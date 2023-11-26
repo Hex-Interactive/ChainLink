@@ -1,0 +1,15 @@
+# Roblox places
+*.rbxl
+*.rbxl.lock
+*.rbxlx
+*.rbxlx.lock
+
+# Wally
+Packages
+ServerPackages
+
+# Rojo
+sourcemap.json
+
+# Selene
+roblox.yml

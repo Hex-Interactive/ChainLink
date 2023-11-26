@@ -1,0 +1,14 @@
+{
+	"name": "ChainLink-Develop",
+	"tree": {
+		"$className": "DataModel",
+		"ReplicatedStorage": {
+			"Packages": {
+				"$className": "Folder",
+				"ChainLink": {
+					"$path": "src"
+				}
+			}
+		}
+	}
+}
