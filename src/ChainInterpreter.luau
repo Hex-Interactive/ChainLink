@@ -2,6 +2,7 @@ local CollectionService = game:GetService("CollectionService")
 
 local ActionRegistry = require(script.Parent:WaitForChild("ActionRegistry"))
 local CurrentMap = require(script.Parent:WaitForChild("CurrentMap"))
+local Regex = require(script.Parent.Parent:WaitForChild("Regex"))
 local Types = require(script.Parent:WaitForChild("Types"))
 
 local MAX_ROUTINE_STEPS = 20
@@ -9,6 +10,11 @@ local MAX_ROUTINE_STEPS = 20
 local validRoutineStepClasses = {
 	Chain = true,
 	If = true,
+}
+
+local exp = {
+	behaviorName = Regex([[/^[^\(]*/]]),
+	parameter = Regex([[/\(([^)]+)\)/]]),
 }
 
 local ifEvals = {
@@ -106,8 +112,8 @@ local function parseInstruction(
 		targetId = segments[1]
 	end
 
-	local behaviorName = string.match(behaviorSegment, "^[^%(]*") :: string
-	local parameter = string.match(behaviorSegment, "%(([^()]*)%)") :: string
+	local behaviorName = exp.behaviorName:exec(behaviorSegment)[1]
+	local parameter = exp.parameter:exec(behaviorSegment)[2]
 
 	return {
 		behaviorName = behaviorName,
