@@ -3,4 +3,6 @@
 		"editor.defaultFormatter": "JohnnyMorganz.stylua",
 		"editor.formatOnSave": true
 	},
+
+	"luau-lsp.sourcemap.rojoProjectFile": "develop.project.json",
 }
