@@ -5,8 +5,8 @@ ChainLink is a DataModel-driven logic and control system that empowers map desig
 ## Features
 
 * Create robust, unique map-based gameplay features without scripting
-* Integrate with your game systems
-* Sandboxing
+* Integrate with your game systems to give more capabilities to maps
+* Inheriently uses sandboxing
 
 # License
 
