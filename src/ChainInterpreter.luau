@@ -164,7 +164,7 @@ local function serializeRoutineLayer(parent: Instance): Types.RoutineLayer
 	return layer
 end
 
-local function executeRoutineLayer(exec: Types.RoutineLayer, context: Types.ActionContext)
+local function executeRoutineLayer(exec: Types.RoutineLayer, context: Types.BehaviorContext)
 	for _, step in exec do
 		if step.class == "Chain" then
 			assert(typeof(step.data) == "string", `invalid routine step data "{step.data}" found`)
@@ -193,10 +193,10 @@ local function executeRoutineLayer(exec: Types.RoutineLayer, context: Types.Acti
 	end
 end
 
-local function serializeRoutine(routine: Model): (context: Types.ActionContext) -> ()
+local function serializeRoutine(routine: Model): (context: Types.BehaviorContext) -> ()
 	local exec = serializeRoutineLayer(routine)
 
-	return function(context: Types.ActionContext)
+	return function(context: Types.BehaviorContext)
 		executeRoutineLayer(exec, context)
 	end
 end

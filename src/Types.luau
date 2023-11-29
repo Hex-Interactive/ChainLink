@@ -1,18 +1,18 @@
--- Actions/Routines/Behaviors
-export type Behavior = (context: ActionContext) -> ()
-export type Action = {
-	Run: Behavior,
-}
-export type ActionContext = {
-	target: Instance?,
-	parameter: ChainParameter,
-}
-
 -- Validators
 export type Validator<T> = (subject: T) -> boolean
 
 -- CurrentMap
 export type MapDirectory = () -> Folder
+
+-- Behaviors
+export type Behavior = (context: BehaviorContext) -> ()
+export type BehaviorContext = {
+	target: Instance?,
+	parameter: ChainParameter,
+}
+export type Action = {
+	Run: Behavior,
+}
 
 -- Chain
 export type RoutineStep = {

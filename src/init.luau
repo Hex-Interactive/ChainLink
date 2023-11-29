@@ -5,7 +5,7 @@ local CurrentMap = require(script:WaitForChild("CurrentMap"))
 local Runtime = require(script:WaitForChild("Runtime"))
 local Types = require(script:WaitForChild("Types"))
 
-export type ActionContext = Types.ActionContext
+export type BehaviorContext = Types.BehaviorContext
 
 return {
 	-- Setup

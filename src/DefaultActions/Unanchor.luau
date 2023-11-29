@@ -1,7 +1,7 @@
 local Types = require(script.Parent.Parent:WaitForChild("Types"))
 
 return {
-	Run = function(context: Types.ActionContext)
+	Run = function(context: Types.BehaviorContext)
 		assert(context.target, "no target")
 
 		for _, instance in context.target:GetDescendants() do

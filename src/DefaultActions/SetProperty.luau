@@ -1,7 +1,7 @@
 local Types = require(script.Parent.Parent:WaitForChild("Types"))
 
 return {
-	Run = function(context: Types.ActionContext)
+	Run = function(context: Types.BehaviorContext)
 		assert(context.target, "no target")
 
 		local target = context.target :: any -- Allow dynamic property read/assign
