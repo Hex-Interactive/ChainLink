@@ -11,6 +11,10 @@ local WHITESPACE = table.freeze({
 local Lexer = {}
 Lexer.__index = Lexer
 
+local function isNumerical(input: string): boolean
+	return tonumber(input) ~= nil
+end
+
 function Lexer.new(source: string)
 	local self = setmetatable({}, Lexer)
 
@@ -36,6 +40,14 @@ function Lexer:Consume()
 	self.pos = pos + 1
 end
 
+function Lexer:ReadString(): Types.Token
+	return { Lexemes.Unknown, self:Peek() } -- TODO: Handle strings
+end
+
+function Lexer:ReadNumber(): Types.Token
+	return { Lexemes.Unknown, self:Peek() } -- TODO: Handle numbers
+end
+
 function Lexer:ReadNext(): Types.Token
 	local char = self:Peek(0)
 
@@ -50,7 +62,8 @@ function Lexer:ReadNext(): Types.Token
 			return { Lexemes.Arrow, char .. nextChar }
 		end
 
-		-- TODO: Could be number
+		self:Consume()
+		return { Lexemes.Ambiguous, char }
 	elseif char == "=" then
 		local nextChar = self:Peek(1)
 
@@ -93,6 +106,28 @@ function Lexer:ReadNext(): Types.Token
 		end
 
 		return { Lexemes.OutOfOrder, char }
+	elseif char == '"' then
+		return self:ReadString()
+	elseif char == "+" then
+		self:Consume()
+		return { Lexemes.Add, char }
+	elseif char == "/" then
+		self:Consume()
+		return { Lexemes.Divide, char }
+	elseif char == "*" then
+		self:Consume()
+		return { Lexemes.Multiply, char }
+	elseif char == "%" then
+		self:Consume()
+		return { Lexemes.Mod, char }
+	elseif char == "^" then
+		self:Consume()
+		return { Lexemes.Pow, char }
+	elseif char == "(" or char == ")" or char == ";" or char == "," then
+		self:Consume()
+		return { Lexemes.Ambiguous, char }
+	elseif isNumerical(char) then
+		return self:ReadNumber()
 	elseif table.find(WHITESPACE, char) then
 		self:Consume()
 	end
