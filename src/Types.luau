@@ -15,6 +15,7 @@ export type Action = {
 }
 
 -- Chain
+export type Token = { [number]: string }
 export type RoutineStep = {
 	class: string,
 	data: any?,
