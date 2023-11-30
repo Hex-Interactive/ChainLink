@@ -2,44 +2,44 @@ local Types = require(script.Parent.Parent:WaitForChild("Types"))
 
 type Parser = {
 	__index: Parser,
-	new: (tokens: { Types.Token }) -> Parser,
+	new: (lexemes: { Types.Lexeme }) -> Parser,
 
-	tokens: { Types.Token },
+	lexemes: { Types.Lexeme },
 	len: number,
 	pos: number,
 
-	Peek: (self: Parser, amount: number) -> Types.Token?,
+	Peek: (self: Parser, amount: number) -> Types.Lexeme?,
 	Consume: (self: Parser) -> (),
-	GenerateInstructions: (self: Parser) -> Types.Result<Types.Instructions>,
+	Begin: (self: Parser) -> Types.Result<{ Types.Instruction }>,
 }
 
 local Parser = {} :: Parser
 Parser.__index = Parser
 
-function Parser.new(tokens: { Types.Token }): Parser
+function Parser.new(lexemes: { Types.Lexeme }): Parser
 	local self = (setmetatable({}, Parser) :: any) :: Parser
 
-	self.tokens = tokens
-	self.len = #tokens
+	self.lexemes = lexemes
+	self.len = #lexemes
 	self.pos = 1
 
 	return self
 end
 
-function Parser:Peek(amount: number): Types.Token?
+function Parser:Peek(amount: number): Types.Lexeme?
 	local nextPos = self.pos + amount
 	if nextPos > self.len then
 		return nil
 	end
 
-	return self.tokens[nextPos]
+	return self.lexemes[nextPos]
 end
 
 function Parser:Consume()
 	self.pos += 1
 end
 
-function Parser:GenerateInstructions(): Types.Result<Types.Instructions>
+function Parser:Begin(): Types.Result<{ Types.Instruction }>
 	-- TODO
 
 	return {

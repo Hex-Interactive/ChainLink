@@ -21,7 +21,7 @@ export type Result<T> = {
 	data: T?,
 }
 export type Lexeme = { string }
-export type Instructions = {} -- TODO
+export type Instruction = {} -- TODO
 
 export type RoutineStep = {
 	class: string,

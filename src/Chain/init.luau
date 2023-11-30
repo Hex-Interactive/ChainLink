@@ -22,7 +22,7 @@ local function handleResult<T>(result: Types.Result<T>): boolean
 	return false
 end
 
-function Chain.Compile(source: string): Types.Instructions?
+function Chain.Compile(source: string): { Types.Instruction }?
 	local lexer = Lexer.new(source)
 	local lexerResult = lexer:Begin()
 	local lexerSuccess = handleResult(lexerResult)
@@ -33,7 +33,7 @@ function Chain.Compile(source: string): Types.Instructions?
 	print("Tokens:", lexerResult.data) -- TEMP
 
 	local parser = Parser.new(lexerResult.data)
-	local parserResult = parser:GenerateInstructions()
+	local parserResult = parser:Begin()
 	local parserSuccess = handleResult(parserResult)
 	if not parserSuccess or not parserResult.data then
 		return nil
