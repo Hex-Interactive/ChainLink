@@ -173,7 +173,7 @@ function Lexer:ReadNext(): Types.Token
 			return { Lexemes.Equal, char .. nextChar }
 		end
 
-		return { Lexemes.OutOfOrder, char }
+		return { Lexemes.UnexpectedChar, char }
 	elseif char == "<" then
 		local nextChar = self:Peek(1)
 
@@ -205,7 +205,7 @@ function Lexer:ReadNext(): Types.Token
 			return { Lexemes.NotEqual, char .. nextChar }
 		end
 
-		return { Lexemes.OutOfOrder, char }
+		return { Lexemes.UnexpectedChar, char }
 	elseif char == '"' then
 		return self:ReadString()
 	elseif char == "+" then
@@ -229,9 +229,12 @@ function Lexer:ReadNext(): Types.Token
 	elseif char == "," then
 		self:Consume()
 		return { Lexemes.NextArg, char }
-	elseif char == "(" or char == ")" then
+	elseif char == "(" then
 		self:Consume()
-		return { Lexemes.Paren, char }
+		return { Lexemes.StartParen, char }
+	elseif char == ")" then
+		self:Consume()
+		return { Lexemes.EndParen, char }
 	elseif isNumerical(char) then
 		return self:ReadNumber(false)
 	elseif isIdentifier(char) then
@@ -240,7 +243,7 @@ function Lexer:ReadNext(): Types.Token
 		self:Consume()
 	end
 
-	return { Lexemes.Unknown, char }
+	return { Lexemes.UnknownChar, char }
 end
 
 function Lexer:GenerateTokens(): Result
@@ -251,12 +254,12 @@ function Lexer:GenerateTokens(): Result
 
 		if token[1] == Lexemes.Eof then
 			break
-		elseif token[1] == Lexemes.OutOfOrder then
+		elseif token[1] == Lexemes.UnexpectedChar then
 			return {
 				ok = false,
-				err = `out of order character "{token[2]}"`,
+				err = `unexpected character "{token[2]}"`,
 			}
-		elseif token[1] == Lexemes.Unknown then
+		elseif token[1] == Lexemes.UnknownChar then
 			return {
 				ok = false,
 				err = `unknown character "{token[2]}"`,

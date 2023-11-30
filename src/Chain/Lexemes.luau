@@ -1,16 +1,17 @@
 return table.freeze({
 	Eof = "Eof", -- End of file/source
-	OutOfOrder = "OutOfOrder", -- Character in the wrong place
-	Unknown = "Unknown", -- Unknown character
+	UnexpectedChar = "UnexpectedChar", -- Unexpected character
+	UnknownChar = "UnknownChar", -- Unknown character
 
 	Identifier = "Identifier", -- Any keyword or behavior name
-	Paren = "Paren", -- Any parenthesis, ambiguous
 	String = "String", -- Any string
 	Number = "Number", -- Any number
 
 	Arrow = "Arrow", -- Arrow (->)
 	NextExp = "NextExp", -- Next expression (;)
 	NextArg = "NextArg", -- Next argument (,)
+	StartParen = "StartParen", -- Left parenthesis (()
+	EndParen = "EndParen", -- Right parenthesis ())
 
 	Equal = "Equal", -- Equal to (==)
 	LessEqual = "LessEqual", -- Less than or equal to (<=)
