@@ -1,6 +1,6 @@
 local Players = game:GetService("Players")
 
-local ValidatorRegistry = require(script.Parent:WaitForChild("ValidatorRegistry"))
+local Validators = require(script.Parent:WaitForChild("Validators"))
 local ChainInterpreter = require(script.Parent:WaitForChild("ChainInterpreter"))
 local CurrentMap = require(script.Parent:WaitForChild("CurrentMap"))
 
@@ -20,13 +20,13 @@ function Triggers.Added(trigger: BasePart)
 		assert(triggerChain, "trigger missing chain!")
 		assert(triggerSource, "trigger missing source!")
 
-		if not ValidatorRegistry.Validate("CanTrigger") then
+		if not Validators.Validate("CanTrigger") then
 			return
 		end
 
 		if mode == "Player" then
 			local player = Players:GetPlayerFromCharacter(hit.Parent)
-			if not player or not ValidatorRegistry.Validate("CanTriggerPlayer", player) then
+			if not player or not Validators.Validate("CanTriggerPlayer", player) then
 				return
 			end
 

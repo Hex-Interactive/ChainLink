@@ -7,9 +7,9 @@ local VALIDATOR_NAMES = {
 
 local index = {}
 
-local ValidatorRegistry = {}
+local Validators = {}
 
-function ValidatorRegistry.Register(validators: {
+function Validators.Register(validators: {
 	CanTrigger: Types.Validator<nil>?,
 	CanTriggerPlayer: Types.Validator<Player>?,
 })
@@ -19,7 +19,7 @@ function ValidatorRegistry.Register(validators: {
 	end
 end
 
-function ValidatorRegistry.Validate(name: string, subject: any?): boolean
+function Validators.Validate(name: string, subject: any?): boolean
 	local validator = index[name]
 	if not validator then
 		return true
@@ -28,4 +28,4 @@ function ValidatorRegistry.Validate(name: string, subject: any?): boolean
 	return validator(subject)
 end
 
-return ValidatorRegistry
+return Validators

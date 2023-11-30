@@ -1,6 +1,6 @@
 local CollectionService = game:GetService("CollectionService")
 
-local ActionRegistry = require(script.Parent:WaitForChild("ActionRegistry"))
+local Actions = require(script.Parent:WaitForChild("Actions"))
 local CurrentMap = require(script.Parent:WaitForChild("CurrentMap"))
 local Regex = require(script.Parent.Parent:WaitForChild("Regex"))
 local Types = require(script.Parent:WaitForChild("Types"))
@@ -243,7 +243,7 @@ function ChainInterpreter.Execute(instructions: string, source: string, extraDat
 	for _, instruction in list do
 		local info = parseInstruction(instruction, source, extraData)
 
-		local action = ActionRegistry.Get(info.behaviorName)
+		local action = Actions.Get(info.behaviorName)
 		local actionRun = if action then action.Run else nil
 		local routineRun = routines[info.behaviorName]
 		local behavior = (routineRun or actionRun) :: Types.Action
