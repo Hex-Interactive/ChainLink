@@ -20,7 +20,7 @@ export type Result<T> = {
 	err: string?,
 	data: T?,
 }
-export type Token = { string }
+export type Lexeme = { string }
 export type Instructions = {} -- TODO
 
 export type RoutineStep = {

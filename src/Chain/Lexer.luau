@@ -1,5 +1,5 @@
+local LexemeDefs = require(script.Parent:WaitForChild("LexemeDefs"))
 local Types = require(script.Parent.Parent:WaitForChild("Types"))
-local Lexemes = require(script.Parent:WaitForChild("Lexemes"))
 
 local NUMBERS = table.freeze({
 	["0"] = true,
@@ -30,11 +30,11 @@ type Lexer = {
 
 	Peek: (self: Lexer, amount: number) -> string?,
 	Consume: (self: Lexer) -> (),
-	ReadString: (self: Lexer) -> Types.Token,
-	ReadNumber: (self: Lexer, negative: boolean) -> Types.Token,
-	ReadIdentifier: (self: Lexer) -> Types.Token,
-	ReadNext: (self: Lexer) -> Types.Token,
-	GenerateTokens: (self: Lexer) -> Types.Result<{ Types.Token }>,
+	ReadString: (self: Lexer) -> Types.Lexeme,
+	ReadNumber: (self: Lexer, negative: boolean) -> Types.Lexeme,
+	ReadIdentifier: (self: Lexer) -> Types.Lexeme,
+	ReadNext: (self: Lexer) -> Types.Lexeme,
+	Begin: (self: Lexer) -> Types.Result<{ Types.Lexeme }>,
 }
 
 local Lexer = {} :: Lexer
@@ -87,7 +87,7 @@ function Lexer:Consume()
 	self.pos += 1
 end
 
-function Lexer:ReadString(): Types.Token
+function Lexer:ReadString(): Types.Lexeme
 	local final = ""
 
 	local prev = self:Peek(0)
@@ -102,10 +102,10 @@ function Lexer:ReadString(): Types.Token
 	end
 
 	self:Consume()
-	return { Lexemes.String, final }
+	return { LexemeDefs.String, final }
 end
 
-function Lexer:ReadNumber(negative: boolean): Types.Token
+function Lexer:ReadNumber(negative: boolean): Types.Lexeme
 	local final = if negative then "-" else ""
 	if negative then
 		self:Consume()
@@ -121,10 +121,10 @@ function Lexer:ReadNumber(negative: boolean): Types.Token
 		self:Consume()
 	end
 
-	return { Lexemes.Number, final }
+	return { LexemeDefs.Number, final }
 end
 
-function Lexer:ReadIdentifier(): Types.Token
+function Lexer:ReadIdentifier(): Types.Lexeme
 	local final = ""
 
 	while true do
@@ -137,98 +137,98 @@ function Lexer:ReadIdentifier(): Types.Token
 		self:Consume()
 	end
 
-	return { Lexemes.Identifier, final }
+	return { LexemeDefs.Identifier, final }
 end
 
-function Lexer:ReadNext(): Types.Token
+function Lexer:ReadNext(): Types.Lexeme
 	local char = self:Peek(0)
 
 	if char == nil then
-		return { Lexemes.Eof, "" }
+		return { LexemeDefs.Eof, "" }
 	elseif char == "-" then
 		local nextChar = self:Peek(1)
 
 		if nextChar == ">" then
 			self:Consume()
 			self:Consume()
-			return { Lexemes.Arrow, char .. nextChar }
+			return { LexemeDefs.Arrow, char .. nextChar }
 		elseif isNumerical(nextChar) then
 			return self:ReadNumber(true)
 		end
 
 		self:Consume()
-		return { Lexemes.Subtract, char }
+		return { LexemeDefs.Subtract, char }
 	elseif char == "=" then
 		local nextChar = self:Peek(1)
 
 		if nextChar == "=" then
 			self:Consume()
 			self:Consume()
-			return { Lexemes.Equal, char .. nextChar }
+			return { LexemeDefs.Equal, char .. nextChar }
 		end
 
-		return { Lexemes.UnexpectedChar, char }
+		return { LexemeDefs.UnexpectedChar, char }
 	elseif char == "<" then
 		local nextChar = self:Peek(1)
 
 		if nextChar == "=" then
 			self:Consume()
 			self:Consume()
-			return { Lexemes.LessEqual, char .. nextChar }
+			return { LexemeDefs.LessEqual, char .. nextChar }
 		end
 
 		self:Consume()
-		return { Lexemes.Less, char }
+		return { LexemeDefs.Less, char }
 	elseif char == ">" then
 		local nextChar = self:Peek(1)
 
 		if nextChar == "=" then
 			self:Consume()
 			self:Consume()
-			return { Lexemes.GreaterEqual, char .. nextChar }
+			return { LexemeDefs.GreaterEqual, char .. nextChar }
 		end
 
 		self:Consume()
-		return { Lexemes.Greater, char }
+		return { LexemeDefs.Greater, char }
 	elseif char == "~" then
 		local nextChar = self:Peek(1)
 
 		if nextChar == "=" then
 			self:Consume()
 			self:Consume()
-			return { Lexemes.NotEqual, char .. nextChar }
+			return { LexemeDefs.NotEqual, char .. nextChar }
 		end
 
-		return { Lexemes.UnexpectedChar, char }
+		return { LexemeDefs.UnexpectedChar, char }
 	elseif char == '"' then
 		return self:ReadString()
 	elseif char == "+" then
 		self:Consume()
-		return { Lexemes.Add, char }
+		return { LexemeDefs.Add, char }
 	elseif char == "/" then
 		self:Consume()
-		return { Lexemes.Divide, char }
+		return { LexemeDefs.Divide, char }
 	elseif char == "*" then
 		self:Consume()
-		return { Lexemes.Multiply, char }
+		return { LexemeDefs.Multiply, char }
 	elseif char == "%" then
 		self:Consume()
-		return { Lexemes.Mod, char }
+		return { LexemeDefs.Mod, char }
 	elseif char == "^" then
 		self:Consume()
-		return { Lexemes.Pow, char }
+		return { LexemeDefs.Pow, char }
 	elseif char == ";" then
 		self:Consume()
-		return { Lexemes.NextExp, char }
+		return { LexemeDefs.NextExp, char }
 	elseif char == "," then
 		self:Consume()
-		return { Lexemes.NextArg, char }
+		return { LexemeDefs.NextArg, char }
 	elseif char == "(" then
 		self:Consume()
-		return { Lexemes.StartParen, char }
+		return { LexemeDefs.StartParen, char }
 	elseif char == ")" then
 		self:Consume()
-		return { Lexemes.EndParen, char }
+		return { LexemeDefs.EndParen, char }
 	elseif isNumerical(char) then
 		return self:ReadNumber(false)
 	elseif isIdentifier(char) then
@@ -237,23 +237,23 @@ function Lexer:ReadNext(): Types.Token
 		self:Consume()
 	end
 
-	return { Lexemes.UnknownChar, char }
+	return { LexemeDefs.UnknownChar, char }
 end
 
-function Lexer:GenerateTokens(): Types.Result<{ Types.Token }>
+function Lexer:Begin(): Types.Result<{ Types.Lexeme }>
 	local tokens = {}
 
 	while true do
 		local token = self:ReadNext()
 
-		if token[1] == Lexemes.Eof then
+		if token[1] == LexemeDefs.Eof then
 			break
-		elseif token[1] == Lexemes.UnexpectedChar then
+		elseif token[1] == LexemeDefs.UnexpectedChar then
 			return {
 				ok = false,
 				err = `unexpected character "{token[2]}"`,
 			}
-		elseif token[1] == Lexemes.UnknownChar then
+		elseif token[1] == LexemeDefs.UnknownChar then
 			return {
 				ok = false,
 				err = `unknown character "{token[2]}"`,

@@ -10,61 +10,42 @@ local function err(text: string)
 	error(string.format(ERR_MESSAGE, text))
 end
 
-local function handleResult<T>(result: Types.Result<T>) end
+local function handleResult<T>(result: Types.Result<T>): boolean
+	if result.ok then
+		return true
+	end
+
+	if result.err then
+		err(result.err)
+	end
+
+	return false
+end
 
 function Chain.Compile(source: string): Types.Instructions?
 	local lexer = Lexer.new(source)
-	local lexerResult = lexer:GenerateTokens()
-
-	if not lexerResult.ok then
-		if lexerResult.err then
-			err(lexerResult.err)
-		end
+	local lexerResult = lexer:Begin()
+	local lexerSuccess = handleResult(lexerResult)
+	if not lexerSuccess or not lexerResult.data then
 		return nil
 	end
 
-	if not lexerResult.tokens then
-		return nil
-	end
+	print("Tokens:", lexerResult.data) -- TEMP
 
-	print("Tokens:", lexerResult.tokens) -- TEMP
-
-	local parser = Parser.new(lexerResult.tokens)
+	local parser = Parser.new(lexerResult.data)
 	local parserResult = parser:GenerateInstructions()
-
-	if not parserResult.ok then
-		if parserResult.err then
-			err(parserResult.err)
-		end
+	local parserSuccess = handleResult(parserResult)
+	if not parserSuccess or not parserResult.data then
 		return nil
 	end
 
-	if not lexerResult.tokens then
-		return nil
-	end
+	print("Instructions:", parserResult.data) -- TEMP
 
-	print("Parser result:", parserResult) -- TEMP
-	return parserResult.instructions
+	return parserResult.data
 end
 
 function Chain.Execute(source: string)
-	local lexer = Lexer.new(source)
-
-	local lexerResult = lexer:GenerateTokens()
-	if not lexerResult.ok then
-		if lexerResult.err then
-			err(lexerResult.err)
-		end
-		return
-	end
-
-	if not lexerResult.tokens then
-		return
-	end
-
-	print(lexerResult.tokens) -- TEMP
-
-	local _parser = Parser.new(lexerResult.tokens) -- TODO
+	Chain.Compile(source) -- TODO: Execute instructions
 end
 
 return Chain
