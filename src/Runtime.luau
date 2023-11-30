@@ -4,6 +4,7 @@ local Players = game:GetService("Players")
 local ValidatorRegistry = require(script.Parent:WaitForChild("ValidatorRegistry"))
 local ChainInterpreter = require(script.Parent:WaitForChild("ChainInterpreter"))
 local CurrentMap = require(script.Parent:WaitForChild("CurrentMap"))
+local Routines = require(script.Parent:WaitForChild("Routines"))
 local Types = require(script.Parent:WaitForChild("Types"))
 
 local initialized = false
@@ -12,7 +13,7 @@ local triggers = {}
 local Runtime = {}
 
 local function triggerAdded(trigger: BasePart)
-	if not CurrentMap.HasDescendant(trigger) then
+	if not CurrentMap.HasDescendant(trigger) or not trigger:IsA("BasePart") then
 		return
 	end
 
@@ -67,9 +68,13 @@ function Runtime.Init()
 	assert(initialized == false, "already initialized")
 	initialized = true
 
-	CurrentMap.GetDirectory() -- Validate map directory
+	CurrentMap.GetDirectory() -- Validate map directory getter is defined
+
 	CollectionService:GetInstanceAddedSignal("Trigger"):Connect(triggerAdded)
 	CollectionService:GetInstanceRemovedSignal("Trigger"):Connect(triggerRemoved)
+
+	CollectionService:GetInstanceAddedSignal("Routine"):Connect(Routines.Added)
+	CollectionService:GetInstanceRemovedSignal("Routine"):Connect(Routines.Removed)
 end
 
 return Runtime
