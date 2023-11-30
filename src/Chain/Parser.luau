@@ -12,7 +12,7 @@ type Parser = {
 
 	Peek: (self: Parser, amount: number) -> Types.Lexeme?,
 	Consume: (self: Parser) -> (),
-	ReadNext: (self: Parser) -> Types.Instruction?,
+	ReadNext: (self: Parser) -> Types.Instruction,
 	Begin: (self: Parser) -> Types.Result<{ Types.Instruction }>,
 }
 
@@ -49,11 +49,11 @@ function Parser:Consume()
 	self.pos += 1
 end
 
-function Parser:ReadNext(): Types.Instruction?
+function Parser:ReadNext(): Types.Instruction
 	local lexeme = self:Peek(0)
 
 	if lexeme == nil then
-		return nil
+		return new(InstructionIDs.MissingEof)
 	elseif lexeme.id == LexemeIDs.Eof then
 		return new(InstructionIDs.Eof)
 	end
@@ -70,7 +70,7 @@ function Parser:Begin(): Types.Result<{ Types.Instruction }>
 	while true do
 		local instruction = self:ReadNext()
 
-		if instruction == nil then
+		if instruction.id == InstructionIDs.MissingEof then
 			return {
 				ok = false,
 				err = `parsed lexemes missing EOF`,
