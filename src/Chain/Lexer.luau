@@ -8,15 +8,37 @@ local WHITESPACE = table.freeze({
 	"\t",
 })
 
-local Lexer = {}
+type Result = {
+	ok: boolean,
+	err: string?,
+	tokens: { [number]: Types.Token }?,
+}
+
+type Lexer = {
+	__index: Lexer,
+	new: (source: string) -> Lexer,
+
+	source: string,
+	len: number,
+	pos: number,
+
+	Peek: (self: Lexer, amount: number) -> string?,
+	Consume: (self: Lexer) -> (),
+	ReadString: (self: Lexer) -> Types.Token,
+	ReadNumber: (self: Lexer) -> Types.Token,
+	ReadNext: (self: Lexer) -> Types.Token,
+	GenerateTokens: (self: Lexer) -> Result,
+}
+
+local Lexer = {} :: Lexer
 Lexer.__index = Lexer
 
 local function isNumerical(input: string): boolean
 	return tonumber(input) ~= nil
 end
 
-function Lexer.new(source: string)
-	local self = setmetatable({}, Lexer)
+function Lexer.new(source: string): Lexer
+	local self = (setmetatable({}, Lexer) :: any) :: Lexer
 
 	self.source = source
 	self.len = string.len(source)
@@ -26,8 +48,7 @@ function Lexer.new(source: string)
 end
 
 function Lexer:Peek(amount: number): string?
-	local pos = self.pos :: number
-	local nextPos = pos + amount
+	local nextPos = self.pos + amount
 	if nextPos > self.len then
 		return nil
 	end
@@ -36,16 +57,15 @@ function Lexer:Peek(amount: number): string?
 end
 
 function Lexer:Consume()
-	local pos = self.pos :: number
-	self.pos = pos + 1
+	self.pos += 1
 end
 
 function Lexer:ReadString(): Types.Token
-	return { Lexemes.Unknown, self:Peek() } -- TODO: Handle strings
+	return { Lexemes.Unknown, self:Peek(1) :: string } -- TODO: Handle strings
 end
 
 function Lexer:ReadNumber(): Types.Token
-	return { Lexemes.Unknown, self:Peek() } -- TODO: Handle numbers
+	return { Lexemes.Unknown, self:Peek(1) :: string } -- TODO: Handle numbers
 end
 
 function Lexer:ReadNext(): Types.Token
@@ -135,11 +155,7 @@ function Lexer:ReadNext(): Types.Token
 	return { Lexemes.Unknown, char }
 end
 
-function Lexer:GenerateTokens(): {
-	ok: boolean,
-	err: string?,
-	tokens: { [number]: Types.Token }?,
-}
+function Lexer:GenerateTokens(): Result
 	local tokens = {}
 
 	while true do

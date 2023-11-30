@@ -1,10 +1,15 @@
 local Types = require(script.Parent.Parent:WaitForChild("Types"))
 
-local Parser = {}
+type Parser = {
+	__index: Parser,
+	new: (_tokens: { [number]: Types.Token }) -> Parser,
+}
+
+local Parser = {} :: Parser
 Parser.__index = Parser
 
-function Parser.new(_tokens: { [number]: Types.Token })
-	local self = setmetatable({}, Parser)
+function Parser.new(_tokens: { [number]: Types.Token }): Parser
+	local self = (setmetatable({}, Parser) :: any) :: Parser
 
 	-- TODO
 
