@@ -2,6 +2,9 @@
 	"name": "ChainLink-Develop",
 	"tree": {
 		"$className": "DataModel",
+		"ServerScriptService": {
+			"$path": "tests"
+		},
 		"ReplicatedStorage": {
 			"Packages": {
 				"$path": "Packages",

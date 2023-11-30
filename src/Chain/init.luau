@@ -6,7 +6,7 @@ local ERR_MESSAGE = "ChainError: %s"
 local Chain = {}
 
 local function err(text: string)
-	warn(string.format(ERR_MESSAGE, text))
+	error(string.format(ERR_MESSAGE, text))
 end
 
 function Chain.Execute(source: string)
@@ -23,6 +23,8 @@ function Chain.Execute(source: string)
 	if not lexerResult.tokens then
 		return
 	end
+
+	print(lexerResult.tokens) -- TEMP
 
 	local _parser = Parser.new(lexerResult.tokens) -- TODO
 end
