@@ -3,10 +3,10 @@ return table.freeze({
 	OutOfOrder = "OutOfOrder", -- Character in the wrong place
 	Unknown = "Unknown", -- Unknown character
 
-	Identifier = "Identifier", -- Keywords or behavior names
+	Identifier = "Identifier", -- Any Keyword or behavior name
 	Paren = "Paren", -- Any parenthesis, ambiguous
-	String = "String", -- String
-	Number = "Number", -- Number
+	String = "String", -- Any string
+	Number = "Number", -- Any number
 
 	Arrow = "Arrow", -- Arrow (->)
 	NextExp = "NextExp", -- Next expression (;)
@@ -16,7 +16,7 @@ return table.freeze({
 	LessEqual = "LessEqual", -- Less than or equal to (<=)
 	Less = "Less", -- Less than (<)
 	GreaterEqual = "GreaterEqual", -- Greater than or equal to (>=)
-	Greater = "Greater", -- Greater than (<)
+	Greater = "Greater", -- Greater than (>)
 	NotEqual = "NotEqual", -- Not equal to (~=)
 
 	Add = "Add", -- Addition (+)
