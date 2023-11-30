@@ -58,6 +58,18 @@ local function isIdentifier(input: string?): boolean
 	return string.match(input or "", "%a") ~= nil or input == "_"
 end
 
+local function canParseString(current: string?, prev: string?): boolean
+	if not current then
+		return false
+	end
+
+	if current == '"' then
+		return prev == "\\"
+	end
+
+	return true
+end
+
 function Lexer.new(source: string): Lexer
 	local self = (setmetatable({}, Lexer) :: any) :: Lexer
 
@@ -88,13 +100,14 @@ function Lexer:ReadString(): Types.Token
 	self:Consume()
 	local current = self:Peek(0)
 
-	while current and (current ~= '"' and prev ~= "\\") do
-		final ..= current
+	while canParseString(current, prev) do
+		final ..= current :: string
 		prev = current
 		self:Consume()
 		current = self:Peek(0)
 	end
 
+	self:Consume()
 	return { Lexemes.String, final }
 end
 
