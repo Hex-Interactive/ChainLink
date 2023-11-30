@@ -241,31 +241,31 @@ function Lexer:ReadNext(): Types.Lexeme
 end
 
 function Lexer:Begin(): Types.Result<{ Types.Lexeme }>
-	local tokens = {}
+	local lexemes = {}
 
 	while true do
-		local token = self:ReadNext()
+		local lexeme = self:ReadNext()
 
-		if token[1] == LexemeDefs.Eof then
+		if lexeme[1] == LexemeDefs.Eof then
 			break
-		elseif token[1] == LexemeDefs.UnexpectedChar then
+		elseif lexeme[1] == LexemeDefs.UnexpectedChar then
 			return {
 				ok = false,
-				err = `unexpected character "{token[2]}"`,
+				err = `unexpected character "{lexeme[2]}"`,
 			}
-		elseif token[1] == LexemeDefs.UnknownChar then
+		elseif lexeme[1] == LexemeDefs.UnknownChar then
 			return {
 				ok = false,
-				err = `unknown character "{token[2]}"`,
+				err = `unknown character "{lexeme[2]}"`,
 			}
 		end
 
-		table.insert(tokens, token)
+		table.insert(lexemes, lexeme)
 	end
 
 	return {
 		ok = true,
-		tokens = tokens,
+		data = lexemes,
 	}
 end
 

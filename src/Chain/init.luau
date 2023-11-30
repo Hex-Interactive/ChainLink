@@ -30,7 +30,7 @@ function Chain.Compile(source: string): { Types.Instruction }?
 		return nil
 	end
 
-	print("Tokens:", lexerResult.data) -- TEMP
+	print("Lexemes:", lexerResult.data) -- TEMP
 
 	local parser = Parser.new(lexerResult.data)
 	local parserResult = parser:Begin()
