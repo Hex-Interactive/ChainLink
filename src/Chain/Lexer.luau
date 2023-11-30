@@ -111,7 +111,7 @@ function Lexer:ReadString(): Types.Token
 	return { Lexemes.String, final }
 end
 
-function Lexer:ReadNumber(negative: boolean): Types.Token -- TODO: Implement decimals
+function Lexer:ReadNumber(negative: boolean): Types.Token
 	local final = if negative then "-" else ""
 	if negative then
 		self:Consume()
@@ -119,7 +119,7 @@ function Lexer:ReadNumber(negative: boolean): Types.Token -- TODO: Implement dec
 
 	while true do
 		local char = self:Peek(0)
-		if not char or not isNumerical(char) then
+		if not char or not (isNumerical(char) or char == ".") then
 			break -- Will never happen on first iteration
 		end
 
