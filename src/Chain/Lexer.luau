@@ -98,7 +98,7 @@ function Lexer:ReadString(): Types.Token
 	return { Lexemes.String, final }
 end
 
-function Lexer:ReadNumber(negative: boolean): Types.Token
+function Lexer:ReadNumber(negative: boolean): Types.Token -- TODO: Implement decimals
 	local final = if negative then "-" else ""
 	if negative then
 		self:Consume()
