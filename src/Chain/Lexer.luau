@@ -20,12 +20,6 @@ local WHITESPACE = table.freeze({
 	["\t"] = true,
 })
 
-type Result = {
-	ok: boolean,
-	err: string?,
-	tokens: { [number]: Types.Token }?,
-}
-
 type Lexer = {
 	__index: Lexer,
 	new: (source: string) -> Lexer,
@@ -40,7 +34,7 @@ type Lexer = {
 	ReadNumber: (self: Lexer, negative: boolean) -> Types.Token,
 	ReadIdentifier: (self: Lexer) -> Types.Token,
 	ReadNext: (self: Lexer) -> Types.Token,
-	GenerateTokens: (self: Lexer) -> Result,
+	GenerateTokens: (self: Lexer) -> Types.Result<{ Types.Token }>,
 }
 
 local Lexer = {} :: Lexer
@@ -246,7 +240,7 @@ function Lexer:ReadNext(): Types.Token
 	return { Lexemes.UnknownChar, char }
 end
 
-function Lexer:GenerateTokens(): Result
+function Lexer:GenerateTokens(): Types.Result<{ Types.Token }>
 	local tokens = {}
 
 	while true do

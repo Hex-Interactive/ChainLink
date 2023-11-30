@@ -15,7 +15,14 @@ export type ActionModule = {
 }
 
 -- Chain
-export type Token = { [number]: string }
+export type Result<T> = {
+	ok: boolean,
+	err: string?,
+	data: T?,
+}
+export type Token = { string }
+export type Instructions = {} -- TODO
+
 export type RoutineStep = {
 	class: string,
 	data: any?,

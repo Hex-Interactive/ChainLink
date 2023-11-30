@@ -1,3 +1,4 @@
+local Types = require(script.Parent:WaitForChild("Types"))
 local Parser = require(script:WaitForChild("Parser"))
 local Lexer = require(script:WaitForChild("Lexer"))
 
@@ -7,6 +8,29 @@ local Chain = {}
 
 local function err(text: string)
 	error(string.format(ERR_MESSAGE, text))
+end
+
+function Chain.Compile(source: string): Types.Instructions?
+	local lexer = Lexer.new(source)
+	local lexerResult = lexer:GenerateTokens()
+
+	if not lexerResult.ok then
+		if lexerResult.err then
+			err(lexerResult.err)
+		end
+		return nil
+	end
+
+	if not lexerResult.tokens then
+		return nil
+	end
+
+	print("Tokens:", lexerResult.tokens) -- TEMP
+
+	local parser = Parser.new(lexerResult.tokens)
+	local parserResult = parser:GenerateInstructions()
+
+	print("Parser result:", parserResult) -- TEMP
 end
 
 function Chain.Execute(source: string)
