@@ -105,7 +105,19 @@ function Lexer:ReadNumber(negative: boolean): Types.Token
 end
 
 function Lexer:ReadIdentifier(): Types.Token
-	return { Lexemes.Unknown, self:Peek(1) :: string } -- TODO: Handle identifiers
+	local final = ""
+
+	while true do
+		local char = self:Peek(0)
+		if not char or not isIdentifier(char) then
+			break -- Will never happen on first iteration
+		end
+
+		final ..= char
+		self:Consume()
+	end
+
+	return { Lexemes.Identifier, final }
 end
 
 function Lexer:ReadNext(): Types.Token
