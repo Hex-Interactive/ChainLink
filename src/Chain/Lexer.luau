@@ -82,7 +82,20 @@ function Lexer:Consume()
 end
 
 function Lexer:ReadString(): Types.Token
-	return { Lexemes.Unknown, self:Peek(1) :: string } -- TODO: Handle strings
+	local final = ""
+
+	local prev = self:Peek(0)
+	self:Consume()
+	local current = self:Peek(0)
+
+	while current and (current ~= '"' and prev ~= "\\") do
+		final ..= current
+		prev = current
+		self:Consume()
+		current = self:Peek(0)
+	end
+
+	return { Lexemes.String, final }
 end
 
 function Lexer:ReadNumber(negative: boolean): Types.Token
