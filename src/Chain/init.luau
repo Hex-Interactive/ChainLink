@@ -10,6 +10,8 @@ local function err(text: string)
 	error(string.format(ERR_MESSAGE, text))
 end
 
+local function handleResult<T>(result: Types.Result<T>) end
+
 function Chain.Compile(source: string): Types.Instructions?
 	local lexer = Lexer.new(source)
 	local lexerResult = lexer:GenerateTokens()
@@ -30,7 +32,19 @@ function Chain.Compile(source: string): Types.Instructions?
 	local parser = Parser.new(lexerResult.tokens)
 	local parserResult = parser:GenerateInstructions()
 
+	if not parserResult.ok then
+		if parserResult.err then
+			err(parserResult.err)
+		end
+		return nil
+	end
+
+	if not lexerResult.tokens then
+		return nil
+	end
+
 	print("Parser result:", parserResult) -- TEMP
+	return parserResult.instructions
 end
 
 function Chain.Execute(source: string)
