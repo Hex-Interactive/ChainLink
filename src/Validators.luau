@@ -19,7 +19,7 @@ function Validators.Register(validators: {
 	end
 end
 
-function Validators.Validate(name: string, subject: any?): boolean
+function Validators.Check(name: string, subject: any?): boolean
 	local validator = index[name]
 	if not validator then
 		return true

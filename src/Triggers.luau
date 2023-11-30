@@ -20,13 +20,13 @@ function Triggers.Added(trigger: BasePart)
 		assert(triggerChain, "trigger missing chain!")
 		assert(triggerSource, "trigger missing source!")
 
-		if not Validators.Validate("CanTrigger") then
+		if not Validators.Check("CanTrigger") then
 			return
 		end
 
 		if mode == "Player" then
 			local player = Players:GetPlayerFromCharacter(hit.Parent)
-			if not player or not Validators.Validate("CanTriggerPlayer", player) then
+			if not player or not Validators.Check("CanTriggerPlayer", player) then
 				return
 			end
 
