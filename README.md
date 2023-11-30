@@ -6,7 +6,7 @@ Keep your map-specific logic in the map itself, while avoiding nested and unorga
 
 ## Features
 
-* Create robust, unique map-based gameplay features without scripting, quickly
+* Create robust, unique map-based gameplay features without Luau scripting, quickly
 * Integrate with your game systems to give more capabilities to maps and their developers
 * Practices code sandboxing inherently, allowing you to integrate community-created content easily
 * Tailored for flexibility, per-game configuration, and usage on both the server and client
