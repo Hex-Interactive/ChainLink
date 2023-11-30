@@ -85,8 +85,23 @@ function Lexer:ReadString(): Types.Token
 	return { Lexemes.Unknown, self:Peek(1) :: string } -- TODO: Handle strings
 end
 
-function Lexer:ReadNumber(_negative: boolean): Types.Token
-	return { Lexemes.Unknown, self:Peek(1) :: string } -- TODO: Handle numbers
+function Lexer:ReadNumber(negative: boolean): Types.Token
+	local final = if negative then "-" else ""
+	if negative then
+		self:Consume()
+	end
+
+	while true do
+		local char = self:Peek(0)
+		if not char or not isNumerical(char) then
+			break -- Will never happen on first iteration
+		end
+
+		final ..= char
+		self:Consume()
+	end
+
+	return { Lexemes.Number, final }
 end
 
 function Lexer:ReadIdentifier(): Types.Token
