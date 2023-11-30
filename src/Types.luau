@@ -20,8 +20,14 @@ export type Result<T> = {
 	err: string?,
 	data: T?,
 }
-export type Lexeme = { string }
-export type Instruction = {} -- TODO
+export type Lexeme = {
+	id: string,
+	data: string,
+}
+export type Instruction = {
+	id: string,
+	args: { string },
+}
 
 export type RoutineStep = {
 	class: string,

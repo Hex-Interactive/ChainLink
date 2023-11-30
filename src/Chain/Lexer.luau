@@ -1,4 +1,4 @@
-local LexemeDefs = require(script.Parent:WaitForChild("LexemeDefs"))
+local LexemeIDs = require(script.Parent:WaitForChild("LexemeIDs"))
 local Types = require(script.Parent.Parent:WaitForChild("Types"))
 
 local NUMBERS = table.freeze({
@@ -64,6 +64,13 @@ local function canParseString(current: string?, prev: string?): boolean
 	return true
 end
 
+local function new(id: string, data: string?): Types.Lexeme
+	return {
+		id = id,
+		data = data or "",
+	}
+end
+
 function Lexer.new(source: string): Lexer
 	local self = (setmetatable({}, Lexer) :: any) :: Lexer
 
@@ -102,7 +109,7 @@ function Lexer:ReadString(): Types.Lexeme
 	end
 
 	self:Consume()
-	return { LexemeDefs.String, final }
+	return new(LexemeIDs.String, final)
 end
 
 function Lexer:ReadNumber(negative: boolean): Types.Lexeme
@@ -121,7 +128,7 @@ function Lexer:ReadNumber(negative: boolean): Types.Lexeme
 		self:Consume()
 	end
 
-	return { LexemeDefs.Number, final }
+	return new(LexemeIDs.Number, final)
 end
 
 function Lexer:ReadIdentifier(): Types.Lexeme
@@ -137,98 +144,98 @@ function Lexer:ReadIdentifier(): Types.Lexeme
 		self:Consume()
 	end
 
-	return { LexemeDefs.Identifier, final }
+	return new(LexemeIDs.Identifier, final)
 end
 
 function Lexer:ReadNext(): Types.Lexeme
 	local char = self:Peek(0)
 
 	if char == nil then
-		return { LexemeDefs.Eof, "" }
+		return new(LexemeIDs.Eof)
 	elseif char == "-" then
 		local nextChar = self:Peek(1)
 
 		if nextChar == ">" then
 			self:Consume()
 			self:Consume()
-			return { LexemeDefs.Arrow, char .. nextChar }
+			return new(LexemeIDs.Arrow, char .. nextChar)
 		elseif isNumerical(nextChar) then
 			return self:ReadNumber(true)
 		end
 
 		self:Consume()
-		return { LexemeDefs.Subtract, char }
+		return new(LexemeIDs.Subtract, char)
 	elseif char == "=" then
 		local nextChar = self:Peek(1)
 
 		if nextChar == "=" then
 			self:Consume()
 			self:Consume()
-			return { LexemeDefs.Equal, char .. nextChar }
+			return new(LexemeIDs.Equal, char .. nextChar)
 		end
 
-		return { LexemeDefs.UnexpectedChar, char }
+		return new(LexemeIDs.UnexpectedChar, char)
 	elseif char == "<" then
 		local nextChar = self:Peek(1)
 
 		if nextChar == "=" then
 			self:Consume()
 			self:Consume()
-			return { LexemeDefs.LessEqual, char .. nextChar }
+			return new(LexemeIDs.LessEqual, char .. nextChar)
 		end
 
 		self:Consume()
-		return { LexemeDefs.Less, char }
+		return new(LexemeIDs.Less, char)
 	elseif char == ">" then
 		local nextChar = self:Peek(1)
 
 		if nextChar == "=" then
 			self:Consume()
 			self:Consume()
-			return { LexemeDefs.GreaterEqual, char .. nextChar }
+			return new(LexemeIDs.GreaterEqual, char .. nextChar)
 		end
 
 		self:Consume()
-		return { LexemeDefs.Greater, char }
+		return new(LexemeIDs.Greater, char)
 	elseif char == "~" then
 		local nextChar = self:Peek(1)
 
 		if nextChar == "=" then
 			self:Consume()
 			self:Consume()
-			return { LexemeDefs.NotEqual, char .. nextChar }
+			return new(LexemeIDs.NotEqual, char .. nextChar)
 		end
 
-		return { LexemeDefs.UnexpectedChar, char }
+		return new(LexemeIDs.UnexpectedChar, char)
 	elseif char == '"' then
 		return self:ReadString()
 	elseif char == "+" then
 		self:Consume()
-		return { LexemeDefs.Add, char }
+		return new(LexemeIDs.Add, char)
 	elseif char == "/" then
 		self:Consume()
-		return { LexemeDefs.Divide, char }
+		return new(LexemeIDs.Divide, char)
 	elseif char == "*" then
 		self:Consume()
-		return { LexemeDefs.Multiply, char }
+		return new(LexemeIDs.Multiply, char)
 	elseif char == "%" then
 		self:Consume()
-		return { LexemeDefs.Mod, char }
+		return new(LexemeIDs.Mod, char)
 	elseif char == "^" then
 		self:Consume()
-		return { LexemeDefs.Pow, char }
+		return new(LexemeIDs.Pow, char)
 	elseif char == ";" then
 		self:Consume()
-		return { LexemeDefs.NextExp, char }
+		return new(LexemeIDs.NextExp, char)
 	elseif char == "," then
 		self:Consume()
-		return { LexemeDefs.NextArg, char }
+		return new(LexemeIDs.NextArg, char)
 	elseif char == "(" then
 		self:Consume()
-		return { LexemeDefs.StartParen, char }
+		return new(LexemeIDs.StartParen, char)
 	elseif char == ")" then
 		self:Consume()
-		return { LexemeDefs.EndParen, char }
+		return new(LexemeIDs.EndParen, char)
 	elseif isNumerical(char) then
 		return self:ReadNumber(false)
 	elseif isIdentifier(char) then
@@ -237,7 +244,7 @@ function Lexer:ReadNext(): Types.Lexeme
 		self:Consume()
 	end
 
-	return { LexemeDefs.UnknownChar, char }
+	return new(LexemeIDs.UnknownChar, char)
 end
 
 function Lexer:Begin(): Types.Result<{ Types.Lexeme }>
@@ -246,12 +253,12 @@ function Lexer:Begin(): Types.Result<{ Types.Lexeme }>
 	while true do
 		local lexeme = self:ReadNext()
 
-		if lexeme[1] == LexemeDefs.UnexpectedChar then
+		if lexeme[1] == LexemeIDs.UnexpectedChar then
 			return {
 				ok = false,
 				err = `unexpected character "{lexeme[2]}"`,
 			}
-		elseif lexeme[1] == LexemeDefs.UnknownChar then
+		elseif lexeme[1] == LexemeIDs.UnknownChar then
 			return {
 				ok = false,
 				err = `unknown character "{lexeme[2]}"`,
@@ -260,7 +267,7 @@ function Lexer:Begin(): Types.Result<{ Types.Lexeme }>
 
 		table.insert(lexemes, lexeme)
 
-		if lexeme[1] == LexemeDefs.Eof then
+		if lexeme[1] == LexemeIDs.Eof then
 			break
 		end
 	end
