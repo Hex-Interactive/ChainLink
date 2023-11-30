@@ -164,7 +164,7 @@ local function serializeRoutineLayer(parent: Instance): Types.RoutineLayer
 	return layer
 end
 
-local function executeRoutineLayer(exec: Types.RoutineLayer, context: Types.BehaviorContext)
+local function executeRoutineLayer(exec: Types.RoutineLayer, context: Types.ActionContext)
 	for _, step in exec do
 		if step.class == "Chain" then
 			assert(typeof(step.data) == "string", `invalid routine step data "{step.data}" found`)
@@ -193,10 +193,10 @@ local function executeRoutineLayer(exec: Types.RoutineLayer, context: Types.Beha
 	end
 end
 
-local function serializeRoutine(routine: Model): (context: Types.BehaviorContext) -> ()
+local function serializeRoutine(routine: Model): (context: Types.ActionContext) -> ()
 	local exec = serializeRoutineLayer(routine)
 
-	return function(context: Types.BehaviorContext)
+	return function(context: Types.ActionContext)
 		executeRoutineLayer(exec, context)
 	end
 end
@@ -246,7 +246,7 @@ function ChainInterpreter.Execute(instructions: string, source: string, extraDat
 		local action = ActionRegistry.Get(info.behaviorName)
 		local actionRun = if action then action.Run else nil
 		local routineRun = routines[info.behaviorName]
-		local behavior = (routineRun or actionRun) :: Types.Behavior
+		local behavior = (routineRun or actionRun) :: Types.Action
 		assert(behavior, `invalid behavior "{info.behaviorName}" found!`)
 
 		table.insert(exec, {

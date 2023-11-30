@@ -7,7 +7,7 @@ local ActionRegistry = {}
 function ActionRegistry.Register(module: ModuleScript)
 	local name = module.Name
 	assert(index[name] == nil, `action "{name}" already defined`)
-	index[name] = require(module) :: Types.Action
+	index[name] = require(module) :: Types.ActionModule
 end
 
 function ActionRegistry.RegisterIn(directory: Instance, ignore: { string }?)
@@ -24,7 +24,7 @@ function ActionRegistry.RegisterDefaults(ignore: { string }?)
 	ActionRegistry.RegisterIn(script.Parent:WaitForChild("DefaultActions"), ignore)
 end
 
-function ActionRegistry.Get(name: string): Types.Action
+function ActionRegistry.Get(name: string): Types.ActionModule
 	local action = index[name]
 	assert(action ~= nil, `action "{name}" not found`)
 	return action

@@ -4,14 +4,14 @@ export type Validator<T> = (subject: T) -> boolean
 -- CurrentMap
 export type MapDirectory = () -> Folder
 
--- Behaviors
-export type Behavior = (context: BehaviorContext) -> ()
-export type BehaviorContext = {
+-- Actions
+export type Action = (context: ActionContext) -> ()
+export type ActionContext = {
 	target: Instance?,
 	parameter: ChainParameter,
 }
-export type Action = {
-	Run: Behavior,
+export type ActionModule = {
+	Run: Action,
 }
 
 -- Chain
