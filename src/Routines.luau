@@ -9,7 +9,7 @@ function Routines.Added(routine: Model)
 		return
 	end
 
-	index[routine] = true -- TODO: Handle routine added
+	index[routine] = true -- TODO: Parse routine in DataModel then precompile
 end
 
 function Routines.Removed(routine: Model)
