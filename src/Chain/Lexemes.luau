@@ -3,7 +3,7 @@ return table.freeze({
 	OutOfOrder = "OutOfOrder", -- Character in the wrong place
 	Unknown = "Unknown", -- Unknown character
 
-	Identifier = "Identifier", -- Any Keyword or behavior name
+	Identifier = "Identifier", -- Any keyword or behavior name
 	Paren = "Paren", -- Any parenthesis, ambiguous
 	String = "String", -- Any string
 	Number = "Number", -- Any number
