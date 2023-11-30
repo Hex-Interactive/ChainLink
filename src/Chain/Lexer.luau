@@ -1,11 +1,23 @@
 local Types = require(script.Parent.Parent:WaitForChild("Types"))
 local Lexemes = require(script.Parent:WaitForChild("Lexemes"))
 
+local NUMBERS = table.freeze({
+	["0"] = true,
+	["1"] = true,
+	["2"] = true,
+	["3"] = true,
+	["4"] = true,
+	["5"] = true,
+	["6"] = true,
+	["7"] = true,
+	["8"] = true,
+	["9"] = true,
+})
 local WHITESPACE = table.freeze({
-	"",
-	" ",
-	"\n",
-	"\t",
+	[""] = true,
+	[" "] = true,
+	["\n"] = true,
+	["\t"] = true,
 })
 
 type Result = {
@@ -25,7 +37,8 @@ type Lexer = {
 	Peek: (self: Lexer, amount: number) -> string?,
 	Consume: (self: Lexer) -> (),
 	ReadString: (self: Lexer) -> Types.Token,
-	ReadNumber: (self: Lexer) -> Types.Token,
+	ReadNumber: (self: Lexer, negative: boolean) -> Types.Token,
+	ReadIdentifier: (self: Lexer) -> Types.Token,
 	ReadNext: (self: Lexer) -> Types.Token,
 	GenerateTokens: (self: Lexer) -> Result,
 }
@@ -33,8 +46,16 @@ type Lexer = {
 local Lexer = {} :: Lexer
 Lexer.__index = Lexer
 
-local function isNumerical(input: string): boolean
-	return tonumber(input) ~= nil
+local function isWhitespace(input: string?): boolean
+	return WHITESPACE[input] == true
+end
+
+local function isNumerical(input: string?): boolean
+	return NUMBERS[input] == true
+end
+
+local function isIdentifier(input: string?): boolean
+	return string.match(input or "", "%a") ~= nil or input == "_"
 end
 
 function Lexer.new(source: string): Lexer
@@ -64,8 +85,12 @@ function Lexer:ReadString(): Types.Token
 	return { Lexemes.Unknown, self:Peek(1) :: string } -- TODO: Handle strings
 end
 
-function Lexer:ReadNumber(): Types.Token
+function Lexer:ReadNumber(_negative: boolean): Types.Token
 	return { Lexemes.Unknown, self:Peek(1) :: string } -- TODO: Handle numbers
+end
+
+function Lexer:ReadIdentifier(): Types.Token
+	return { Lexemes.Unknown, self:Peek(1) :: string } -- TODO: Handle identifiers
 end
 
 function Lexer:ReadNext(): Types.Token
@@ -80,10 +105,12 @@ function Lexer:ReadNext(): Types.Token
 			self:Consume()
 			self:Consume()
 			return { Lexemes.Arrow, char .. nextChar }
+		elseif isNumerical(nextChar) then
+			return self:ReadNumber(true)
 		end
 
 		self:Consume()
-		return { Lexemes.Ambiguous, char }
+		return { Lexemes.Subtract, char }
 	elseif char == "=" then
 		local nextChar = self:Peek(1)
 
@@ -143,12 +170,20 @@ function Lexer:ReadNext(): Types.Token
 	elseif char == "^" then
 		self:Consume()
 		return { Lexemes.Pow, char }
-	elseif char == "(" or char == ")" or char == ";" or char == "," then
+	elseif char == ";" then
 		self:Consume()
-		return { Lexemes.Ambiguous, char }
+		return { Lexemes.NextExp, char }
+	elseif char == "," then
+		self:Consume()
+		return { Lexemes.NextArg, char }
+	elseif char == "(" or char == ")" then
+		self:Consume()
+		return { Lexemes.Paren, char }
 	elseif isNumerical(char) then
-		return self:ReadNumber()
-	elseif table.find(WHITESPACE, char) then
+		return self:ReadNumber(false)
+	elseif isIdentifier(char) then
+		return self:ReadIdentifier()
+	elseif isWhitespace(char) then
 		self:Consume()
 	end
 

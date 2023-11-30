@@ -3,9 +3,14 @@ return table.freeze({
 	OutOfOrder = "OutOfOrder", -- Character in the wrong place
 	Unknown = "Unknown", -- Unknown character
 
-	Ambiguous = "Ambiguous", -- Unknown with current context
+	Identifier = "Identifier", -- Keywords or behavior names
+	Paren = "Paren", -- Any parenthesis, ambiguous
+	String = "String", -- String
+	Number = "Number", -- Number
 
 	Arrow = "Arrow", -- Arrow (->)
+	NextExp = "NextExp", -- Next expression (;)
+	NextArg = "NextArg", -- Next argument (,)
 
 	Equal = "Equal", -- Equal to (==)
 	LessEqual = "LessEqual", -- Less than or equal to (<=)
