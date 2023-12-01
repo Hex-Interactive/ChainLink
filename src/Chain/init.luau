@@ -1,14 +1,9 @@
+local ChainUtil = require(script:WaitForChild("ChainUtil"))
 local Types = require(script.Parent:WaitForChild("Types"))
 local Parser = require(script:WaitForChild("Parser"))
 local Lexer = require(script:WaitForChild("Lexer"))
 
-local ERR_MESSAGE = "ChainError: %s"
-
 local Chain = {}
-
-local function err(text: string)
-	error(string.format(ERR_MESSAGE, text))
-end
 
 local function handleResult<T>(result: Types.Result<T>): boolean
 	if result.ok then
@@ -16,7 +11,7 @@ local function handleResult<T>(result: Types.Result<T>): boolean
 	end
 
 	if result.err then
-		err(result.err)
+		ChainUtil.LogError(result.err)
 	end
 
 	return false

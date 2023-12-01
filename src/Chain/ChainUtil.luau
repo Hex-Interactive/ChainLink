@@ -1,0 +1,9 @@
+local ERR_MESSAGE = "ChainError: %s"
+
+local ChainUtil = {}
+
+function ChainUtil.LogError(text: string)
+	error(string.format(ERR_MESSAGE, text))
+end
+
+return ChainUtil
