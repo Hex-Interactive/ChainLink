@@ -34,7 +34,7 @@ type Lexer = {
 	ReadNumber: (self: Lexer, negative: boolean) -> Types.Lexeme,
 	ReadIdentifier: (self: Lexer) -> Types.Lexeme,
 	ReadNext: (self: Lexer) -> Types.Lexeme,
-	Begin: (self: Lexer) -> Types.Result<{ Types.Lexeme }>,
+	Begin: (self: Lexer) -> Types.Result<Types.Lexemes>,
 }
 
 local Lexer = {} :: Lexer
@@ -247,7 +247,7 @@ function Lexer:ReadNext(): Types.Lexeme
 	return new(LexemeIDs.UnknownChar, char)
 end
 
-function Lexer:Begin(): Types.Result<{ Types.Lexeme }>
+function Lexer:Begin(): Types.Result<Types.Lexemes>
 	local lexemes = {}
 
 	while true do

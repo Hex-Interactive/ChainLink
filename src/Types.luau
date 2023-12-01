@@ -20,6 +20,7 @@ export type Result<T> = {
 	err: string?,
 	data: T?,
 }
+export type Lexemes = { Lexeme }
 export type Lexeme = {
 	id: string,
 	data: string,

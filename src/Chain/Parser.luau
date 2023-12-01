@@ -4,9 +4,9 @@ local Types = require(script.Parent.Parent:WaitForChild("Types"))
 
 type Parser = {
 	__index: Parser,
-	new: (lexemes: { Types.Lexeme }) -> Parser,
+	new: (lexemes: Types.Lexemes) -> Parser,
 
-	lexemes: { Types.Lexeme },
+	lexemes: Types.Lexemes,
 	len: number,
 	pos: number,
 
@@ -26,7 +26,7 @@ local function new(id: string, args: { string }?): Types.Instruction
 	}
 end
 
-function Parser.new(lexemes: { Types.Lexeme }): Parser
+function Parser.new(lexemes: Types.Lexemes): Parser
 	local self = (setmetatable({}, Parser) :: any) :: Parser
 
 	self.lexemes = lexemes
