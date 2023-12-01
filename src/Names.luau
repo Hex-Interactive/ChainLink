@@ -14,4 +14,9 @@ return table.freeze({
 		Class = "Class",
 		Data = "Data",
 	}),
+
+	Vals = table.freeze({
+		CanTrigger = "CanTrigger",
+		CanTriggerPlayer = "CanTriggerPlayer",
+	}),
 })

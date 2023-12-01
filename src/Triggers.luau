@@ -28,13 +28,13 @@ function Triggers.Added(trigger: BasePart)
 	Util.Assert(VALID_MODES[mode], `invalid trigger mode "{mode}"`)
 
 	index[trigger] = trigger.Touched:Connect(function(hit: BasePart)
-		if not Validators.Check("CanTrigger") then
+		if not Validators.Check(Names.Vals.CanTrigger) then
 			return
 		end
 
 		if mode == "Player" then
 			local player = Players:GetPlayerFromCharacter(hit.Parent)
-			if not player or not Validators.Check("CanTriggerPlayer", player) then
+			if not player or not Validators.Check(Names.Vals.CanTriggerPlayer, player) then
 				return
 			end
 

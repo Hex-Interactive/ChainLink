@@ -1,10 +1,6 @@
 local Types = require(script.Parent:WaitForChild("Types"))
+local Names = require(script.Parent:WaitForChild("Names"))
 local Util = require(script.Parent:WaitForChild("Util"))
-
-local VALIDATOR_NAMES = table.freeze({
-	CanTrigger = true,
-	CanTriggerPlayer = true,
-})
 
 local index = {}
 
@@ -15,7 +11,7 @@ function Validators.Register(validators: {
 	CanTriggerPlayer: Types.Validator<Player>?,
 })
 	for name, validator in pairs(validators) do
-		Util.Assert(VALIDATOR_NAMES[name], `unknown validator "{name}"`)
+		Util.Assert(Names.Vals[name] ~= nil, `unknown validator "{name}"`)
 		index[name] = validator
 	end
 end
