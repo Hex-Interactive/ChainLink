@@ -1,3 +1,4 @@
+local Mutexes = require(script.Parent:WaitForChild("Mutexes"))
 local Types = require(script.Parent:WaitForChild("Types"))
 local State = require(script.Parent:WaitForChild("State"))
 
@@ -7,9 +8,12 @@ local Actions = {}
 
 function Actions.Register(module: ModuleScript)
 	assert(State.initialized == false, "register actions before initialization")
+
 	local name = module.Name
-	assert(index[name] == nil, `action "{name}" already defined`)
+	assert(not Mutexes.IsLocked(name), `action or routine by name "{name}" already exists`)
+
 	index[name] = require(module) :: Types.ActionModule
+	Mutexes.Create(name)
 end
 
 function Actions.RegisterIn(directory: Instance, ignore: { string }?)

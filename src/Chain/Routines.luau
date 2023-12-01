@@ -1,5 +1,5 @@
+local Mutexes = require(script.Parent.Parent:WaitForChild("Mutexes"))
 local CurrentMap = require(script.Parent.Parent:WaitForChild("CurrentMap"))
-local Actions = require(script.Parent.Parent:WaitForChild("Actions"))
 local ChainUtil = require(script.Parent:WaitForChild("ChainUtil"))
 local Types = require(script.Parent.Parent:WaitForChild("Types"))
 
@@ -77,16 +77,10 @@ function Routines.Added(routine: Model)
 	end
 
 	local name = routine.Name
-	if index[name] then
-		ChainUtil.LogError(`routine "{name}" already exists`)
-		return
-	end
-	if Actions.Get(name) then
-		ChainUtil.LogError(`routine name "{name}" already exists as an action`)
-		return
-	end
+	ChainUtil.Assert(not Mutexes.IsLocked(name), `action or routine by name "{name}" already exists`)
 
 	index[name] = serialize(routine)
+	Mutexes.Create(name)
 end
 
 function Routines.Removed(routine: Model)
