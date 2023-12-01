@@ -1,4 +1,5 @@
 local CurrentMap = require(script.Parent.Parent:WaitForChild("CurrentMap"))
+local Actions = require(script.Parent.Parent:WaitForChild("Actions"))
 local ChainUtil = require(script.Parent:WaitForChild("ChainUtil"))
 local Types = require(script.Parent.Parent:WaitForChild("Types"))
 
@@ -78,6 +79,10 @@ function Routines.Added(routine: Model)
 	local name = routine.Name
 	if index[name] then
 		ChainUtil.LogError(`routine "{name}" already exists`)
+		return
+	end
+	if Actions.Exists(name) then
+		ChainUtil.LogError(`routine name "{name}" already exists as action`)
 		return
 	end
 

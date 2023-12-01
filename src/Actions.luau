@@ -30,4 +30,8 @@ function Actions.Get(name: string): Types.ActionModule
 	return action
 end
 
+function Actions.Exists(name: string): boolean
+	return index[name] ~= nil
+end
+
 return Actions
