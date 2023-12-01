@@ -1,5 +1,5 @@
-local ChainUtil = require(script:WaitForChild("ChainUtil"))
 local Types = require(script.Parent:WaitForChild("Types"))
+local Util = require(script.Parent:WaitForChild("Util"))
 local Parser = require(script:WaitForChild("Parser"))
 local Lexer = require(script:WaitForChild("Lexer"))
 
@@ -11,7 +11,7 @@ local function handleResult<T>(result: Types.Result<T>): boolean
 	end
 
 	if result.err then
-		ChainUtil.LogError(result.err)
+		Util.LogError(result.err)
 	end
 
 	return false

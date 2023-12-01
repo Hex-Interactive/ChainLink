@@ -1,7 +1,8 @@
-local Mutexes = require(script.Parent.Parent:WaitForChild("Mutexes"))
 local CurrentMap = require(script.Parent.Parent:WaitForChild("CurrentMap"))
-local ChainUtil = require(script.Parent:WaitForChild("ChainUtil"))
+local Mutexes = require(script.Parent.Parent:WaitForChild("Mutexes"))
 local Types = require(script.Parent.Parent:WaitForChild("Types"))
+local Names = require(script.Parent.Parent:WaitForChild("Names"))
+local Util = require(script.Parent.Parent:WaitForChild("Util"))
 
 local MAX_ROUTINE_STEPS = 20
 local VALID_STEPS = table.freeze({
@@ -22,11 +23,11 @@ local function serializeLayer(parent: Instance): Types.RoutineLayer
 			break
 		end
 
-		ChainUtil.Assert(step:IsA("Configuration"), `invalid routine step "{step:GetFullName()}" found!`)
+		Util.Assert(step:IsA("Configuration"), `invalid routine step "{step:GetFullName()}" found!`)
 
-		local class = step:GetAttribute("Class")
-		local data = step:GetAttribute("Data")
-		ChainUtil.Assert(VALID_STEPS[class], `routine step class "{class}" is unknown!`)
+		local class = step:GetAttribute(Names.Attr.Class)
+		local data = step:GetAttribute(Names.Attr.Data)
+		Util.Assert(VALID_STEPS[class], `routine step class "{class}" is unknown!`)
 
 		local routineStep = {
 			class = class,
@@ -36,13 +37,13 @@ local function serializeLayer(parent: Instance): Types.RoutineLayer
 		if class == "If" then
 			local truePath = step:FindFirstChild("True")
 			local falsePath = step:FindFirstChild("False")
-			ChainUtil.Assert(truePath and falsePath, `invalid routine if "{step.Name}" step`)
+			Util.Assert(truePath and falsePath, `invalid routine if "{step.Name}" step`)
 			if not (truePath and falsePath) then
 				break
 			end
 
-			ChainUtil.Assert(truePath:IsA("Configuration"), `invalid routine true path for "{step.Name}" step`)
-			ChainUtil.Assert(falsePath:IsA("Configuration"), `invalid routine false path for "{step.Name}" step`)
+			Util.Assert(truePath:IsA("Configuration"), `invalid routine true path for "{step.Name}" step`)
+			Util.Assert(falsePath:IsA("Configuration"), `invalid routine false path for "{step.Name}" step`)
 
 			routineStep.childLayers = {}
 			routineStep.childLayers[1] = serializeLayer(truePath)
@@ -76,10 +77,10 @@ function Routines.Added(routine: Model)
 		return
 	end
 
-	ChainUtil.Assert(routine:IsA("Model"), `invalid trigger "{routine.Name}"`)
+	Util.Assert(routine:IsA("Model"), `invalid trigger "{routine.Name}"`)
 
 	local name = routine.Name
-	ChainUtil.Assert(not Mutexes.IsLocked(name), `action or routine by name "{name}" already exists`)
+	Util.Assert(not Mutexes.IsLocked(name), `action or routine by name "{name}" already exists`)
 
 	index[name] = serialize(routine)
 	Mutexes.Create(name)

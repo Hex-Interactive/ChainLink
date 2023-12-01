@@ -4,4 +4,14 @@ return table.freeze({
 		Trigger = "Trigger",
 		Routine = "Routine",
 	}),
+
+	Attr = table.freeze({
+		LinkChain = "LinkChain",
+
+		TriggerMode = "TriggerMode",
+		TriggerChain = "TriggerChain",
+
+		Class = "Class",
+		Data = "Data",
+	}),
 })

@@ -4,23 +4,22 @@ local Routines = require(script.Parent:WaitForChild("Chain"):WaitForChild("Routi
 local CurrentMap = require(script.Parent:WaitForChild("CurrentMap"))
 local Triggers = require(script.Parent:WaitForChild("Triggers"))
 local Chain = require(script.Parent:WaitForChild("Chain"))
-local Types = require(script.Parent:WaitForChild("Types"))
 local State = require(script.Parent:WaitForChild("State"))
 local Names = require(script.Parent:WaitForChild("Names"))
 
 local Runtime = {}
 
-function Runtime.TriggerLink(link: Instance, _source: string, _extraData: Types.ExtraData?)
+function Runtime.TriggerLink(link: Instance)
 	if not link:HasTag(Names.Tags.Link) or not CurrentMap.HasDescendant(link) then
 		return
 	end
 
-	local instructions = link:GetAttribute("LinkTrigger")
-	if not instructions then
+	local chain = link:GetAttribute(Names.Attr.LinkChain)
+	if not chain then
 		return
 	end
 
-	task.spawn(Chain.Execute, instructions) -- source, extraData
+	task.spawn(Chain.Execute, chain)
 end
 
 function Runtime.Init()

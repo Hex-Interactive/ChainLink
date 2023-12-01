@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 local Validators = require(script.Parent:WaitForChild("Validators"))
 local CurrentMap = require(script.Parent:WaitForChild("CurrentMap"))
 local Chain = require(script.Parent:WaitForChild("Chain"))
+local Names = require(script.Parent:WaitForChild("Names"))
 
 local index = {}
 
@@ -15,13 +16,12 @@ function Triggers.Added(trigger: BasePart)
 
 	assert(trigger:IsA("BasePart"), `invalid trigger "{trigger.Name}"`)
 
-	index[trigger] = trigger.Touched:Connect(function(hit: BasePart)
-		local mode = trigger:GetAttribute("TriggerMode")
-		local triggerChain = trigger:GetAttribute("TriggerChain")
-		local triggerSource = trigger:GetAttribute("TriggerSource")
-		assert(triggerChain, "trigger missing chain!")
-		assert(triggerSource, "trigger missing source!")
+	local mode = trigger:GetAttribute(Names.Attr.TriggerMode)
+	local chain = trigger:GetAttribute(Names.Attr.TriggerChain)
+	assert(mode, "trigger missing mode!")
+	assert(chain, "trigger missing chain!")
 
+	index[trigger] = trigger.Touched:Connect(function(hit: BasePart)
 		if not Validators.Check("CanTrigger") then
 			return
 		end
@@ -32,7 +32,9 @@ function Triggers.Added(trigger: BasePart)
 				return
 			end
 
-			Chain.Execute(triggerChain) -- triggerSource, { Player = player }
+			Chain.Execute(chain)
+		else
+			error(`invalid trigger mode "{mode}"`)
 		end
 	end)
 end
