@@ -1,4 +1,4 @@
-local CurrentMap = require(script.Parent:WaitForChild("CurrentMap"))
+local CurrentMap = require(script.Parent.Parent:WaitForChild("CurrentMap"))
 
 local index = {}
 

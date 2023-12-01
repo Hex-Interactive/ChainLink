@@ -1,8 +1,8 @@
 local CollectionService = game:GetService("CollectionService")
 
+local Routines = require(script.Parent:WaitForChild("Chain"):WaitForChild("Routines"))
 local ChainInterpreter = require(script.Parent:WaitForChild("ChainInterpreter"))
 local CurrentMap = require(script.Parent:WaitForChild("CurrentMap"))
-local Routines = require(script.Parent:WaitForChild("Routines"))
 local Triggers = require(script.Parent:WaitForChild("Triggers"))
 local Types = require(script.Parent:WaitForChild("Types"))
 
