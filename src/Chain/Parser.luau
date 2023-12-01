@@ -13,7 +13,7 @@ type Parser = {
 	Peek: (self: Parser, amount: number) -> Types.Lexeme?,
 	Consume: (self: Parser) -> (),
 	ReadNext: (self: Parser) -> Types.Instruction,
-	Begin: (self: Parser) -> Types.Result<{ Types.Instruction }>,
+	Begin: (self: Parser) -> Types.Result<Types.Instructions>,
 }
 
 local Parser = {} :: Parser
@@ -64,7 +64,7 @@ function Parser:ReadNext(): Types.Instruction
 	})
 end
 
-function Parser:Begin(): Types.Result<{ Types.Instruction }>
+function Parser:Begin(): Types.Result<Types.Instructions>
 	local instructions = {}
 
 	while true do

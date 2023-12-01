@@ -17,7 +17,7 @@ local function handleResult<T>(result: Types.Result<T>): boolean
 	return false
 end
 
-function Chain.Compile(source: string): { Types.Instruction }?
+function Chain.Compile(source: string): Types.Instructions?
 	local lexer = Lexer.new(source)
 	local lexerResult = lexer:Begin()
 	local lexerSuccess = handleResult(lexerResult)
@@ -34,13 +34,20 @@ function Chain.Compile(source: string): { Types.Instruction }?
 		return nil
 	end
 
-	print("Instructions:", parserResult.data) -- TEMP
-
 	return parserResult.data
 end
 
+function Chain.Interpret(instructions: Types.Instructions)
+	print("Instructions:", instructions) -- TEMP
+end
+
 function Chain.Execute(source: string)
-	Chain.Compile(source) -- TODO: Execute instructions
+	local instructions = Chain.Compile(source)
+	if not instructions then
+		return
+	end
+
+	Chain.Interpret(instructions)
 end
 
 return Chain

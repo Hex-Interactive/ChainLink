@@ -24,6 +24,7 @@ export type Lexeme = {
 	id: string,
 	data: string,
 }
+export type Instructions = { Instruction }
 export type Instruction = {
 	id: string,
 	args: { string },
