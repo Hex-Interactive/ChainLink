@@ -1,4 +1,5 @@
 local Types = require(script.Parent:WaitForChild("Types"))
+local Util = require(script.Parent:WaitForChild("Util"))
 
 local getDirectory
 
@@ -9,7 +10,7 @@ function CurrentMap.SetDirectory(getter: Types.MapDirectory)
 end
 
 function CurrentMap.GetDirectory(): Folder
-	assert(getDirectory ~= nil, "map directory not defined")
+	Util.Assert(getDirectory ~= nil, "map directory not defined")
 	return getDirectory()
 end
 

@@ -6,6 +6,7 @@ local Triggers = require(script.Parent:WaitForChild("Triggers"))
 local Chain = require(script.Parent:WaitForChild("Chain"))
 local State = require(script.Parent:WaitForChild("State"))
 local Names = require(script.Parent:WaitForChild("Names"))
+local Util = require(script.Parent:WaitForChild("Util"))
 
 local Runtime = {}
 
@@ -23,7 +24,7 @@ function Runtime.TriggerLink(link: Instance)
 end
 
 function Runtime.Init()
-	assert(State.initialized == false, "already initialized")
+	Util.Assert(State.initialized == false, "already initialized")
 	State.initialized = true
 
 	CurrentMap.GetDirectory() -- Validate map directory getter is defined

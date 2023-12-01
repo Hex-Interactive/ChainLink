@@ -77,7 +77,7 @@ function Routines.Added(routine: Model)
 		return
 	end
 
-	Util.Assert(routine:IsA("Model"), `invalid trigger "{routine.Name}"`)
+	Util.Assert(routine:IsA("Model"), `invalid routine "{routine.Name}"`)
 
 	local name = routine.Name
 	Util.Assert(not Mutexes.IsLocked(name), `action or routine by name "{name}" already exists`)

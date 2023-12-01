@@ -1,9 +1,11 @@
+local Util = require(script.Parent:WaitForChild("Util"))
+
 local index = {}
 
 local Mutexes = {}
 
 function Mutexes.Create(id: string)
-	assert(index[id] == nil, `identifier mutex "{id}" already exists`)
+	Util.Assert(index[id] == nil, `identifier mutex "{id}" already exists`)
 	index[id] = true
 end
 

@@ -4,6 +4,7 @@ local Validators = require(script.Parent:WaitForChild("Validators"))
 local CurrentMap = require(script.Parent:WaitForChild("CurrentMap"))
 local Chain = require(script.Parent:WaitForChild("Chain"))
 local Names = require(script.Parent:WaitForChild("Names"))
+local Util = require(script.Parent:WaitForChild("Util"))
 
 local VALID_MODES = table.freeze({
 	Player = true,
@@ -18,14 +19,13 @@ function Triggers.Added(trigger: BasePart)
 		return
 	end
 
-	assert(trigger:IsA("BasePart"), `invalid trigger "{trigger.Name}"`)
+	Util.Assert(trigger:IsA("BasePart"), `invalid trigger "{trigger.Name}"`)
 
 	local mode = trigger:GetAttribute(Names.Attr.TriggerMode)
 	local chain = trigger:GetAttribute(Names.Attr.TriggerChain)
-	assert(mode, "trigger missing mode!")
-	assert(chain, "trigger missing chain!")
-
-	assert(VALID_MODES[mode], `invalid trigger mode "{mode}"`)
+	Util.Assert(mode, "trigger missing mode!")
+	Util.Assert(chain, "trigger missing chain!")
+	Util.Assert(VALID_MODES[mode], `invalid trigger mode "{mode}"`)
 
 	index[trigger] = trigger.Touched:Connect(function(hit: BasePart)
 		if not Validators.Check("CanTrigger") then
