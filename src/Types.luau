@@ -28,6 +28,7 @@ export type Instruction = {
 	id: string,
 	args: { string },
 }
+export type Routine = () -> ()
 export type RoutineLayer = { RoutineStep }
 export type RoutineStep = {
 	class: string,

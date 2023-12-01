@@ -1,6 +1,6 @@
 local CurrentMap = require(script.Parent.Parent:WaitForChild("CurrentMap"))
-local Types = require(script.Parent.Parent:WaitForChild("Types"))
 local ChainUtil = require(script.Parent:WaitForChild("ChainUtil"))
+local Types = require(script.Parent.Parent:WaitForChild("Types"))
 
 local MAX_ROUTINE_STEPS = 20
 local VALID_STEPS = table.freeze({
@@ -58,7 +58,7 @@ local function executeLayer(_layer: Types.RoutineLayer)
 	-- TODO
 end
 
-local function serialize(routine: Model): () -> ()
+local function serialize(routine: Model): Types.Routine
 	local layer = serializeLayer(routine)
 
 	return function()
@@ -66,16 +66,26 @@ local function serialize(routine: Model): () -> ()
 	end
 end
 
+function Routines.Get(name: string): Types.Routine?
+	return index[name]
+end
+
 function Routines.Added(routine: Model)
 	if not CurrentMap.HasDescendant(routine) or not routine:IsA("Model") then
 		return
 	end
 
-	index[routine] = serialize(routine)
+	local name = routine.Name
+	if index[name] then
+		ChainUtil.LogError(`routine "{name}" already exists`)
+		return
+	end
+
+	index[name] = serialize(routine)
 end
 
 function Routines.Removed(routine: Model)
-	index[routine] = nil
+	index[routine.Name] = nil
 end
 
 return Routines
