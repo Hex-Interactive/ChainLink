@@ -72,9 +72,11 @@ function Routines.Get(name: string): Types.Routine?
 end
 
 function Routines.Added(routine: Model)
-	if not CurrentMap.HasDescendant(routine) or not routine:IsA("Model") then
+	if not CurrentMap.HasDescendant(routine) then
 		return
 	end
+
+	ChainUtil.Assert(routine:IsA("Model"), `invalid trigger "{routine.Name}"`)
 
 	local name = routine.Name
 	ChainUtil.Assert(not Mutexes.IsLocked(name), `action or routine by name "{name}" already exists`)

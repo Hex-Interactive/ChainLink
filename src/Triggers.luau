@@ -9,9 +9,11 @@ local index = {}
 local Triggers = {}
 
 function Triggers.Added(trigger: BasePart)
-	if not CurrentMap.HasDescendant(trigger) or not trigger:IsA("BasePart") then
+	if not CurrentMap.HasDescendant(trigger) then
 		return
 	end
+
+	assert(trigger:IsA("BasePart"), `invalid trigger "{trigger.Name}"`)
 
 	index[trigger] = trigger.Touched:Connect(function(hit: BasePart)
 		local mode = trigger:GetAttribute("TriggerMode")
