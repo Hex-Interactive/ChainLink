@@ -5,6 +5,10 @@ local CurrentMap = require(script.Parent:WaitForChild("CurrentMap"))
 local Chain = require(script.Parent:WaitForChild("Chain"))
 local Names = require(script.Parent:WaitForChild("Names"))
 
+local VALID_MODES = table.freeze({
+	Player = true,
+})
+
 local index = {}
 
 local Triggers = {}
@@ -21,6 +25,8 @@ function Triggers.Added(trigger: BasePart)
 	assert(mode, "trigger missing mode!")
 	assert(chain, "trigger missing chain!")
 
+	assert(VALID_MODES[mode], `invalid trigger mode "{mode}"`)
+
 	index[trigger] = trigger.Touched:Connect(function(hit: BasePart)
 		if not Validators.Check("CanTrigger") then
 			return
@@ -33,8 +39,6 @@ function Triggers.Added(trigger: BasePart)
 			end
 
 			Chain.Execute(chain)
-		else
-			error(`invalid trigger mode "{mode}"`)
 		end
 	end)
 end
