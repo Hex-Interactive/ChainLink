@@ -58,7 +58,7 @@ function Parser:ReadNext(): Types.Instruction
 		return new(InstructionIDs.Eof)
 	end
 
-	return new(InstructionIDs.Unknown, {
+	return new(InstructionIDs.Unexpected, {
 		lexeme.id,
 		lexeme.data,
 	})
@@ -75,10 +75,10 @@ function Parser:Begin(): Types.Result<Types.Instructions>
 				ok = false,
 				err = `parsed lexemes missing EOF`,
 			}
-		elseif instruction.id == InstructionIDs.Unknown then
+		elseif instruction.id == InstructionIDs.Unexpected then
 			return {
 				ok = false,
-				err = `parsed unknown lexeme "{instruction.args[1]}"`,
+				err = `parsed unexpected lexeme "{instruction.args[1]}"`,
 			}
 		end
 
