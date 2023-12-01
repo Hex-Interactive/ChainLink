@@ -28,7 +28,7 @@ export type Lexeme = {
 export type Instructions = { Instruction }
 export type Instruction = {
 	id: string,
-	args: { string },
+	data: { [string]: any },
 }
 export type Routine = () -> ()
 export type RoutineLayer = { RoutineStep }
@@ -38,6 +38,7 @@ export type RoutineStep = {
 	childLayers: { RoutineLayer }?,
 }
 
+-- Pending removal
 export type ExtraData = {
 	[string]: any,
 }

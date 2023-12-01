@@ -9,7 +9,7 @@ return table.freeze({
 	Number = "Number", -- Any number
 
 	Arrow = "Arrow", -- Arrow (->)
-	NextExp = "NextExp", -- Next expression (;)
+	NextCall = "NextCall", -- Next call (;)
 	NextArg = "NextArg", -- Next argument (,)
 	StartParen = "StartParen", -- Left parenthesis (()
 	EndParen = "EndParen", -- Right parenthesis ())

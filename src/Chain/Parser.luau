@@ -13,6 +13,7 @@ type Parser = {
 	Peek: (self: Parser, amount: number) -> string,
 	Look: (self: Parser, amount: number) -> Types.Lexeme?,
 	Consume: (self: Parser) -> (),
+	ParseExpression: (self: Parser) -> Types.Instruction,
 	ParseCall: (self: Parser, callTarget: Types.Lexeme?) -> Types.Instruction,
 	ParseTargetedCall: (self: Parser) -> Types.Instruction,
 	ParseNext: (self: Parser) -> Types.Instruction,
@@ -22,18 +23,18 @@ type Parser = {
 local Parser = {} :: Parser
 Parser.__index = Parser
 
-local function new(id: string, args: { string }?): Types.Instruction
+local function new(id: string, data: { [string]: any }?): Types.Instruction
 	return {
 		id = id,
-		args = args or {},
+		data = data or {},
 	}
 end
 
 local function newUnexp(lexeme: Types.Lexeme?): Types.Instruction
 	if lexeme then
 		return new(InstructionIDs.Unexpected, {
-			lexeme.id,
-			lexeme.data,
+			id = lexeme.id,
+			data = lexeme.data,
 		})
 	end
 
@@ -72,23 +73,53 @@ function Parser:Consume()
 	self.pos += 1
 end
 
-function Parser:ParseCall(_callTarget: Types.Lexeme?): Types.Instruction
+function Parser:ParseExpression(): Types.Instruction
+	-- TODO
+end
+
+function Parser:ParseCall(callTarget: Types.Lexeme?): Types.Instruction
+	local target = if callTarget then callTarget.data else nil
+
 	local callName = self:Look(0) :: Types.Lexeme
 	self:Consume()
 
 	self:Consume() -- Starting parenthesis
 
-	local callArgs = {}
-	while true do
+	local earlyExitId = self:Peek(0)
+	if earlyExitId == LexemeIDs.EndParen then
+		self:Consume()
+
 		local id = self:Peek(0)
-
-		if id == LexemeIDs.EndParen then
-			self:Consume()
-			break
+		if id ~= LexemeIDs.NextCall then
+			return newUnexp(self:Look(0))
 		end
+		self:Consume()
 
+		return new(InstructionIDs.Call, {
+			name = callName.data,
+			target = target,
+			args = {},
+		})
+	end
+
+	local call = new(InstructionIDs.Call, {
+		name = callName.data,
+		target = target,
+		args = { self:ParseExpression() },
+	})
+
+	while self:Peek(0) == LexemeIDs.NextCall do
+		self:Consume()
+		table.insert(call.data.args, self:ParseExpression())
+	end
+
+	local id = self:Peek(0)
+	if id ~= LexemeIDs.NextCall then
 		return newUnexp(self:Look(0))
 	end
+	self:Consume()
+
+	return call
 end
 
 function Parser:ParseTargetedCall(): Types.Instruction
@@ -145,7 +176,7 @@ function Parser:Begin(): Types.Result<Types.Instructions>
 		elseif instruction.id == InstructionIDs.Unexpected then
 			return {
 				ok = false,
-				err = `parsed unexpected lexeme "{instruction.args[1]}"`,
+				err = `parsed unexpected lexeme "{instruction.data.id}"`,
 			}
 		end
 

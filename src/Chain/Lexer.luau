@@ -226,7 +226,7 @@ function Lexer:ReadNext(): Types.Lexeme
 		return new(LexemeIDs.Pow, char)
 	elseif char == ";" then
 		self:Consume()
-		return new(LexemeIDs.NextExp, char)
+		return new(LexemeIDs.NextCall, char)
 	elseif char == "," then
 		self:Consume()
 		return new(LexemeIDs.NextArg, char)
