@@ -78,7 +78,7 @@ function Parser:Begin(): Types.Result<Types.Instructions>
 		elseif instruction.id == InstructionIDs.Unknown then
 			return {
 				ok = false,
-				err = `parsed unknown lexeme "{instruction.args}"`,
+				err = `parsed unknown lexeme "{instruction.args[1]}"`,
 			}
 		end
 
