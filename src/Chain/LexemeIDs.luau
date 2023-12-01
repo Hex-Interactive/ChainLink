@@ -1,5 +1,6 @@
 return table.freeze({
 	Eof = "Eof", -- End of file/source
+	UnexpectedEof = "UnexpectedEof", -- Unexpected end of file
 	UnexpectedChar = "UnexpectedChar", -- Unexpected character
 	UnknownChar = "UnknownChar", -- Unknown character
 
