@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ChainLink = require(ReplicatedStorage.Packages.ChainLink)
 
-local Chain = require(ReplicatedStorage.Packages.ChainLink.Chain)
-Chain.Execute(`Name(true,"hello \\" there",1+2,-33);TestHere()`)
-Chain.Execute(`NumberTesting(23.64,-0.4,76)`)
+-- Various syntax tests (TODO: Use a testing library)
+ChainLink.ExecuteChain(`Name(true,"hello \\" there",1+2,-33);TestHere()`)
+ChainLink.ExecuteChain(`Things->NumberTesting(23.64,-0.4,76)`)
