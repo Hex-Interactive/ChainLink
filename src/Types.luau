@@ -28,13 +28,13 @@ export type Instruction = {
 	id: string,
 	args: { string },
 }
-
+export type RoutineLayer = { RoutineStep }
 export type RoutineStep = {
 	class: string,
 	data: any?,
 	childLayers: { RoutineLayer }?,
 }
-export type RoutineLayer = { RoutineStep }
+
 export type ExtraData = {
 	[string]: any,
 }
