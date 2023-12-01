@@ -1,10 +1,12 @@
 local Types = require(script.Parent:WaitForChild("Types"))
+local State = require(script.Parent:WaitForChild("State"))
 
 local index = {}
 
 local Actions = {}
 
 function Actions.Register(module: ModuleScript)
+	assert(State.initialized == false, "register actions before initialization")
 	local name = module.Name
 	assert(index[name] == nil, `action "{name}" already defined`)
 	index[name] = require(module) :: Types.ActionModule
@@ -24,14 +26,8 @@ function Actions.RegisterDefaults(ignore: { string }?)
 	Actions.RegisterIn(script.Parent:WaitForChild("DefaultActions"), ignore)
 end
 
-function Actions.Get(name: string): Types.ActionModule
-	local action = index[name]
-	assert(action ~= nil, `action "{name}" not found`)
-	return action
-end
-
-function Actions.Exists(name: string): boolean
-	return index[name] ~= nil
+function Actions.Get(name: string): Types.ActionModule?
+	return index[name]
 end
 
 return Actions

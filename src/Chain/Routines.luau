@@ -81,8 +81,8 @@ function Routines.Added(routine: Model)
 		ChainUtil.LogError(`routine "{name}" already exists`)
 		return
 	end
-	if Actions.Exists(name) then
-		ChainUtil.LogError(`routine name "{name}" already exists as action`)
+	if Actions.Get(name) then
+		ChainUtil.LogError(`routine name "{name}" already exists as an action`)
 		return
 	end
 
