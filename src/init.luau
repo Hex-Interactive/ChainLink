@@ -1,8 +1,8 @@
 local Validators = require(script:WaitForChild("Validators"))
-local ChainInterpreter = require(script:WaitForChild("ChainInterpreter"))
-local Actions = require(script:WaitForChild("Actions"))
 local CurrentMap = require(script:WaitForChild("CurrentMap"))
+local Actions = require(script:WaitForChild("Actions"))
 local Runtime = require(script:WaitForChild("Runtime"))
+local Chain = require(script:WaitForChild("Chain"))
 local Types = require(script:WaitForChild("Types"))
 
 export type ActionContext = Types.ActionContext
@@ -18,5 +18,5 @@ return {
 
 	-- Usage
 	TriggerLink = Runtime.TriggerLink,
-	ExecuteChain = ChainInterpreter.Execute,
+	ExecuteChain = Chain.Execute,
 }

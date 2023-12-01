@@ -1,16 +1,16 @@
 local CollectionService = game:GetService("CollectionService")
 
 local Routines = require(script.Parent:WaitForChild("Chain"):WaitForChild("Routines"))
-local ChainInterpreter = require(script.Parent:WaitForChild("ChainInterpreter"))
 local CurrentMap = require(script.Parent:WaitForChild("CurrentMap"))
 local Triggers = require(script.Parent:WaitForChild("Triggers"))
+local Chain = require(script.Parent:WaitForChild("Chain"))
 local Types = require(script.Parent:WaitForChild("Types"))
 
 local initialized = false
 
 local Runtime = {}
 
-function Runtime.TriggerLink(link: Instance, source: string, extraData: Types.ExtraData?)
+function Runtime.TriggerLink(link: Instance, _source: string, _extraData: Types.ExtraData?)
 	if not CollectionService:HasTag(link, "Link") or not CurrentMap.HasDescendant(link) then
 		return
 	end
@@ -20,7 +20,7 @@ function Runtime.TriggerLink(link: Instance, source: string, extraData: Types.Ex
 		return
 	end
 
-	task.spawn(ChainInterpreter.Execute, instructions, source, extraData)
+	task.spawn(Chain.Execute, instructions) -- source, extraData
 end
 
 function Runtime.Init()

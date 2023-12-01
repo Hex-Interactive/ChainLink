@@ -1,8 +1,8 @@
 local Players = game:GetService("Players")
 
 local Validators = require(script.Parent:WaitForChild("Validators"))
-local ChainInterpreter = require(script.Parent:WaitForChild("ChainInterpreter"))
 local CurrentMap = require(script.Parent:WaitForChild("CurrentMap"))
+local Chain = require(script.Parent:WaitForChild("Chain"))
 
 local index = {}
 
@@ -30,9 +30,7 @@ function Triggers.Added(trigger: BasePart)
 				return
 			end
 
-			ChainInterpreter.Execute(triggerChain, triggerSource, {
-				Player = player,
-			})
+			Chain.Execute(triggerChain) -- triggerSource, { Player = player }
 		end
 	end)
 end
