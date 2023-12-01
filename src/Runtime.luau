@@ -6,11 +6,12 @@ local Triggers = require(script.Parent:WaitForChild("Triggers"))
 local Chain = require(script.Parent:WaitForChild("Chain"))
 local Types = require(script.Parent:WaitForChild("Types"))
 local State = require(script.Parent:WaitForChild("State"))
+local Names = require(script.Parent:WaitForChild("Names"))
 
 local Runtime = {}
 
 function Runtime.TriggerLink(link: Instance, _source: string, _extraData: Types.ExtraData?)
-	if not CollectionService:HasTag(link, "Link") or not CurrentMap.HasDescendant(link) then
+	if not link:HasTag(Names.Tags.Link) or not CurrentMap.HasDescendant(link) then
 		return
 	end
 
@@ -28,11 +29,11 @@ function Runtime.Init()
 
 	CurrentMap.GetDirectory() -- Validate map directory getter is defined
 
-	CollectionService:GetInstanceAddedSignal("Trigger"):Connect(Triggers.Added)
-	CollectionService:GetInstanceRemovedSignal("Trigger"):Connect(Triggers.Removed)
+	CollectionService:GetInstanceAddedSignal(Names.Tags.Trigger):Connect(Triggers.Added)
+	CollectionService:GetInstanceRemovedSignal(Names.Tags.Trigger):Connect(Triggers.Removed)
 
-	CollectionService:GetInstanceAddedSignal("Routine"):Connect(Routines.Added)
-	CollectionService:GetInstanceRemovedSignal("Routine"):Connect(Routines.Removed)
+	CollectionService:GetInstanceAddedSignal(Names.Tags.Routine):Connect(Routines.Added)
+	CollectionService:GetInstanceRemovedSignal(Names.Tags.Routine):Connect(Routines.Removed)
 end
 
 return Runtime
