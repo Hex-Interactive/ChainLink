@@ -253,21 +253,21 @@ function Lexer:Begin(): Types.Result<{ Types.Lexeme }>
 	while true do
 		local lexeme = self:ReadNext()
 
-		if lexeme[1] == LexemeIDs.UnexpectedChar then
+		if lexeme.id == LexemeIDs.UnexpectedChar then
 			return {
 				ok = false,
-				err = `unexpected character "{lexeme[2]}"`,
+				err = `unexpected character "{lexeme.data}"`,
 			}
-		elseif lexeme[1] == LexemeIDs.UnknownChar then
+		elseif lexeme.id == LexemeIDs.UnknownChar then
 			return {
 				ok = false,
-				err = `unknown character "{lexeme[2]}"`,
+				err = `unknown character "{lexeme.data}"`,
 			}
 		end
 
 		table.insert(lexemes, lexeme)
 
-		if lexeme[1] == LexemeIDs.Eof then
+		if lexeme.id == LexemeIDs.Eof then
 			break
 		end
 	end
