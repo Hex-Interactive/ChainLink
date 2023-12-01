@@ -4,7 +4,7 @@ return table.freeze({
 	UnexpectedChar = "UnexpectedChar", -- Unexpected character
 	UnknownChar = "UnknownChar", -- Unknown character
 
-	Identifier = "Identifier", -- Any keyword or action name
+	Identifier = "Identifier", -- Any keyword, action name, or routine name
 	String = "String", -- Any string
 	Number = "Number", -- Any number
 
