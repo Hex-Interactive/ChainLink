@@ -37,6 +37,19 @@ export type RoutineStep = {
 	data: any?,
 	childLayers: { RoutineLayer }?,
 }
+export type ASTNode = {
+	type: string,
+	data: number | string | boolean,
+	children: (ASTChildren_Call | ASTChildren_BinExp)?,
+}
+type ASTChildren_Call = {
+	target: ASTNode,
+	args: { ASTNode },
+}
+type ASTChildren_BinExp = {
+	left: ASTNode,
+	right: ASTNode,
+}
 
 -- Pending removal
 export type ExtraData = {
