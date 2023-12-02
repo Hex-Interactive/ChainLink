@@ -52,18 +52,6 @@ local function isIdentifier(input: string?): boolean
 	return string.match(input or "", "%a") ~= nil or input == "_"
 end
 
-local function canParseString(current: string?, prev: string?): boolean
-	if not current then
-		return false
-	end
-
-	if current == '"' then
-		return prev == "\\"
-	end
-
-	return true
-end
-
 local function new(id: string, data: string?): Types.Lexeme
 	return {
 		id = id,
@@ -97,15 +85,23 @@ end
 function Lexer:ReadString(): Types.Lexeme
 	local final = ""
 
-	local prev = self:Peek(0)
+	local prev = nil
 	self:Consume()
 	local current = self:Peek(0)
 
-	while canParseString(current, prev) do
-		final ..= current :: string
+	while true do
+		if not current or (current == '"' and prev ~= "\\") then
+			break
+		end
+
+		local nextChar = self:Peek(1)
+		if not (current == "\\" and nextChar == '"') then
+			final ..= current :: string
+		end
+
 		prev = current
 		self:Consume()
-		current = self:Peek(0)
+		current = nextChar
 	end
 
 	self:Consume()
