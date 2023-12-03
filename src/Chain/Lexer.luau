@@ -238,6 +238,7 @@ function Lexer:ReadNext(): Types.Lexeme
 		return self:ReadIdentifier()
 	elseif isWhitespace(char) then
 		self:Consume()
+		return new(LexemeIDs.Whitespace, char)
 	end
 
 	return new(LexemeIDs.UnknownChar, char)
@@ -249,7 +250,9 @@ function Lexer:Begin(): Types.Result<Types.Lexemes>
 	while true do
 		local lexeme = self:ReadNext()
 
-		if lexeme.id == LexemeIDs.UnexpectedChar then
+		if lexeme.id == LexemeIDs.Whitespace then
+			continue
+		elseif lexeme.id == LexemeIDs.UnexpectedChar then
 			return {
 				ok = false,
 				err = `unexpected character "{lexeme.data}"`,

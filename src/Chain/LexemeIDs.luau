@@ -3,6 +3,7 @@ return table.freeze({
 	UnexpectedEof = "UnexpectedEof", -- Unexpected end of file
 	UnexpectedChar = "UnexpectedChar", -- Unexpected character
 	UnknownChar = "UnknownChar", -- Unknown character
+	Whitespace = "Whitespace", -- Whitespace characters
 
 	Identifier = "Identifier", -- Any keyword, action name, or routine name
 	String = "String", -- Any string
