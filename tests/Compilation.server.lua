@@ -14,4 +14,4 @@ end
 test(`NameGoesHere(true, "hello \\" there", -33);TestHere()`)
 test(`Things->NumberTesting(23.64, -0.4, 76)`)
 test(`Operations(1 + 2, 1.45 - 2.543, 2 * 4, 1 / 2)`)
-test(`OperationOrder(1 + 2 * 4, 1.45 - 2.543 / 2.34, (1 + 2) * 4)`)
+test(`OperationOrder(2 + 2 * 4, 1.45 - 2.543 / 2.34, (1 + 2) * 4)`)
