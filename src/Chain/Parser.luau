@@ -115,6 +115,7 @@ function Parser:ParseFactor(): Types.ASTNode
 		return res
 	elseif id == LexemeIDs.Number then
 		local lexeme = self:Look(0) :: Types.Lexeme
+		self:Consume()
 		return node(ASTNodeIDs.Number, tonumber(lexeme.data) :: number)
 	end
 
@@ -186,13 +187,19 @@ function Parser:ParseCall(callTarget: Types.Lexeme?): Types.ASTNode
 	end
 
 	local args = { self:ParseExpression() }
-	while self:Peek(0) == LexemeIDs.NextCall do
+	while self:Peek(0) == LexemeIDs.NextArg do
 		self:Consume()
 		table.insert(args, self:ParseExpression())
 	end
 
-	local id = self:Peek(0)
-	if id ~= LexemeIDs.NextCall then
+	local exitId = self:Peek(0)
+	if exitId ~= LexemeIDs.EndParen then
+		return nodeUnexp(self:Look(0))
+	end
+	self:Consume()
+
+	local nextCallId = self:Peek(0)
+	if nextCallId ~= LexemeIDs.NextCall then
 		return nodeUnexp(self:Look(0))
 	end
 	self:Consume()
