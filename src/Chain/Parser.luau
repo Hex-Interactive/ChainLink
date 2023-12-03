@@ -2,34 +2,34 @@ local ASTNodeIDs = require(script.Parent:WaitForChild("ASTNodeIDs"))
 local LexemeIDs = require(script.Parent:WaitForChild("LexemeIDs"))
 local Types = require(script.Parent.Parent:WaitForChild("Types"))
 
--- local PREC = {
--- 	[LexemeIDs.Pow] = 40,
--- 	[LexemeIDs.Mod] = 30,
--- 	[LexemeIDs.Multiply] = 30,
--- 	[LexemeIDs.Divide] = 30,
--- 	[LexemeIDs.Add] = 20,
--- 	[LexemeIDs.Subtract] = 20,
--- 	[LexemeIDs.Equal] = 10,
--- 	[LexemeIDs.LessEqual] = 10,
--- 	[LexemeIDs.Less] = 10,
--- 	[LexemeIDs.GreaterEqual] = 10,
--- 	[LexemeIDs.Greater] = 10,
--- 	[LexemeIDs.NotEqual] = 10,
--- }
--- local ASSOC = {
--- 	[LexemeIDs.Pow] = 0,
--- 	[LexemeIDs.Mod] = 1,
--- 	[LexemeIDs.Multiply] = 1,
--- 	[LexemeIDs.Divide] = 1,
--- 	[LexemeIDs.Add] = 1,
--- 	[LexemeIDs.Subtract] = 1,
--- 	[LexemeIDs.Equal] = 1,
--- 	[LexemeIDs.LessEqual] = 1,
--- 	[LexemeIDs.Less] = 1,
--- 	[LexemeIDs.GreaterEqual] = 1,
--- 	[LexemeIDs.Greater] = 1,
--- 	[LexemeIDs.NotEqual] = 1,
--- }
+local PREC = {
+	[LexemeIDs.Pow] = 40,
+	[LexemeIDs.Mod] = 30,
+	[LexemeIDs.Multiply] = 30,
+	[LexemeIDs.Divide] = 30,
+	[LexemeIDs.Add] = 20,
+	[LexemeIDs.Subtract] = 20,
+	[LexemeIDs.Equal] = 10,
+	[LexemeIDs.LessEqual] = 10,
+	[LexemeIDs.Less] = 10,
+	[LexemeIDs.GreaterEqual] = 10,
+	[LexemeIDs.Greater] = 10,
+	[LexemeIDs.NotEqual] = 10,
+}
+local ASSOC = {
+	[LexemeIDs.Pow] = 0,
+	[LexemeIDs.Mod] = 1,
+	[LexemeIDs.Multiply] = 1,
+	[LexemeIDs.Divide] = 1,
+	[LexemeIDs.Add] = 1,
+	[LexemeIDs.Subtract] = 1,
+	[LexemeIDs.Equal] = 1,
+	[LexemeIDs.LessEqual] = 1,
+	[LexemeIDs.Less] = 1,
+	[LexemeIDs.GreaterEqual] = 1,
+	[LexemeIDs.Greater] = 1,
+	[LexemeIDs.NotEqual] = 1,
+}
 
 type Parser = {
 	__index: Parser,
@@ -42,6 +42,7 @@ type Parser = {
 	Peek: (self: Parser, amount: number) -> string,
 	Look: (self: Parser, amount: number) -> Types.Lexeme?,
 	Consume: (self: Parser) -> (),
+	ParseFactor: (self: Parser) -> Types.ASTNode,
 	ParseBinExp: (self: Parser, min: number) -> Types.ASTNode,
 	ParseExpression: (self: Parser) -> Types.ASTNode,
 	ParseCall: (self: Parser, callTarget: Types.Lexeme?) -> Types.ASTNode,
@@ -99,8 +100,42 @@ function Parser:Consume()
 	self.pos += 1
 end
 
-function Parser:ParseBinExp(_min: number): Types.ASTNode
-	return nodeUnexp() -- TODO: Parse BinExp
+function Parser:ParseFactor(): Types.ASTNode
+	local id = self:Peek(0)
+
+	if id == LexemeIDs.StartParen then
+		self:Consume()
+		local res = self:ParseBinExp(0)
+
+		if self:Peek(0) ~= LexemeIDs.EndParen then
+			return nodeUnexp(self:Look(0))
+		end
+		self:Consume()
+
+		return res
+	elseif id == LexemeIDs.Number then
+		local lexeme = self:Look(0) :: Types.Lexeme
+		return node(ASTNodeIDs.Number, tonumber(lexeme.data) :: number)
+	end
+
+	return nodeUnexp(self:Look(0))
+end
+
+function Parser:ParseBinExp(min: number): Types.ASTNode
+	local res = self:ParseFactor()
+	local id = self:Peek(0)
+
+	while PREC[id] and PREC[id] >= min do
+		local nextMin = PREC[id] + ASSOC[id]
+		local operator = self:Peek(0)
+		self:Consume()
+		res = node(ASTNodeIDs.BinExp, operator, {
+			left = res,
+			right = self:ParseBinExp(nextMin),
+		})
+	end
+
+	return res
 end
 
 function Parser:ParseExpression(): Types.ASTNode
@@ -120,7 +155,7 @@ function Parser:ParseExpression(): Types.ASTNode
 			return node(ASTNodeIDs.Bool, isTrue)
 		end
 	elseif id == LexemeIDs.Number then
-		return nodeUnexp() -- TODO: Handle numbers
+		return self:ParseBinExp(0)
 	end
 
 	return nodeUnexp(lexeme)
