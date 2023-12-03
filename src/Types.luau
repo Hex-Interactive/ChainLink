@@ -25,11 +25,6 @@ export type Lexeme = {
 	id: string,
 	data: string,
 }
-export type Instructions = { Instruction }
-export type Instruction = {
-	id: string,
-	data: { [string]: any },
-}
 export type Routine = () -> ()
 export type RoutineLayer = { RoutineStep }
 export type RoutineStep = {
@@ -38,12 +33,15 @@ export type RoutineStep = {
 	childLayers: { RoutineLayer }?,
 }
 export type ASTNode = {
-	type: string,
-	data: number | string | boolean,
-	children: (ASTChildren_Call | ASTChildren_BinExp)?,
+	id: string,
+	data: ASTData,
+	children: ASTChildren?,
 }
+export type ASTData = string | number | boolean
+export type ASTChildren = ASTChildren_Root | ASTChildren_Call | ASTChildren_BinExp
+type ASTChildren_Root = { ASTNode }
 type ASTChildren_Call = {
-	target: ASTNode,
+	target: ASTNode?,
 	args: { ASTNode },
 }
 type ASTChildren_BinExp = {

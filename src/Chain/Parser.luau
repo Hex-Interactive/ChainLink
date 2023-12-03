@@ -1,6 +1,35 @@
-local InstructionIDs = require(script.Parent:WaitForChild("InstructionIDs"))
+local ASTNodeIDs = require(script.Parent:WaitForChild("ASTNodeIDs"))
 local LexemeIDs = require(script.Parent:WaitForChild("LexemeIDs"))
 local Types = require(script.Parent.Parent:WaitForChild("Types"))
+
+-- local PREC = {
+-- 	[LexemeIDs.Pow] = 40,
+-- 	[LexemeIDs.Mod] = 30,
+-- 	[LexemeIDs.Multiply] = 30,
+-- 	[LexemeIDs.Divide] = 30,
+-- 	[LexemeIDs.Add] = 20,
+-- 	[LexemeIDs.Subtract] = 20,
+-- 	[LexemeIDs.Equal] = 10,
+-- 	[LexemeIDs.LessEqual] = 10,
+-- 	[LexemeIDs.Less] = 10,
+-- 	[LexemeIDs.GreaterEqual] = 10,
+-- 	[LexemeIDs.Greater] = 10,
+-- 	[LexemeIDs.NotEqual] = 10,
+-- }
+-- local ASSOC = {
+-- 	[LexemeIDs.Pow] = 0,
+-- 	[LexemeIDs.Mod] = 1,
+-- 	[LexemeIDs.Multiply] = 1,
+-- 	[LexemeIDs.Divide] = 1,
+-- 	[LexemeIDs.Add] = 1,
+-- 	[LexemeIDs.Subtract] = 1,
+-- 	[LexemeIDs.Equal] = 1,
+-- 	[LexemeIDs.LessEqual] = 1,
+-- 	[LexemeIDs.Less] = 1,
+-- 	[LexemeIDs.GreaterEqual] = 1,
+-- 	[LexemeIDs.Greater] = 1,
+-- 	[LexemeIDs.NotEqual] = 1,
+-- }
 
 type Parser = {
 	__index: Parser,
@@ -13,32 +42,29 @@ type Parser = {
 	Peek: (self: Parser, amount: number) -> string,
 	Look: (self: Parser, amount: number) -> Types.Lexeme?,
 	Consume: (self: Parser) -> (),
-	ParseExpression: (self: Parser) -> Types.Instruction,
-	ParseCall: (self: Parser, callTarget: Types.Lexeme?) -> Types.Instruction,
-	ParseTargetedCall: (self: Parser) -> Types.Instruction,
-	ParseNext: (self: Parser) -> Types.Instruction,
-	Begin: (self: Parser) -> Types.Result<Types.Instructions>,
+	ParseBinExp: (self: Parser, min: number) -> Types.ASTNode,
+	ParseExpression: (self: Parser) -> Types.ASTNode,
+	ParseCall: (self: Parser, callTarget: Types.Lexeme?) -> Types.ASTNode,
+	ParseTargetedCall: (self: Parser) -> Types.ASTNode,
+	ParseNext: (self: Parser) -> Types.ASTNode?,
+	Begin: (self: Parser) -> Types.Result<Types.ASTNode>,
 }
 
 local Parser = {} :: Parser
 Parser.__index = Parser
 
-local function new(id: string, data: { [string]: any }?): Types.Instruction
+local function node(id: string, data: Types.ASTData, children: Types.ASTChildren?): Types.ASTNode
 	return {
 		id = id,
-		data = data or {},
+		data = data,
+		children = children,
 	}
 end
 
-local function newUnexp(lexeme: Types.Lexeme?): Types.Instruction
-	if lexeme then
-		return new(InstructionIDs.Unexpected, {
-			id = lexeme.id,
-			data = lexeme.data,
-		})
-	end
-
-	return new(InstructionIDs.MissingEof)
+local function nodeUnexp(lexeme: Types.Lexeme?): Types.ASTNode
+	local id = if lexeme then lexeme.id else "__Missing"
+	local data = if lexeme then lexeme.data else ""
+	return node(ASTNodeIDs.Unexpected, `{id} ({data})`)
 end
 
 function Parser.new(lexemes: Types.Lexemes): Parser
@@ -73,12 +99,35 @@ function Parser:Consume()
 	self.pos += 1
 end
 
-function Parser:ParseExpression(): Types.Instruction
-	-- TODO
+function Parser:ParseBinExp(_min: number): Types.ASTNode
+	return nodeUnexp() -- TODO: Parse BinExp
 end
 
-function Parser:ParseCall(callTarget: Types.Lexeme?): Types.Instruction
-	local target = if callTarget then callTarget.data else nil
+function Parser:ParseExpression(): Types.ASTNode
+	local id = self:Peek(0)
+	if id == LexemeIDs.UnexpectedEof then
+		return nodeUnexp(nil) -- We know this will be nil here
+	end
+
+	local lexeme = self:Look(0) :: Types.Lexeme
+	if id == LexemeIDs.String then
+		self:Consume()
+		return node(ASTNodeIDs.String, lexeme.data)
+	elseif id == LexemeIDs.Identifier then
+		local isTrue = lexeme.data == "true"
+		if isTrue or lexeme.data == "false" then -- TODO: Handle BinExp with booleans
+			self:Consume()
+			return node(ASTNodeIDs.Bool, isTrue)
+		end
+	elseif id == LexemeIDs.Number then
+		return nodeUnexp() -- TODO: Handle numbers
+	end
+
+	return nodeUnexp(lexeme)
+end
+
+function Parser:ParseCall(callTarget: Types.Lexeme?): Types.ASTNode
+	local target = if callTarget then node(ASTNodeIDs.String, callTarget.data) else nil
 
 	local callName = self:Look(0) :: Types.Lexeme
 	self:Consume()
@@ -91,38 +140,35 @@ function Parser:ParseCall(callTarget: Types.Lexeme?): Types.Instruction
 
 		local id = self:Peek(0)
 		if id ~= LexemeIDs.NextCall then
-			return newUnexp(self:Look(0))
+			return nodeUnexp(self:Look(0))
 		end
 		self:Consume()
 
-		return new(InstructionIDs.Call, {
-			name = callName.data,
+		return node(ASTNodeIDs.Call, callName.data, {
 			target = target,
 			args = {},
 		})
 	end
 
-	local call = new(InstructionIDs.Call, {
-		name = callName.data,
-		target = target,
-		args = { self:ParseExpression() },
-	})
-
+	local args = { self:ParseExpression() }
 	while self:Peek(0) == LexemeIDs.NextCall do
 		self:Consume()
-		table.insert(call.data.args, self:ParseExpression())
+		table.insert(args, self:ParseExpression())
 	end
 
 	local id = self:Peek(0)
 	if id ~= LexemeIDs.NextCall then
-		return newUnexp(self:Look(0))
+		return nodeUnexp(self:Look(0))
 	end
 	self:Consume()
 
-	return call
+	return node(ASTNodeIDs.Call, callName.data, {
+		target = target,
+		args = args,
+	})
 end
 
-function Parser:ParseTargetedCall(): Types.Instruction
+function Parser:ParseTargetedCall(): Types.ASTNode
 	local targetName = self:Look(0) :: Types.Lexeme
 	self:Consume()
 
@@ -136,17 +182,17 @@ function Parser:ParseTargetedCall(): Types.Instruction
 			return self:ParseCall(targetName)
 		end
 
-		return newUnexp(self:Look(1))
+		return nodeUnexp(self:Look(1))
 	end
 
-	return newUnexp(self:Look(0))
+	return nodeUnexp(self:Look(0))
 end
 
-function Parser:ParseNext(): Types.Instruction
+function Parser:ParseNext(): Types.ASTNode?
 	local id = self:Peek(0)
 
 	if id == LexemeIDs.Eof then
-		return new(InstructionIDs.Eof)
+		return nil
 	elseif id == LexemeIDs.Identifier then
 		local nextId = self:Peek(1)
 
@@ -156,40 +202,34 @@ function Parser:ParseNext(): Types.Instruction
 			return self:ParseCall(nil)
 		end
 
-		return newUnexp(self:Look(1))
+		return nodeUnexp(self:Look(1))
 	end
 
-	return newUnexp(self:Look(0))
+	return nodeUnexp(self:Look(0))
 end
 
-function Parser:Begin(): Types.Result<Types.Instructions>
-	local instructions = {}
+function Parser:Begin(): Types.Result<Types.ASTNode>
+	local children = {}
 
 	while true do
-		local instruction = self:ParseNext()
-
-		if instruction.id == InstructionIDs.MissingEof then
-			return {
-				ok = false,
-				err = `parsed lexemes missing EOF`,
-			}
-		elseif instruction.id == InstructionIDs.Unexpected then
-			return {
-				ok = false,
-				err = `parsed unexpected lexeme "{instruction.data.id}"`,
-			}
-		end
-
-		if instruction.id == InstructionIDs.Eof then
+		local nextNode = self:ParseNext()
+		if not nextNode then
 			break
 		end
 
-		table.insert(instructions, instruction)
+		if nextNode.id == ASTNodeIDs.Unexpected then
+			return {
+				ok = false,
+				err = `parsed unexpected lexeme "{nextNode.data}"`,
+			}
+		end
+
+		table.insert(children, nextNode)
 	end
 
 	return {
 		ok = true,
-		data = instructions,
+		data = node(ASTNodeIDs.Root, "", children),
 	}
 end
 
