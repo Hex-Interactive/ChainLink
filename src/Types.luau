@@ -8,7 +8,7 @@ export type MapDirectory = () -> Folder
 export type Action = (context: ActionContext) -> ()
 export type ActionContext = {
 	target: Instance?,
-	parameter: ChainParameter,
+	args: { ASTData? },
 }
 export type ActionModule = {
 	Run: Action,
@@ -41,19 +41,6 @@ export type ASTChildren_Call = {
 export type ASTChildren_BinExp = {
 	left: ASTNode,
 	right: ASTNode,
-}
-
--- Pending removal
-export type ExtraData = {
-	[string]: any,
-}
-export type ChainParameter = {
-	GetInputs: (desiredTypes: { string }) -> { any },
-	GetInput: (inputIndex: number, desiredType: string) -> any,
-
-	source: string,
-	extraData: ExtraData,
-	rawInputs: { string },
 }
 
 return nil

@@ -1,11 +1,7 @@
-local CollectionService = game:GetService("CollectionService")
-
 local RoutineDispatcher = require(script.Parent:WaitForChild("RoutineDispatcher"))
-local CurrentMap = require(script.Parent.Parent:WaitForChild("CurrentMap"))
 local Actions = require(script.Parent.Parent:WaitForChild("Actions"))
 local ASTNodeIDs = require(script.Parent:WaitForChild("ASTNodeIDs"))
 local Types = require(script.Parent.Parent:WaitForChild("Types"))
-local Names = require(script.Parent.Parent:WaitForChild("Names"))
 local Links = require(script.Parent.Parent:WaitForChild("Links"))
 local Util = require(script.Parent.Parent:WaitForChild("Util"))
 
@@ -44,15 +40,60 @@ end
 function Interpreter:InterpretRoot(node: Types.ASTNode): Types.ASTData?
 	local children = node.children :: Types.ASTChildren_Root
 
-	for _, childNode in children do
-		self:InterpretASTNode(childNode)
+	for _, child in children do
+		self:InterpretASTNode(child)
 	end
 
 	return nil
 end
 
-function Interpreter:InterpretCall(_node: Types.ASTNode): Types.ASTData?
-	return nil -- TODO
+function Interpreter:InterpretCall(node: Types.ASTNode): Types.ASTData?
+	local children = node.children :: Types.ASTChildren_Call
+	local target = (if children.target then self:InterpretASTNode(children.target) else nil) :: string?
+	local callName = node.data :: string
+
+	local args = {}
+	for _, child in children.args do
+		table.insert(args, self:InterpretASTNode(child))
+	end
+
+	local func
+	local action = Actions.Get(callName)
+	if action then
+		func = action.Run
+	else
+		local routine = self.routines[callName]
+
+		if routine then
+			func = routine
+		end
+	end
+
+	if not func then
+		Util.LogWarn(`unable to resolve call name "{callName}"`)
+		return nil
+	end
+
+	if target then
+		local targets = self.links[target]
+		if not targets then
+			return nil
+		end
+
+		for _, targetLink in targets do
+			func({
+				target = targetLink,
+				args = args,
+			})
+		end
+	else
+		func({
+			target = nil,
+			args = args,
+		})
+	end
+
+	return nil
 end
 
 function Interpreter:InterpretBinExp(_node: Types.ASTNode): Types.ASTData?
