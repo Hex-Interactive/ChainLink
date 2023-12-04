@@ -33,12 +33,12 @@ export type ASTNode = {
 }
 export type ASTData = string | number | boolean
 export type ASTChildren = ASTChildren_Root | ASTChildren_Call | ASTChildren_BinExp
-type ASTChildren_Root = { ASTNode }
-type ASTChildren_Call = {
+export type ASTChildren_Root = { ASTNode }
+export type ASTChildren_Call = {
 	target: ASTNode?,
 	args: { ASTNode },
 }
-type ASTChildren_BinExp = {
+export type ASTChildren_BinExp = {
 	left: ASTNode,
 	right: ASTNode,
 }
