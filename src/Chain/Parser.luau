@@ -2,7 +2,7 @@ local ASTNodeIDs = require(script.Parent:WaitForChild("ASTNodeIDs"))
 local LexemeIDs = require(script.Parent:WaitForChild("LexemeIDs"))
 local Types = require(script.Parent.Parent:WaitForChild("Types"))
 
-local PREC = {
+local PREC = table.freeze({
 	[LexemeIDs.Pow] = 40,
 	[LexemeIDs.Mod] = 30,
 	[LexemeIDs.Mul] = 30,
@@ -15,8 +15,8 @@ local PREC = {
 	[LexemeIDs.GreatEq] = 10,
 	[LexemeIDs.Great] = 10,
 	[LexemeIDs.NotEq] = 10,
-}
-local ASSOC = {
+})
+local ASSOC = table.freeze({
 	[LexemeIDs.Pow] = 0,
 	[LexemeIDs.Mod] = 1,
 	[LexemeIDs.Mul] = 1,
@@ -29,7 +29,17 @@ local ASSOC = {
 	[LexemeIDs.GreatEq] = 1,
 	[LexemeIDs.Great] = 1,
 	[LexemeIDs.NotEq] = 1,
-}
+})
+local RESOLVE_ID = table.freeze({
+	["true"] = table.freeze({
+		id = ASTNodeIDs.Bool,
+		value = true,
+	}),
+	["false"] = table.freeze({
+		id = ASTNodeIDs.Bool,
+		value = false,
+	}),
+})
 
 type Parser = {
 	__index: Parser,
@@ -119,10 +129,10 @@ function Parser:ParseFactor(): Types.ASTNode
 		return node(ASTNodeIDs.Num, tonumber(lexeme.data) :: number)
 	elseif id == LexemeIDs.Id then
 		local lexeme = self:Look(0) :: Types.Lexeme
-		local isTrue = lexeme.data == "true"
-		if isTrue or lexeme.data == "false" then
+		local resolved = RESOLVE_ID[lexeme.data]
+		if resolved then
 			self:Consume()
-			return node(ASTNodeIDs.Bool, isTrue)
+			return node(resolved.id, resolved.value)
 		end
 	end
 
