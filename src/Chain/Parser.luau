@@ -156,7 +156,7 @@ function Parser:ParseExpression(): Types.ASTNode
 			self:Consume()
 			return node(ASTNodeIDs.Bool, isTrue)
 		end
-	elseif id == LexemeIDs.Number then
+	elseif id == LexemeIDs.Number or id == LexemeIDs.StartParen then
 		return self:ParseBinExp(0)
 	end
 
