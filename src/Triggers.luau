@@ -16,13 +16,22 @@ local index = {}
 local Triggers = {}
 
 function Triggers.Added(trigger: BasePart)
-	Util.Assert(trigger:IsA("BasePart"), `invalid trigger "{trigger.Name}"`)
+	if not trigger:IsA("BasePart") then
+		Util.LogWarn(`invalid trigger "{trigger.Name}"`)
+		return
+	end
 
 	local mode = trigger:GetAttribute(Names.Attr.TriggerMode)
+	if not mode or not VALID_MODES[mode] then
+		Util.LogWarn("trigger lacking valid mode!")
+		return
+	end
+
 	local chain = trigger:GetAttribute(Names.Attr.TriggerChain)
-	Util.Assert(mode, "trigger missing mode!")
-	Util.Assert(chain, "trigger missing chain!")
-	Util.Assert(VALID_MODES[mode], `invalid trigger mode "{mode}"`)
+	if not chain or typeof(chain) ~= "string" then
+		Util.LogWarn("trigger lacking valid chain!")
+		return
+	end
 
 	index[trigger] = trigger.Touched:Connect(function(hit: BasePart)
 		if not CurrentMap.HasDescendant(trigger) or not Validators.Check(Names.Vals.CanTrigger) then
