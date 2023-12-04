@@ -1,3 +1,5 @@
+local CollectionService = game:GetService("CollectionService")
+
 local RoutineDispatcher = require(script.Parent:WaitForChild("RoutineDispatcher"))
 local Types = require(script.Parent.Parent:WaitForChild("Types"))
 local Names = require(script.Parent.Parent:WaitForChild("Names"))
@@ -112,6 +114,12 @@ end
 
 function Routines.Removed(routine: Model)
 	RoutineDispatcher.Remove(routine)
+end
+
+function Routines.Init()
+	for _, routine in CollectionService:GetTagged(Names.Tags.Routine) do
+		Routines.Added(routine)
+	end
 end
 
 return Routines

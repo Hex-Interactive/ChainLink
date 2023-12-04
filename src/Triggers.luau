@@ -1,3 +1,4 @@
+local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 
 local Validators = require(script.Parent:WaitForChild("Validators"))
@@ -47,6 +48,12 @@ function Triggers.Removed(trigger: BasePart)
 
 	conn:Disconnect()
 	index[trigger] = nil
+end
+
+function Triggers.Init()
+	for _, trigger in CollectionService:GetTagged(Names.Tags.Trigger) do
+		Triggers.Added(trigger)
+	end
 end
 
 return Triggers

@@ -29,9 +29,11 @@ function Runtime.Init()
 
 	CurrentMap.GetDirectory() -- Validate map directory getter is defined
 
+	Triggers.Init()
 	CollectionService:GetInstanceAddedSignal(Names.Tags.Trigger):Connect(Triggers.Added)
 	CollectionService:GetInstanceRemovedSignal(Names.Tags.Trigger):Connect(Triggers.Removed)
 
+	Routines.Init()
 	CollectionService:GetInstanceAddedSignal(Names.Tags.Routine):Connect(Routines.Added)
 	CollectionService:GetInstanceRemovedSignal(Names.Tags.Routine):Connect(Routines.Removed)
 end
