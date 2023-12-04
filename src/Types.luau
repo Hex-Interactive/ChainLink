@@ -25,13 +25,6 @@ export type Lexeme = {
 	id: string,
 	data: string,
 }
-export type Routine = () -> ()
-export type RoutineLayer = { RoutineStep }
-export type RoutineStep = {
-	class: string,
-	data: any?,
-	childLayers: { RoutineLayer }?,
-}
 export type ASTNode = {
 	id: string,
 	data: ASTData,

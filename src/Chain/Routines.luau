@@ -10,11 +10,25 @@ local VALID_STEPS = table.freeze({
 	If = true,
 })
 
-local index = {}
+local index: RoutineIndex = {}
+
+type Routine = () -> ()
+type RoutineLayer = { RoutineStep }
+type RoutineStep = {
+	class: string,
+	data: any?,
+	childLayers: { RoutineLayer }?,
+}
+type RoutineIndex = {
+	[string]: {
+		root: Model,
+		run: Routine,
+	},
+}
 
 local Routines = {}
 
-local function serializeLayer(parent: Instance): Types.RoutineLayer
+local function serializeLayer(parent: Instance): RoutineLayer
 	local layer = {}
 
 	for i = 0, MAX_ROUTINE_STEPS do
@@ -56,11 +70,11 @@ local function serializeLayer(parent: Instance): Types.RoutineLayer
 	return layer
 end
 
-local function executeLayer(_layer: Types.RoutineLayer)
+local function executeLayer(_layer: RoutineLayer)
 	-- TODO
 end
 
-local function serialize(routine: Model): Types.Routine
+local function serialize(routine: Model): Routine
 	local layer = serializeLayer(routine)
 
 	return function()
@@ -68,21 +82,33 @@ local function serialize(routine: Model): Types.Routine
 	end
 end
 
-function Routines.Get(name: string): Types.Routine?
-	return index[name]
+function Routines.Run(name: string): Types.Result<nil>
+	local data = index[name]
+	if not data or not CurrentMap.HasDescendant(data.root) then
+		return {
+			ok = false,
+			err = `routine "{name}" not found`,
+		}
+	end
+
+	data.run()
+
+	return {
+		ok = true,
+	}
 end
 
 function Routines.Added(routine: Model)
-	if not CurrentMap.HasDescendant(routine) then
-		return
-	end
-
 	Util.Assert(routine:IsA("Model"), `invalid routine "{routine.Name}"`)
 
 	local name = routine.Name
 	Util.Assert(not Mutexes.IsLocked(name), `action or routine by name "{name}" already exists`)
 
-	index[name] = serialize(routine)
+	index[name] = {
+		root = routine,
+		run = serialize(routine),
+	}
+
 	Mutexes.Create(name)
 end
 
