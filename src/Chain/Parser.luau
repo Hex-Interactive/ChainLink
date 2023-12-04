@@ -130,6 +130,7 @@ function Parser:ParseBinExp(min: number): Types.ASTNode
 		local nextMin = PREC[id] + ASSOC[id]
 		local operator = self:Peek(0)
 		self:Consume()
+		id = self:Peek(0)
 		res = node(ASTNodeIDs.BinExp, operator, {
 			left = res,
 			right = self:ParseBinExp(nextMin),
