@@ -7,7 +7,7 @@ local Util = require(script.Parent.Parent:WaitForChild("Util"))
 local MAX_ROUTINE_STEPS = 20
 local VALID_STEPS = table.freeze({
 	Chain = true,
-	If = true,
+	-- If = true,
 })
 
 local index: RoutineIndex = {}
@@ -48,21 +48,21 @@ local function serializeLayer(parent: Instance): RoutineLayer
 			data = data,
 		}
 
-		if class == "If" then
-			local truePath = step:FindFirstChild("True")
-			local falsePath = step:FindFirstChild("False")
-			Util.Assert(truePath and falsePath, `invalid routine if "{step.Name}" step`)
-			if not (truePath and falsePath) then
-				break
-			end
+		-- if class == "If" then
+		-- 	local truePath = step:FindFirstChild("True")
+		-- 	local falsePath = step:FindFirstChild("False")
+		-- 	Util.Assert(truePath and falsePath, `invalid routine if "{step.Name}" step`)
+		-- 	if not (truePath and falsePath) then
+		-- 		break
+		-- 	end
 
-			Util.Assert(truePath:IsA("Configuration"), `invalid routine true path for "{step.Name}" step`)
-			Util.Assert(falsePath:IsA("Configuration"), `invalid routine false path for "{step.Name}" step`)
+		-- 	Util.Assert(truePath:IsA("Configuration"), `invalid routine true path for "{step.Name}" step`)
+		-- 	Util.Assert(falsePath:IsA("Configuration"), `invalid routine false path for "{step.Name}" step`)
 
-			routineStep.childLayers = {}
-			routineStep.childLayers[1] = serializeLayer(truePath)
-			routineStep.childLayers[2] = serializeLayer(falsePath)
-		end
+		-- 	routineStep.childLayers = {}
+		-- 	routineStep.childLayers[1] = serializeLayer(truePath)
+		-- 	routineStep.childLayers[2] = serializeLayer(falsePath)
+		-- end
 
 		table.insert(layer, routineStep)
 	end
