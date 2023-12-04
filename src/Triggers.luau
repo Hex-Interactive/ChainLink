@@ -15,10 +15,6 @@ local index = {}
 local Triggers = {}
 
 function Triggers.Added(trigger: BasePart)
-	if not CurrentMap.HasDescendant(trigger) then
-		return
-	end
-
 	Util.Assert(trigger:IsA("BasePart"), `invalid trigger "{trigger.Name}"`)
 
 	local mode = trigger:GetAttribute(Names.Attr.TriggerMode)
@@ -28,7 +24,7 @@ function Triggers.Added(trigger: BasePart)
 	Util.Assert(VALID_MODES[mode], `invalid trigger mode "{mode}"`)
 
 	index[trigger] = trigger.Touched:Connect(function(hit: BasePart)
-		if not Validators.Check(Names.Vals.CanTrigger) then
+		if not CurrentMap.HasDescendant(trigger) or not Validators.Check(Names.Vals.CanTrigger) then
 			return
 		end
 
