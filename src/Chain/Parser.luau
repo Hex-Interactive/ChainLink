@@ -117,6 +117,13 @@ function Parser:ParseFactor(): Types.ASTNode
 		local lexeme = self:Look(0) :: Types.Lexeme
 		self:Consume()
 		return node(ASTNodeIDs.Num, tonumber(lexeme.data) :: number)
+	elseif id == LexemeIDs.Id then
+		local lexeme = self:Look(0) :: Types.Lexeme
+		local isTrue = lexeme.data == "true"
+		if isTrue or lexeme.data == "false" then
+			self:Consume()
+			return node(ASTNodeIDs.Bool, isTrue)
+		end
 	end
 
 	return nodeUnexp(self:Look(0))
@@ -152,13 +159,7 @@ function Parser:ParseExpression(): Types.ASTNode
 	if id == LexemeIDs.Str then
 		self:Consume()
 		return node(ASTNodeIDs.Str, lexeme.data)
-	elseif id == LexemeIDs.Id then
-		local isTrue = lexeme.data == "true"
-		if isTrue or lexeme.data == "false" then -- TODO: Handle BinExp with booleans
-			self:Consume()
-			return node(ASTNodeIDs.Bool, isTrue)
-		end
-	elseif id == LexemeIDs.Num or id == LexemeIDs.LParen then
+	elseif id == LexemeIDs.Num or id == LexemeIDs.Id or id == LexemeIDs.LParen then
 		return self:ParseBinExp(0)
 	end
 
