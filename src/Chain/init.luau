@@ -37,7 +37,8 @@ function Chain.Compile(source: string): (Types.ASTNode?, Types.Lexemes?)
 end
 
 function Chain.Interpret(ast: Types.ASTNode)
-	Interpreter.Begin(ast)
+	local interpreter = Interpreter.new(ast)
+	interpreter:Begin()
 end
 
 function Chain.Execute(source: string)
