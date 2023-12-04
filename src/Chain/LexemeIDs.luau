@@ -1,31 +1,31 @@
 return table.freeze({
 	Eof = "Eof", -- End of file/source
-	UnexpectedEof = "UnexpectedEof", -- Unexpected end of file
-	UnexpectedChar = "UnexpectedChar", -- Unexpected character
-	UnknownChar = "UnknownChar", -- Unknown character
-	Whitespace = "Whitespace", -- Whitespace characters
+	UnexpEof = "UnexpEof", -- Unexpected end of file
+	UnexpChar = "UnexpChar", -- Unexpected character
+	UknChar = "UknChar", -- Unknown character
+	None = "None", -- Whitespace characters
 
-	Identifier = "Identifier", -- Any keyword, action name, or routine name
-	String = "String", -- Any string
-	Number = "Number", -- Any number
+	Id = "Id", -- Any keyword, action name, or routine name (identifier)
+	Str = "Str", -- Any string
+	Num = "Num", -- Any number
 
-	Arrow = "Arrow", -- Arrow (->)
-	NextCall = "NextCall", -- Next call (;)
-	NextArg = "NextArg", -- Next argument (,)
-	StartParen = "StartParen", -- Left parenthesis (()
-	EndParen = "EndParen", -- Right parenthesis ())
+	Arr = "Arr", -- Arrow (->)
+	NxCall = "NxCall", -- Next call (;)
+	NxArg = "NxArg", -- Next argument (,)
+	LParen = "LParen", -- Left parenthesis (()
+	RParen = "RParen", -- Right parenthesis ())
 
-	Equal = "Equal", -- Equal to (==)
-	LessEqual = "LessEqual", -- Less than or equal to (<=)
+	Eq = "Eq", -- Equal to (==)
+	LessEq = "LessEq", -- Less than or equal to (<=)
 	Less = "Less", -- Less than (<)
-	GreaterEqual = "GreaterEqual", -- Greater than or equal to (>=)
-	Greater = "Greater", -- Greater than (>)
-	NotEqual = "NotEqual", -- Not equal to (~=)
+	GreatEq = "GreatEq", -- Greater than or equal to (>=)
+	Great = "Great", -- Greater than (>)
+	NotEq = "NotEq", -- Not equal to (~=)
 
 	Add = "Add", -- Addition (+)
-	Subtract = "Subtract", -- Subtraction (-)
-	Multiply = "Multiply", -- Multiplication (*)
-	Divide = "Divide", -- Division (/)
+	Sub = "Sub", -- Subtraction (-)
+	Mul = "Mul", -- Multiplication (*)
+	Div = "Div", -- Division (/)
 	Mod = "Mod", -- Modulus (%)
 	Pow = "Pow", -- Power (^)
 })

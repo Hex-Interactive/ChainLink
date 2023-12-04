@@ -105,7 +105,7 @@ function Lexer:ReadString(): Types.Lexeme
 	end
 
 	self:Consume()
-	return new(LexemeIDs.String, final)
+	return new(LexemeIDs.Str, final)
 end
 
 function Lexer:ReadNumber(negative: boolean): Types.Lexeme
@@ -124,7 +124,7 @@ function Lexer:ReadNumber(negative: boolean): Types.Lexeme
 		self:Consume()
 	end
 
-	return new(LexemeIDs.Number, final)
+	return new(LexemeIDs.Num, final)
 end
 
 function Lexer:ReadIdentifier(): Types.Lexeme
@@ -140,7 +140,7 @@ function Lexer:ReadIdentifier(): Types.Lexeme
 		self:Consume()
 	end
 
-	return new(LexemeIDs.Identifier, final)
+	return new(LexemeIDs.Id, final)
 end
 
 function Lexer:ReadNext(): Types.Lexeme
@@ -154,30 +154,30 @@ function Lexer:ReadNext(): Types.Lexeme
 		if nextChar == ">" then
 			self:Consume()
 			self:Consume()
-			return new(LexemeIDs.Arrow, char .. nextChar)
+			return new(LexemeIDs.Arr, char .. nextChar)
 		elseif isNumerical(nextChar) then
 			return self:ReadNumber(true)
 		end
 
 		self:Consume()
-		return new(LexemeIDs.Subtract, char)
+		return new(LexemeIDs.Sub, char)
 	elseif char == "=" then
 		local nextChar = self:Peek(1)
 
 		if nextChar == "=" then
 			self:Consume()
 			self:Consume()
-			return new(LexemeIDs.Equal, char .. nextChar)
+			return new(LexemeIDs.Eq, char .. nextChar)
 		end
 
-		return new(LexemeIDs.UnexpectedChar, char)
+		return new(LexemeIDs.UnexpChar, char)
 	elseif char == "<" then
 		local nextChar = self:Peek(1)
 
 		if nextChar == "=" then
 			self:Consume()
 			self:Consume()
-			return new(LexemeIDs.LessEqual, char .. nextChar)
+			return new(LexemeIDs.LessEq, char .. nextChar)
 		end
 
 		self:Consume()
@@ -188,21 +188,21 @@ function Lexer:ReadNext(): Types.Lexeme
 		if nextChar == "=" then
 			self:Consume()
 			self:Consume()
-			return new(LexemeIDs.GreaterEqual, char .. nextChar)
+			return new(LexemeIDs.GreatEq, char .. nextChar)
 		end
 
 		self:Consume()
-		return new(LexemeIDs.Greater, char)
+		return new(LexemeIDs.Great, char)
 	elseif char == "~" then
 		local nextChar = self:Peek(1)
 
 		if nextChar == "=" then
 			self:Consume()
 			self:Consume()
-			return new(LexemeIDs.NotEqual, char .. nextChar)
+			return new(LexemeIDs.NotEq, char .. nextChar)
 		end
 
-		return new(LexemeIDs.UnexpectedChar, char)
+		return new(LexemeIDs.UnexpChar, char)
 	elseif char == '"' then
 		return self:ReadString()
 	elseif char == "+" then
@@ -210,10 +210,10 @@ function Lexer:ReadNext(): Types.Lexeme
 		return new(LexemeIDs.Add, char)
 	elseif char == "/" then
 		self:Consume()
-		return new(LexemeIDs.Divide, char)
+		return new(LexemeIDs.Div, char)
 	elseif char == "*" then
 		self:Consume()
-		return new(LexemeIDs.Multiply, char)
+		return new(LexemeIDs.Mul, char)
 	elseif char == "%" then
 		self:Consume()
 		return new(LexemeIDs.Mod, char)
@@ -222,26 +222,26 @@ function Lexer:ReadNext(): Types.Lexeme
 		return new(LexemeIDs.Pow, char)
 	elseif char == ";" then
 		self:Consume()
-		return new(LexemeIDs.NextCall, char)
+		return new(LexemeIDs.NxCall, char)
 	elseif char == "," then
 		self:Consume()
-		return new(LexemeIDs.NextArg, char)
+		return new(LexemeIDs.NxArg, char)
 	elseif char == "(" then
 		self:Consume()
-		return new(LexemeIDs.StartParen, char)
+		return new(LexemeIDs.LParen, char)
 	elseif char == ")" then
 		self:Consume()
-		return new(LexemeIDs.EndParen, char)
+		return new(LexemeIDs.RParen, char)
 	elseif isNumerical(char) then
 		return self:ReadNumber(false)
 	elseif isIdentifier(char) then
 		return self:ReadIdentifier()
 	elseif isWhitespace(char) then
 		self:Consume()
-		return new(LexemeIDs.Whitespace, char)
+		return new(LexemeIDs.None, char)
 	end
 
-	return new(LexemeIDs.UnknownChar, char)
+	return new(LexemeIDs.UknChar, char)
 end
 
 function Lexer:Begin(): Types.Result<Types.Lexemes>
@@ -250,14 +250,14 @@ function Lexer:Begin(): Types.Result<Types.Lexemes>
 	while true do
 		local lexeme = self:ReadNext()
 
-		if lexeme.id == LexemeIDs.Whitespace then
+		if lexeme.id == LexemeIDs.None then
 			continue
-		elseif lexeme.id == LexemeIDs.UnexpectedChar then
+		elseif lexeme.id == LexemeIDs.UnexpChar then
 			return {
 				ok = false,
 				err = `unexpected character "{lexeme.data}"`,
 			}
-		elseif lexeme.id == LexemeIDs.UnknownChar then
+		elseif lexeme.id == LexemeIDs.UknChar then
 			return {
 				ok = false,
 				err = `unknown character "{lexeme.data}"`,

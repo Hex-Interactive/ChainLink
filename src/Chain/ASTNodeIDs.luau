@@ -1,8 +1,8 @@
 return table.freeze({
-	Unexpected = "Unexpected", -- Unexpected instruction
+	Unexp = "Unexp", -- Unexpected instruction
 
-	String = "String", -- Any string
-	Number = "Number", -- Any string
+	Str = "Str", -- Any string
+	Num = "Num", -- Any string
 	Bool = "Bool", -- Any boolean
 
 	Root = "Root", -- The beginning/root of the AST

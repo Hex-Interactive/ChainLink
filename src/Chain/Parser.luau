@@ -5,30 +5,30 @@ local Types = require(script.Parent.Parent:WaitForChild("Types"))
 local PREC = {
 	[LexemeIDs.Pow] = 40,
 	[LexemeIDs.Mod] = 30,
-	[LexemeIDs.Multiply] = 30,
-	[LexemeIDs.Divide] = 30,
+	[LexemeIDs.Mul] = 30,
+	[LexemeIDs.Div] = 30,
 	[LexemeIDs.Add] = 20,
-	[LexemeIDs.Subtract] = 20,
-	[LexemeIDs.Equal] = 10,
-	[LexemeIDs.LessEqual] = 10,
+	[LexemeIDs.Sub] = 20,
+	[LexemeIDs.Eq] = 10,
+	[LexemeIDs.LessEq] = 10,
 	[LexemeIDs.Less] = 10,
-	[LexemeIDs.GreaterEqual] = 10,
-	[LexemeIDs.Greater] = 10,
-	[LexemeIDs.NotEqual] = 10,
+	[LexemeIDs.GreatEq] = 10,
+	[LexemeIDs.Great] = 10,
+	[LexemeIDs.NotEq] = 10,
 }
 local ASSOC = {
 	[LexemeIDs.Pow] = 0,
 	[LexemeIDs.Mod] = 1,
-	[LexemeIDs.Multiply] = 1,
-	[LexemeIDs.Divide] = 1,
+	[LexemeIDs.Mul] = 1,
+	[LexemeIDs.Div] = 1,
 	[LexemeIDs.Add] = 1,
-	[LexemeIDs.Subtract] = 1,
-	[LexemeIDs.Equal] = 1,
-	[LexemeIDs.LessEqual] = 1,
+	[LexemeIDs.Sub] = 1,
+	[LexemeIDs.Eq] = 1,
+	[LexemeIDs.LessEq] = 1,
 	[LexemeIDs.Less] = 1,
-	[LexemeIDs.GreaterEqual] = 1,
-	[LexemeIDs.Greater] = 1,
-	[LexemeIDs.NotEqual] = 1,
+	[LexemeIDs.GreatEq] = 1,
+	[LexemeIDs.Great] = 1,
+	[LexemeIDs.NotEq] = 1,
 }
 
 type Parser = {
@@ -65,7 +65,7 @@ end
 local function nodeUnexp(lexeme: Types.Lexeme?): Types.ASTNode
 	local id = if lexeme then lexeme.id else "__Missing"
 	local data = if lexeme then lexeme.data else ""
-	return node(ASTNodeIDs.Unexpected, `{id} ({data})`)
+	return node(ASTNodeIDs.Unexp, `{id} ({data})`)
 end
 
 function Parser.new(lexemes: Types.Lexemes): Parser
@@ -81,7 +81,7 @@ end
 function Parser:Peek(amount: number): string
 	local lexeme = self:Look(amount)
 	if not lexeme then
-		return LexemeIDs.UnexpectedEof
+		return LexemeIDs.UnexpEof
 	end
 
 	return lexeme.id
@@ -103,27 +103,27 @@ end
 function Parser:ParseFactor(): Types.ASTNode
 	local id = self:Peek(0)
 
-	if id == LexemeIDs.StartParen then
+	if id == LexemeIDs.LParen then
 		self:Consume()
 		local res = self:ParseBinExp(0)
 
-		if self:Peek(0) ~= LexemeIDs.EndParen then
+		if self:Peek(0) ~= LexemeIDs.RParen then
 			return nodeUnexp(self:Look(0))
 		end
 		self:Consume()
 
 		return res
-	elseif id == LexemeIDs.Number then
+	elseif id == LexemeIDs.Num then
 		local lexeme = self:Look(0) :: Types.Lexeme
 		self:Consume()
-		return node(ASTNodeIDs.Number, tonumber(lexeme.data) :: number)
+		return node(ASTNodeIDs.Num, tonumber(lexeme.data) :: number)
 	end
 
 	return nodeUnexp(self:Look(0))
 end
 
 function Parser:ParseBinExp(min: number): Types.ASTNode
-	local res = self:ParseFactor()
+	local result = self:ParseFactor()
 	local id = self:Peek(0)
 
 	while PREC[id] and PREC[id] >= min do
@@ -131,32 +131,32 @@ function Parser:ParseBinExp(min: number): Types.ASTNode
 		local operator = self:Peek(0)
 		self:Consume()
 		id = self:Peek(0)
-		res = node(ASTNodeIDs.BinExp, operator, {
-			left = res,
+		result = node(ASTNodeIDs.BinExp, operator, {
+			left = result,
 			right = self:ParseBinExp(nextMin),
 		})
 	end
 
-	return res
+	return result
 end
 
 function Parser:ParseExpression(): Types.ASTNode
 	local id = self:Peek(0)
-	if id == LexemeIDs.UnexpectedEof then
+	if id == LexemeIDs.UnexpEof then
 		return nodeUnexp(nil) -- We know this will be nil here
 	end
 
 	local lexeme = self:Look(0) :: Types.Lexeme
-	if id == LexemeIDs.String then
+	if id == LexemeIDs.Str then
 		self:Consume()
-		return node(ASTNodeIDs.String, lexeme.data)
-	elseif id == LexemeIDs.Identifier then
+		return node(ASTNodeIDs.Str, lexeme.data)
+	elseif id == LexemeIDs.Id then
 		local isTrue = lexeme.data == "true"
 		if isTrue or lexeme.data == "false" then -- TODO: Handle BinExp with booleans
 			self:Consume()
 			return node(ASTNodeIDs.Bool, isTrue)
 		end
-	elseif id == LexemeIDs.Number or id == LexemeIDs.StartParen then
+	elseif id == LexemeIDs.Num or id == LexemeIDs.LParen then
 		return self:ParseBinExp(0)
 	end
 
@@ -164,7 +164,7 @@ function Parser:ParseExpression(): Types.ASTNode
 end
 
 function Parser:ParseCall(callTarget: Types.Lexeme?): Types.ASTNode
-	local target = if callTarget then node(ASTNodeIDs.String, callTarget.data) else nil
+	local target = if callTarget then node(ASTNodeIDs.Str, callTarget.data) else nil
 
 	local callName = self:Look(0) :: Types.Lexeme
 	self:Consume()
@@ -172,11 +172,11 @@ function Parser:ParseCall(callTarget: Types.Lexeme?): Types.ASTNode
 	self:Consume() -- Starting parenthesis
 
 	local earlyExitId = self:Peek(0)
-	if earlyExitId == LexemeIDs.EndParen then
+	if earlyExitId == LexemeIDs.RParen then
 		self:Consume()
 
 		local id = self:Peek(0)
-		if id ~= LexemeIDs.NextCall then
+		if id ~= LexemeIDs.NxCall then
 			return nodeUnexp(self:Look(0))
 		end
 		self:Consume()
@@ -188,19 +188,19 @@ function Parser:ParseCall(callTarget: Types.Lexeme?): Types.ASTNode
 	end
 
 	local args = { self:ParseExpression() }
-	while self:Peek(0) == LexemeIDs.NextArg do
+	while self:Peek(0) == LexemeIDs.NxArg do
 		self:Consume()
 		table.insert(args, self:ParseExpression())
 	end
 
 	local exitId = self:Peek(0)
-	if exitId ~= LexemeIDs.EndParen then
+	if exitId ~= LexemeIDs.RParen then
 		return nodeUnexp(self:Look(0))
 	end
 	self:Consume()
 
 	local nextCallId = self:Peek(0)
-	if nextCallId ~= LexemeIDs.NextCall then
+	if nextCallId ~= LexemeIDs.NxCall then
 		return nodeUnexp(self:Look(0))
 	end
 	self:Consume()
@@ -218,10 +218,10 @@ function Parser:ParseTargetedCall(): Types.ASTNode
 	self:Consume() -- Arrow
 
 	local id = self:Peek(0)
-	if id == LexemeIDs.Identifier then
+	if id == LexemeIDs.Id then
 		local nextId = self:Peek(1)
 
-		if nextId == LexemeIDs.StartParen then
+		if nextId == LexemeIDs.LParen then
 			return self:ParseCall(targetName)
 		end
 
@@ -236,12 +236,12 @@ function Parser:ParseNext(): Types.ASTNode?
 
 	if id == LexemeIDs.Eof then
 		return nil
-	elseif id == LexemeIDs.Identifier then
+	elseif id == LexemeIDs.Id then
 		local nextId = self:Peek(1)
 
-		if nextId == LexemeIDs.Arrow then
+		if nextId == LexemeIDs.Arr then
 			return self:ParseTargetedCall()
-		elseif nextId == LexemeIDs.StartParen then
+		elseif nextId == LexemeIDs.LParen then
 			return self:ParseCall(nil)
 		end
 
@@ -260,7 +260,7 @@ function Parser:Begin(): Types.Result<Types.ASTNode>
 			break
 		end
 
-		if nextNode.id == ASTNodeIDs.Unexpected then
+		if nextNode.id == ASTNodeIDs.Unexp then
 			return {
 				ok = false,
 				err = `parsed unexpected lexeme "{nextNode.data}"`,
