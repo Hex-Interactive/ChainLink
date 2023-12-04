@@ -6,6 +6,7 @@ return table.freeze({
 	}),
 
 	Attr = table.freeze({
+		LinkId = "LinkId",
 		LinkChain = "LinkChain",
 
 		TriggerMode = "TriggerMode",

@@ -1,3 +1,4 @@
+local Interpreter = require(script:WaitForChild("Interpreter"))
 local Types = require(script.Parent:WaitForChild("Types"))
 local Util = require(script.Parent:WaitForChild("Util"))
 local Parser = require(script:WaitForChild("Parser"))
@@ -36,7 +37,7 @@ function Chain.Compile(source: string): (Types.ASTNode?, Types.Lexemes?)
 end
 
 function Chain.Interpret(ast: Types.ASTNode)
-	print("AST:", ast) -- TEMP
+	Interpreter.Begin(ast)
 end
 
 function Chain.Execute(source: string)
