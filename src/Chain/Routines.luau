@@ -19,7 +19,7 @@ type RoutineStep = {
 	childLayers: { RoutineLayer }?,
 }
 
-local Routines = {}
+local Routines = {} -- TODO: Implement "If" step
 
 local function serializeLayer(parent: Instance): RoutineLayer
 	local layer = {}
