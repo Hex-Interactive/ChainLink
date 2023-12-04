@@ -15,7 +15,7 @@ local index = {}
 
 local Triggers = {}
 
-function Triggers.Added(trigger: BasePart)
+local function added(trigger: BasePart)
 	if not trigger:IsA("BasePart") then
 		Util.LogWarn(`invalid trigger "{trigger.Name}"`)
 		return
@@ -49,7 +49,7 @@ function Triggers.Added(trigger: BasePart)
 	end)
 end
 
-function Triggers.Removed(trigger: BasePart)
+local function removed(trigger: BasePart)
 	local conn = index[trigger]
 	if not conn then
 		return
@@ -60,8 +60,11 @@ function Triggers.Removed(trigger: BasePart)
 end
 
 function Triggers.Init()
+	CollectionService:GetInstanceAddedSignal(Names.Tags.Trigger):Connect(added)
+	CollectionService:GetInstanceRemovedSignal(Names.Tags.Trigger):Connect(removed)
+
 	for _, trigger in CollectionService:GetTagged(Names.Tags.Trigger) do
-		Triggers.Added(trigger)
+		added(trigger)
 	end
 end
 

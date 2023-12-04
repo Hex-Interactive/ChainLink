@@ -99,7 +99,7 @@ local function serialize(routine: Model): Types.Routine
 	end
 end
 
-function Routines.Added(routine: Model)
+local function added(routine: Model)
 	local name = routine.Name
 	if not routine:IsA("Model") then
 		Util.LogWarn(`routine "{name}" is not a model`)
@@ -112,13 +112,16 @@ function Routines.Added(routine: Model)
 	})
 end
 
-function Routines.Removed(routine: Model)
+local function removed(routine: Model)
 	RoutineDispatcher.Remove(routine)
 end
 
 function Routines.Init()
+	CollectionService:GetInstanceAddedSignal(Names.Tags.Routine):Connect(added)
+	CollectionService:GetInstanceRemovedSignal(Names.Tags.Routine):Connect(removed)
+
 	for _, routine in CollectionService:GetTagged(Names.Tags.Routine) do
-		Routines.Added(routine)
+		added(routine)
 	end
 end
 

@@ -1,5 +1,3 @@
-local CollectionService = game:GetService("CollectionService")
-
 local Routines = require(script.Parent:WaitForChild("Chain"):WaitForChild("Routines"))
 local CurrentMap = require(script.Parent:WaitForChild("CurrentMap"))
 local Triggers = require(script.Parent:WaitForChild("Triggers"))
@@ -30,12 +28,7 @@ function Runtime.Init()
 	CurrentMap.GetDirectory() -- Validate map directory getter is defined
 
 	Triggers.Init()
-	CollectionService:GetInstanceAddedSignal(Names.Tags.Trigger):Connect(Triggers.Added)
-	CollectionService:GetInstanceRemovedSignal(Names.Tags.Trigger):Connect(Triggers.Removed)
-
 	Routines.Init()
-	CollectionService:GetInstanceAddedSignal(Names.Tags.Routine):Connect(Routines.Added)
-	CollectionService:GetInstanceRemovedSignal(Names.Tags.Routine):Connect(Routines.Removed)
 end
 
 return Runtime
