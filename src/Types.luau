@@ -5,11 +5,7 @@ export type Validator<T> = (subject: T) -> boolean
 export type MapDirectory = () -> Folder
 
 -- Actions
-export type Action = (context: ActionContext) -> ()
-export type ActionContext = {
-	target: Instance?,
-	args: { ASTData? },
-}
+export type Action = (context: CallContext) -> ()
 export type ActionModule = {
 	Run: Action,
 }
@@ -20,7 +16,11 @@ export type Result<T> = {
 	err: string?,
 	data: T?,
 }
-export type Routine = () -> ()
+export type CallContext = {
+	target: Instance?,
+	args: { ASTData? },
+}
+export type Routine = (context: CallContext) -> ()
 export type Lexemes = { Lexeme }
 export type Lexeme = {
 	id: string,

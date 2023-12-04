@@ -1,21 +1,12 @@
 local Types = require(script.Parent.Parent:WaitForChild("Types"))
 
 return {
-	Run = function(context: Types.ActionContext)
-		assert(context.target, "no target")
-
-		local forceDirAtt = context.target:FindFirstChild("_ForceDirection", true)
-		assert(
-			forceDirAtt and forceDirAtt:IsA("Attachment"),
-			`unable to find _ForceDirection ({context.target:GetFullName()})`
-		)
+	Run = function(context: Types.CallContext)
+		local target = context.target :: Instance
+		local forceDirAtt = target:FindFirstChild("_ForceDirection", true) :: Attachment
 
 		local magnitude = forceDirAtt:GetAttribute("Magnitude")
-		local basePart = forceDirAtt.Parent
-		assert(
-			magnitude and basePart and basePart:IsA("BasePart"),
-			`invalid _ForceDirection ({forceDirAtt:GetFullName()})`
-		)
+		local basePart = forceDirAtt.Parent :: BasePart
 
 		local direction = CFrame.lookAt(basePart.Position, forceDirAtt.WorldPosition).LookVector
 		basePart.AssemblyLinearVelocity = direction * magnitude

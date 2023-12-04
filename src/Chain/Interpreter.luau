@@ -58,16 +58,13 @@ function Interpreter:InterpretCall(node: Types.ASTNode): Types.ASTData?
 		table.insert(args, self:InterpretASTNode(child))
 	end
 
-	local func
+	local func = nil
 	local action = Actions.Get(callName)
+	local routine = self.routines[callName]
 	if action then
 		func = action.Run
-	else
-		local routine = self.routines[callName]
-
-		if routine then
-			func = routine
-		end
+	elseif routine then
+		func = routine
 	end
 
 	if not func then
