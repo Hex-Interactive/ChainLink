@@ -74,7 +74,8 @@ function Interpreter:InterpretCall(node: Types.ASTNode): Types.ASTData?
 
 	if action and action.ValidateArgs then
 		for index, expectedType in action.ValidateArgs do
-			if typeof(args[index]) == expectedType then
+			local value = args[index]
+			if typeof(value) == expectedType or (expectedType == "any" and value ~= nil) then
 				continue
 			end
 
@@ -100,8 +101,10 @@ function Interpreter:InterpretCall(node: Types.ASTNode): Types.ASTData?
 				if typeof(action.ValidateTarget) == "function" then
 					local validated, param = action.ValidateTarget(targetLink)
 					if not validated then
+						Util.LogWarn(`action "{callName}" target "{targetLink.Name}" is invalid`)
 						continue
 					end
+
 					validatedParam = param
 				end
 			end

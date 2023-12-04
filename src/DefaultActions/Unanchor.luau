@@ -1,6 +1,8 @@
 local Types = require(script.Parent.Parent:WaitForChild("Types"))
 
 return {
+	ValidateTarget = true,
+
 	Run = function(context: Types.CallContext)
 		local target = context.target :: Instance
 
@@ -16,4 +18,4 @@ return {
 			end
 		end
 	end,
-}
+} :: Types.ActionModule
