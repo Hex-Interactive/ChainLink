@@ -3,43 +3,50 @@ local Mutexes = require(script.Parent.Parent:WaitForChild("Mutexes"))
 local Types = require(script.Parent.Parent:WaitForChild("Types"))
 local Util = require(script.Parent.Parent:WaitForChild("Util"))
 
-local index = {}
+local index: { [Model]: RoutineEntry } = {}
 
 type RoutineEntry = {
-	root: Model,
+	name: string,
 	run: Types.Routine,
 }
 
 local RoutineDispatcher = {}
 
-function RoutineDispatcher.Run(name: string): Types.Result<nil>
-	local data = index[name]
-	if not data or not CurrentMap.HasDescendant(data.root) then
-		return {
-			ok = false,
-			err = `routine "{name}" not found`,
-		}
+function RoutineDispatcher.Export(): { [string]: Types.Routine }
+	local routines = {}
+
+	for routine, entry in index do
+		local name = entry.name
+		if routines[name] then
+			Util.LogWarn(`routine by name "{name}" already exists`)
+			continue
+		end
+
+		if not CurrentMap.HasDescendant(routine) then
+			continue
+		end
+
+		routines[name] = entry.run
 	end
 
-	data.run()
-
-	return {
-		ok = true,
-	}
+	return routines
 end
 
-function RoutineDispatcher.Add(name: string, entry: RoutineEntry)
-	Util.Assert(not Mutexes.IsLocked(name), `action or routine by name "{name}" already exists`)
-	Mutexes.Create(name)
-	index[name] = entry
-end
-
-function RoutineDispatcher.Remove(name: string)
-	if index[name] then
-		table.clear(index[name])
+function RoutineDispatcher.Add(routine: Model, entry: RoutineEntry)
+	local name = entry.name
+	if Mutexes.IsLocked(name) then
+		Util.LogWarn(`action by name routine's "{name}" already exists`)
+		return
 	end
-	index[name] = nil
-	Mutexes.Clear(name)
+
+	index[routine] = entry
+end
+
+function RoutineDispatcher.Remove(routine: Model)
+	if index[routine] then
+		table.clear(index[routine])
+	end
+	index[routine] = nil
 end
 
 return RoutineDispatcher

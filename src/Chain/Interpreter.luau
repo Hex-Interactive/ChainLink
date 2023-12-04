@@ -16,9 +16,8 @@ type Interpreter = {
 
 	recursionCounter: number,
 	ast: Types.ASTNode,
-	links: {
-		[string]: { Instance },
-	},
+	routines: { [string]: Types.Routine },
+	links: { [string]: { Instance } },
 
 	InterpretRoot: (self: Interpreter, node: Types.ASTNode) -> Types.ASTData?,
 	InterpretCall: (self: Interpreter, node: Types.ASTNode) -> Types.ASTData?,
@@ -35,6 +34,7 @@ function Interpreter.new(ast: Types.ASTNode): Interpreter
 
 	self.recursionCounter = 0
 	self.ast = ast
+	self.routines = RoutineDispatcher.Export()
 
 	local links = {}
 	for _, link in CollectionService:GetTagged(Names.Tags.Link) do
@@ -100,7 +100,7 @@ function Interpreter:Begin()
 	self:InterpretASTNode(self.ast)
 
 	if self.recursionCounter > RECURSION_LIMIT then
-		Util.LogWarn("interpreter recursion limit reached, didn't execute fully")
+		Util.LogWarn("interpreter recursion limit was reached, didn't execute fully")
 	end
 end
 

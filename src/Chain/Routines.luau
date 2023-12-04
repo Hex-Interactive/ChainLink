@@ -99,16 +99,19 @@ end
 
 function Routines.Added(routine: Model)
 	local name = routine.Name
-	Util.Assert(routine:IsA("Model"), `invalid routine "{name}"`)
+	if not routine:IsA("Model") then
+		Util.LogWarn(`routine "{name}" is not a model`)
+		return
+	end
 
-	RoutineDispatcher.Add(name, {
-		root = routine,
+	RoutineDispatcher.Add(routine, {
+		name = name,
 		run = serialize(routine),
 	})
 end
 
 function Routines.Removed(routine: Model)
-	RoutineDispatcher.Remove(routine.Name)
+	RoutineDispatcher.Remove(routine)
 end
 
 return Routines

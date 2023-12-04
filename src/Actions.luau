@@ -11,7 +11,7 @@ function Actions.Register(module: ModuleScript)
 	Util.Assert(State.initialized == false, "register actions before initialization")
 
 	local name = module.Name
-	Util.Assert(not Mutexes.IsLocked(name), `action or routine by name "{name}" already exists`)
+	Util.Assert(not Mutexes.IsLocked(name), `action by name "{name}" already exists`)
 
 	index[name] = require(module) :: Types.ActionModule
 	Mutexes.Create(name)
