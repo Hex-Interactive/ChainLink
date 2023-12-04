@@ -6,13 +6,13 @@ local Types = require(script.Parent.Parent:WaitForChild("Types"))
 local Links = require(script.Parent.Parent:WaitForChild("Links"))
 local Util = require(script.Parent.Parent:WaitForChild("Util"))
 
-local RECURSION_LIMIT = 800
+local COMPLEXITY_LIMIT = 800
 
 type Interpreter = {
 	__index: Interpreter,
 	new: (ast: Types.ASTNode) -> Interpreter,
 
-	recursionCounter: number,
+	complexity: number,
 	ast: Types.ASTNode,
 	routines: { [string]: Types.Routine },
 	links: { [string]: { Instance } },
@@ -30,7 +30,7 @@ Interpreter.__index = Interpreter
 function Interpreter.new(ast: Types.ASTNode): Interpreter
 	local self = (setmetatable({}, Interpreter) :: any) :: Interpreter
 
-	self.recursionCounter = 0
+	self.complexity = 0
 	self.ast = ast
 	self.routines = RoutineDispatcher.Export()
 	self.links = Links.Export()
@@ -145,9 +145,9 @@ function Interpreter:InterpretBinExp(node: Types.ASTNode): Types.ASTData?
 end
 
 function Interpreter:InterpretASTNode(node: Types.ASTNode): Types.ASTData?
-	local newCount = self.recursionCounter + 1
-	if newCount > RECURSION_LIMIT then
-		return nil
+	local newCount = self.complexity + 1
+	if newCount > COMPLEXITY_LIMIT then
+		return nil -- Not a perfect limit, but it will stop any deeper function calls
 	end
 
 	if node.id == ASTNodeIDs.Root then
@@ -164,8 +164,8 @@ end
 function Interpreter:Begin()
 	self:InterpretASTNode(self.ast)
 
-	if self.recursionCounter > RECURSION_LIMIT then
-		Util.LogWarn("interpreter recursion limit was reached, didn't execute fully")
+	if self.complexity > COMPLEXITY_LIMIT then
+		Util.LogWarn("interpreter complexity limit was reached, didn't execute fully")
 	end
 end
 
