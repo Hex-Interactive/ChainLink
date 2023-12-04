@@ -5,7 +5,8 @@ local Runtime = require(script:WaitForChild("Runtime"))
 local Chain = require(script:WaitForChild("Chain"))
 local Types = require(script:WaitForChild("Types"))
 
-export type ActionContext = Types.ActionContext
+export type ActionModule = Types.ActionModule
+export type CallContext = Types.CallContext
 
 return {
 	-- Setup

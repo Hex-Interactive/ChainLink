@@ -7,8 +7,11 @@ export type MapDirectory = () -> Folder
 -- Actions
 export type Action = (context: CallContext) -> ()
 export type ActionModule = {
+	ValidateArgs: { [number]: string },
+	ValidateTarget: (ValidateTargetFunc | boolean)?,
 	Run: Action,
 }
+type ValidateTargetFunc = (target: Instance) -> (boolean, any?)
 
 -- Chain
 export type Result<T> = {
@@ -19,6 +22,7 @@ export type Result<T> = {
 export type CallContext = {
 	target: Instance?,
 	args: { ASTData? },
+	validatedParam: any?,
 }
 export type Routine = (context: CallContext) -> ()
 export type Lexemes = { Lexeme }

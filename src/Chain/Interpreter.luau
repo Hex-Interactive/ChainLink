@@ -72,6 +72,17 @@ function Interpreter:InterpretCall(node: Types.ASTNode): Types.ASTData?
 		return nil
 	end
 
+	if action and action.ValidateArgs then
+		for index, expectedType in action.ValidateArgs do
+			if typeof(args[index]) == expectedType then
+				continue
+			end
+
+			Util.LogWarn(`action "{callName}" argument #{index} is invalid`)
+			return nil
+		end
+	end
+
 	if target then
 		local targets = self.links[target]
 		if not targets then
@@ -79,15 +90,33 @@ function Interpreter:InterpretCall(node: Types.ASTNode): Types.ASTData?
 		end
 
 		for _, targetLink in targets do
+			local validatedParam = nil
+
+			if action and action.ValidateTarget then
+				if not targetLink then
+					continue
+				end
+
+				if typeof(action.ValidateTarget) == "function" then
+					local validated, param = action.ValidateTarget(targetLink)
+					if not validated then
+						continue
+					end
+					validatedParam = param
+				end
+			end
+
 			func({
 				target = targetLink,
 				args = args,
+				validatedParam = validatedParam,
 			})
 		end
 	else
 		func({
 			target = nil,
 			args = args,
+			validatedParam = nil,
 		})
 	end
 
