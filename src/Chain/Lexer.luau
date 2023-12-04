@@ -241,6 +241,8 @@ function Lexer:ReadNext(): Types.Lexeme
 		return new(LexemeIDs.None, char)
 	end
 
+	-- TODO: Implement logical operators (not, and, or)
+
 	return new(LexemeIDs.UknChar, char)
 end
 
