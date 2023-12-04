@@ -1,5 +1,4 @@
-local CurrentMap = require(script.Parent.Parent:WaitForChild("CurrentMap"))
-local Mutexes = require(script.Parent.Parent:WaitForChild("Mutexes"))
+local RoutineDispatcher = require(script.Parent:WaitForChild("RoutineDispatcher"))
 local Types = require(script.Parent.Parent:WaitForChild("Types"))
 local Names = require(script.Parent.Parent:WaitForChild("Names"))
 local Util = require(script.Parent.Parent:WaitForChild("Util"))
@@ -11,20 +10,11 @@ local VALID_STEPS = table.freeze({
 	-- If = true,
 })
 
-local index: RoutineIndex = {}
-
-type Routine = () -> ()
 type RoutineLayer = { RoutineStep }
 type RoutineStep = {
 	class: string,
 	data: any?,
 	childLayers: { RoutineLayer }?,
-}
-type RoutineIndex = {
-	[string]: {
-		root: Model,
-		run: Routine,
-	},
 }
 
 local Routines = {}
@@ -99,7 +89,7 @@ local function executeLayer(layer: RoutineLayer)
 	end
 end
 
-local function serialize(routine: Model): Routine
+local function serialize(routine: Model): Types.Routine
 	local layer = serializeLayer(routine)
 
 	return function()
@@ -107,38 +97,18 @@ local function serialize(routine: Model): Routine
 	end
 end
 
-function Routines.Run(name: string): Types.Result<nil>
-	local data = index[name]
-	if not data or not CurrentMap.HasDescendant(data.root) then
-		return {
-			ok = false,
-			err = `routine "{name}" not found`,
-		}
-	end
-
-	data.run()
-
-	return {
-		ok = true,
-	}
-end
-
 function Routines.Added(routine: Model)
-	Util.Assert(routine:IsA("Model"), `invalid routine "{routine.Name}"`)
-
 	local name = routine.Name
-	Util.Assert(not Mutexes.IsLocked(name), `action or routine by name "{name}" already exists`)
+	Util.Assert(routine:IsA("Model"), `invalid routine "{name}"`)
 
-	index[name] = {
+	RoutineDispatcher.Add(name, {
 		root = routine,
 		run = serialize(routine),
-	}
-
-	Mutexes.Create(name)
+	})
 end
 
 function Routines.Removed(routine: Model)
-	index[routine.Name] = nil
+	RoutineDispatcher.Remove(routine.Name)
 end
 
 return Routines
