@@ -24,6 +24,7 @@ export type CallContext = {
 	args: { ASTData? },
 	validatedParam: any?,
 }
+export type BinExpValue = number | boolean
 export type Routine = (context: CallContext) -> ()
 export type Lexemes = { Lexeme }
 export type Lexeme = {

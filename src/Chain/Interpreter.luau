@@ -1,6 +1,6 @@
 local RoutineDispatcher = require(script.Parent:WaitForChild("RoutineDispatcher"))
-local BinExpEvals = require(script.Parent:WaitForChild("BinExpEvals"))
 local Actions = require(script.Parent.Parent:WaitForChild("Actions"))
+local BinExpUtil = require(script.Parent:WaitForChild("BinExpUtil"))
 local ASTNodeIDs = require(script.Parent:WaitForChild("ASTNodeIDs"))
 local Types = require(script.Parent.Parent:WaitForChild("Types"))
 local Links = require(script.Parent.Parent:WaitForChild("Links"))
@@ -129,19 +129,19 @@ end
 function Interpreter:InterpretBinExp(node: Types.ASTNode): Types.ASTData?
 	local children = node.children :: Types.ASTChildren_BinExp
 	local op = node.data :: string
-	local eval = BinExpEvals[op]
 
-	if not eval then
+	if not BinExpUtil.IsDefined(op) then
 		Util.LogWarn(`unable to resolve BinExp op "{op}"`)
 		return nil
 	end
 
 	local left = self:InterpretASTNode(children.left)
 	local right = self:InterpretASTNode(children.right)
+	if not BinExpUtil.IsValidTypes(op, left, right) then
+		return nil
+	end
 
-	-- TODO: Type checking to ensure the prospective eval is possible
-
-	return eval(left, right)
+	return BinExpUtil.Eval(op, left :: Types.BinExpValue, right :: Types.BinExpValue)
 end
 
 function Interpreter:InterpretASTNode(node: Types.ASTNode): Types.ASTData?
