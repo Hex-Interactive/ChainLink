@@ -6,6 +6,7 @@ local Actions = require(script.Parent.Parent:WaitForChild("Actions"))
 local ASTNodeIDs = require(script.Parent:WaitForChild("ASTNodeIDs"))
 local Types = require(script.Parent.Parent:WaitForChild("Types"))
 local Names = require(script.Parent.Parent:WaitForChild("Names"))
+local Links = require(script.Parent.Parent:WaitForChild("Links"))
 local Util = require(script.Parent.Parent:WaitForChild("Util"))
 
 local RECURSION_LIMIT = 800
@@ -35,28 +36,7 @@ function Interpreter.new(ast: Types.ASTNode): Interpreter
 	self.recursionCounter = 0
 	self.ast = ast
 	self.routines = RoutineDispatcher.Export()
-
-	local links = {}
-	for _, link in CollectionService:GetTagged(Names.Tags.Link) do
-		local fullId = link:GetAttribute(Names.Attr.LinkId)
-		if not fullId or not CurrentMap.HasDescendant(link) then
-			continue
-		end
-
-		local ids = string.split(fullId, ";")
-		if #ids <= 0 then
-			continue
-		end
-
-		for _, id in ids do
-			if not links[id] then
-				links[id] = {}
-			end
-
-			table.insert(links[id], link)
-		end
-	end
-	self.links = links
+	self.links = Links.Export()
 
 	return self
 end
