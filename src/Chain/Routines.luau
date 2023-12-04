@@ -74,8 +74,27 @@ end
 local function executeLayer(layer: RoutineLayer)
 	for _, step in layer do
 		if step.class == "Chain" then
-			Util.Assert(typeof(step.data) == "string", `routine step data "{step.data}" should be a string`)
+			Util.Assert(typeof(step.data) == "string", `routine "Chain" step data "{step.data}" should be a string`)
 			Chain.Execute(step.data :: string)
+			-- elseif step.class == "If" then
+			-- 	Util.Assert(typeof(step.data) == "string", `routine "If" step data "{step.data}" should be a string`)
+			-- 	if not step.childLayers then
+			-- 		continue
+			-- 	end
+
+			-- 	local data = string.gsub(step.data :: string, "_SOURCE_", context.parameter.source)
+			-- 	local result
+
+			-- 	for operator, eval in ifEvals do
+			-- 		if string.find(data, operator) then
+			-- 			local segments = string.split(data, operator)
+			-- 			result = eval(segments[1], segments[2])
+			-- 			break
+			-- 		end
+			-- 	end
+
+			-- 	Util.Assert(result ~= nil, `invalid routine "If" step data "{data}" found`)
+			-- 	executeLayer(step.childLayers[if result then 1 else 2])
 		end
 	end
 end
