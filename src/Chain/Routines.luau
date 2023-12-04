@@ -30,27 +30,34 @@ local function serializeLayer(parent: Instance): RoutineLayer
 			break
 		end
 
-		Util.Assert(step:IsA("Configuration"), `invalid routine step "{step:GetFullName()}" found`)
+		if not step:IsA("Configuration") then
+			Util.LogWarn(`invalid routine step "{step:GetFullName()}" found`)
+			continue
+		end
 
 		local class = step:GetAttribute(Names.Attr.Class)
-		local data = step:GetAttribute(Names.Attr.Data)
-		Util.Assert(VALID_STEPS[class], `routine step class "{class}" is unknown`)
+		if not VALID_STEPS[class] then
+			Util.LogWarn(`routine step class "{class}" is unknown`)
+			continue
+		end
 
 		local routineStep = {
 			class = class,
-			data = data,
+			data = step:GetAttribute(Names.Attr.Data),
 		}
 
 		-- if class == "If" then
 		-- 	local truePath = step:FindFirstChild("True")
 		-- 	local falsePath = step:FindFirstChild("False")
-		-- 	Util.Assert(truePath and falsePath, `invalid routine if "{step.Name}" step`)
 		-- 	if not (truePath and falsePath) then
+		-- 		Util.LogWarn(`invalid routine if "{step.Name}" step`)
 		-- 		break
 		-- 	end
 
-		-- 	Util.Assert(truePath:IsA("Configuration"), `invalid routine true path for "{step.Name}" step`)
-		-- 	Util.Assert(falsePath:IsA("Configuration"), `invalid routine false path for "{step.Name}" step`)
+		-- 	if not truePath:IsA("Configuration") or not falsePath:IsA("Configuration") then
+		-- 		Util.LogWarn(`invalid routine true/false paths for "{step.Name}" step`)
+		-- 		break
+		-- 	end
 
 		-- 	routineStep.childLayers = {}
 		-- 	routineStep.childLayers[1] = serializeLayer(truePath)
@@ -63,13 +70,21 @@ local function serializeLayer(parent: Instance): RoutineLayer
 	return layer
 end
 
-local function executeLayer(layer: RoutineLayer)
+local function executeLayer(layer: RoutineLayer, _context: Types.CallContext)
 	for _, step in layer do
 		if step.class == "Chain" then
-			Util.Assert(typeof(step.data) == "string", `routine "Chain" step data "{step.data}" should be a string`)
+			if typeof(step.data) ~= "string" then
+				Util.LogWarn(`routine "Chain" step data "{step.data}" should be a string`)
+				continue
+			end
+
 			Chain.Execute(step.data :: string)
 			-- elseif step.class == "If" then
-			-- 	Util.Assert(typeof(step.data) == "string", `routine "If" step data "{step.data}" should be a string`)
+			-- 	if typeof(step.data) ~= "string" then
+			-- 		Util.LogWarn(`routine "If" step data "{step.data}" should be a string`)
+			-- 		continue
+			-- 	end
+
 			-- 	if not step.childLayers then
 			-- 		continue
 			-- 	end
@@ -85,8 +100,12 @@ local function executeLayer(layer: RoutineLayer)
 			-- 		end
 			-- 	end
 
-			-- 	Util.Assert(result ~= nil, `invalid routine "If" step data "{data}" found`)
-			-- 	executeLayer(step.childLayers[if result then 1 else 2])
+			-- 	if not result then
+			-- 		Util.LogWarn(`invalid routine "If" step data "{data}" found`)
+			-- 		continue
+			-- 	end
+
+			-- 	executeLayer(step.childLayers[if result then 1 else 2], context)
 		end
 	end
 end
@@ -94,8 +113,8 @@ end
 local function serialize(routine: Model): Types.Routine
 	local layer = serializeLayer(routine)
 
-	return function()
-		executeLayer(layer)
+	return function(context: Types.CallContext)
+		executeLayer(layer, context)
 	end
 end
 

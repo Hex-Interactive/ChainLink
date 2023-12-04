@@ -12,7 +12,7 @@ local function handleResult<T>(result: Types.Result<T>): boolean
 	end
 
 	if result.err then
-		Util.LogError(result.err)
+		Util.LogWarn(result.err)
 	end
 
 	return false
