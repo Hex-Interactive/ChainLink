@@ -3,6 +3,7 @@ local Mutexes = require(script.Parent.Parent:WaitForChild("Mutexes"))
 local Types = require(script.Parent.Parent:WaitForChild("Types"))
 local Names = require(script.Parent.Parent:WaitForChild("Names"))
 local Util = require(script.Parent.Parent:WaitForChild("Util"))
+local Chain = require(script.Parent)
 
 local MAX_ROUTINE_STEPS = 20
 local VALID_STEPS = table.freeze({
@@ -37,11 +38,11 @@ local function serializeLayer(parent: Instance): RoutineLayer
 			break
 		end
 
-		Util.Assert(step:IsA("Configuration"), `invalid routine step "{step:GetFullName()}" found!`)
+		Util.Assert(step:IsA("Configuration"), `invalid routine step "{step:GetFullName()}" found`)
 
 		local class = step:GetAttribute(Names.Attr.Class)
 		local data = step:GetAttribute(Names.Attr.Data)
-		Util.Assert(VALID_STEPS[class], `routine step class "{class}" is unknown!`)
+		Util.Assert(VALID_STEPS[class], `routine step class "{class}" is unknown`)
 
 		local routineStep = {
 			class = class,
@@ -70,8 +71,13 @@ local function serializeLayer(parent: Instance): RoutineLayer
 	return layer
 end
 
-local function executeLayer(_layer: RoutineLayer)
-	-- TODO
+local function executeLayer(layer: RoutineLayer)
+	for _, step in layer do
+		if step.class == "Chain" then
+			Util.Assert(typeof(step.data) == "string", `routine step data "{step.data}" should be a string`)
+			Chain.Execute(step.data :: string)
+		end
+	end
 end
 
 local function serialize(routine: Model): Routine
