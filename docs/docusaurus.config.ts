@@ -3,8 +3,8 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
+  title: 'ChainLink',
+  tagline: 'DataModel-driven logic and control system for Roblox',
   favicon: 'img/favicon.ico',
 
   url: 'https://github.com',
@@ -29,9 +29,6 @@ const config: Config = {
         docs: {
           sidebarPath: './sidebars.ts',
         },
-        blog: {
-          showReadingTime: true,
-        },
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -40,21 +37,15 @@ const config: Config = {
   ],
 
   themeConfig: {
-    image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'My Site',
-      logo: {
-        alt: 'My Site Logo',
-        src: 'img/logo.svg',
-      },
+      title: 'ChainLink',
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
+          sidebarId: 'guideSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: 'Guide',
         },
-        {to: '/blog', label: 'Blog', position: 'left'},
         {
           href: 'https://github.com/Hex-Interactive/ChainLink',
           label: 'GitHub',
@@ -69,8 +60,8 @@ const config: Config = {
           title: 'Docs',
           items: [
             {
-              label: 'Tutorial',
-              to: '/docs/intro',
+              label: 'Guide',
+              to: '/docs/getting-started',
             },
           ],
         },
@@ -78,17 +69,13 @@ const config: Config = {
           title: 'More',
           items: [
             {
-              label: 'Blog',
-              to: '/blog',
-            },
-            {
               label: 'GitHub',
               href: 'https://github.com/Hex-Interactive/ChainLink',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Hex Interactive. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Hex Interactive.`,
     },
     prism: {
       theme: prismThemes.github,
