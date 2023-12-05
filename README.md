@@ -17,7 +17,7 @@ TODO
 
 ## Documentation
 
-TODO
+You can find documentation and guides on the [website](https://hex-interactive.github.io/ChainLink/).
 
 ## License
 
