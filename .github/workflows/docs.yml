@@ -8,17 +8,15 @@ on:
     paths:
       - docs/**
 
-permissions:
-  contents: write
-
-defaults:
-  run:
-    working-directory: docs
-
 jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: docs
     steps:
       - name: Checkout docs
         uses: actions/checkout@v3
