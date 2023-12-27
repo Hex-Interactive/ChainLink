@@ -47,7 +47,7 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'guideSidebar',
           position: 'left',
-          label: 'Guide',
+          label: 'Docs',
         },
         {
           href: 'https://github.com/Hex-Interactive/ChainLink',
@@ -62,8 +62,16 @@ const config: Config = {
           title: 'Docs',
           items: [
             {
-              label: 'Guide',
-              to: '/docs/getting-started',
+              label: 'Intro',
+              to: '/docs',
+            },
+            {
+              label: 'Installation',
+              to: '/docs/getting-started/installation',
+            },
+            {
+              label: 'Configuration',
+              to: '/docs/getting-started/configuration',
             },
           ],
         },
