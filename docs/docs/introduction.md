@@ -11,11 +11,11 @@ ChainLink also practices sandboxing, which you can read about [below](#community
 
 ## Conceptually
 
-The key features of ChainLink primarily come from two things, as the name suggests: Chain and Links.
+The key features of ChainLink primarily come from two things, as the name suggests: [Chain](docs/concepts/chain) and [Links](docs/concepts/links).
 
-Chain is a custom list-based scripting language. It's intentionally simple, lacking common programming features such as if-statements or functions. The singluar goal of Chain is to be a list of definitive instructions to execute. Achieving more complex logic with Chain comes from the usage of features like Links, Actions, and Routines.
+Chain is a custom list-based scripting language. It's intentionally simple, lacking common programming features such as if-statements or functions. The singluar goal of Chain is to be a list of definitive instructions to execute. Achieving more complex logic with Chain comes from the usage of features like Links, [Actions](docs/concepts/actions), and [Routines](docs/concepts/routines).
 
-Links are what tie your maps's presence in the Roblox DOM to the world of ChainLink. In other words, ChainLink, and by extension its scripting language, Chain, are not able to access your game's hierarchy without a Link explicitly denoting that a given instance can be accessed.
+Links are what tie your maps's presence in the [Roblox DOM](https://create.roblox.com/docs/reference/engine/classes/DataModel) to the world of ChainLink. In other words, ChainLink, and by extension its scripting language, Chain, are not able to access your game's hierarchy without a Link explicitly denoting that a given instance can be accessed.
 
 The instructions that Chain executes are Actions and Routines. Actions are the lowest level of an instructional unit. Actions are programmed in Luau and defined by the developer of the game, for use through ChainLink in maps. Routines are groupings of Chain in an ordered structure. They allow you to achieve more complexity through being able to reuse a Chain script in other Chain scripts, but not being rooted in Chain themselves.
 

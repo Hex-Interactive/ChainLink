@@ -13,7 +13,7 @@ During the configuration process you can:
 3. [Register Validators](#registering-validators)
 4. [Call the `Init` function](#initializing)
 
-The first step and last step are the only required steps, but registering game-specific Actions are recommended. You should register Validators only as you need them.
+The first step and last step are the only required steps, but registering game-specific [Actions](../concepts/actions) are recommended. You should register [Validators](../concepts/validators) only as you need them.
 
 ## Steps
 
@@ -53,7 +53,7 @@ ChainLink.RegisterDefaultActions()
 
 ### Registering Validators
 
-To customize functionality of built-in features such as Triggers, you'll want to register Validators. Using the function `RegisterValidators`, you pass in a table with the names of the Validators and the Validator functions themselves. You're only able to register Validators defined internally in ChainLink, and you only have to register the Validators you need, otherwise they will default to a function that always returns true.
+To customize functionality of built-in features such as [Triggers](../concepts/triggers), you'll want to register Validators. Using the function `RegisterValidators`, you pass in a table with the names of the Validators and the Validator functions themselves. You're only able to register Validators defined internally in ChainLink, and you only have to register the Validators you need, otherwise they will default to a function that always returns true.
 
 ```lua
 local ChainLink = require(...)
