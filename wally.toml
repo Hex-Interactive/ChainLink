@@ -12,6 +12,6 @@ include = [
 	"src/**",
 	".luaurc",
 	"wally.toml",
-	"LICENSE",
+	"LICENSE.md",
 	"README.md",
 ]
