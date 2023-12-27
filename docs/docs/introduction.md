@@ -27,7 +27,7 @@ ChainLink can be a very powerful tool for map development. When implementing Cha
 ChainLink can only do what you, the developer, give it the capabilities to do.
 :::
 
-By default, ChainLink only has a handful of Actions and nothing to trigger Links. To get the most out of the system, integrate your game's systems with ChainLink as much as reasonably possible. The scope of what is possible is up to how deep you integrate ChaihLink, and the map developer's usage of ChainLinks native and developer-defined features.
+By default, ChainLink only has a handful of Actions and nothing to trigger Links. To get the most out of the system, integrate your game's systems with ChainLink as much as reasonably possible. The scope of what is possible is up to how deep you integrate ChaihLink, and the map developer's usage of ChainLink's native and developer-defined features.
 
 ## Use Cases
 
