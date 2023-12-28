@@ -1,5 +1,6 @@
 [package]
 name = "hex-interactive/chainlink"
+description = "DataModel-driven logic and control system for Roblox"
 version = "0.1.0"
 registry = "https://github.com/upliftgames/wally-index"
 realm = "shared"
