@@ -5,7 +5,6 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'ChainLink',
   tagline: 'DataModel-driven logic and control system for Roblox',
-  favicon: 'img/favicon.ico',
 
   url: 'https://github.com',
   baseUrl: '/ChainLink/',
@@ -62,7 +61,7 @@ const config: Config = {
           title: 'Docs',
           items: [
             {
-              label: 'Intro',
+              label: 'Introduction',
               to: '/docs',
             },
             {
