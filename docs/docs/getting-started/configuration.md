@@ -62,8 +62,8 @@ ChainLink.RegisterValidators({
 	CanTrigger = function(): boolean
 		return script:GetAttribute("TriggersEnabled")
 	end,
-	CanTriggerPlayer = function(player: Player): boolean
-		return player.UserId ~= 1
+	CanTriggerPlayer = function(subject: Player): boolean
+		return subject.UserId ~= 1
 	end,
 })
 ```
@@ -93,8 +93,8 @@ ChainLink.RegisterActionsIn(script:WaitForChild("Actions"), { "OldAction" })
 ChainLink.RegisterDefaultActions()
 
 ChainLink.RegisterValidators({
-	CanTriggerPlayer = function(player: Player): boolean
-		return player.UserId % 2 == 0
+	CanTriggerPlayer = function(subject: Player): boolean
+		return subject.UserId % 2 == 0
 	end,
 })
 
