@@ -22,3 +22,7 @@
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
   --ifm-link-color: #70cfff;
 }
+
+.docusaurus-mermaid-container {
+  text-align: center;
+}
