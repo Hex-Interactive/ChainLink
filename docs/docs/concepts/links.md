@@ -13,13 +13,15 @@ Links can have Ids assigned by the map developer which [Chain](chain) uses to re
 The syntax to define a Link Id is very simple. It is a list of individual identifiers separated by semicolons. Instances tagged as a Link can have multiple identifiers in their Link Id so that they can be more robustly referenced depending on your needs. Examples of this would be `Hello`, `Other`, and `Hello;Other`. These constitute single Link Ids, with the last one having multiple identifiers as opposed to the first two only having one identifier. Chain would be able to reference these examples as such:
 
 ```mermaid
-graph TD;
+flowchart TD;
     A[Chain Referencing Identifier #quot;Hello#quot;];
     B[Instance With Link Id #quot;Hello#quot;];
-    C[Instance With Link Id #quot;Hello;Other#quot;];
+    C[Instance With Link Id #quot;Other#quot;];
+    D[Instance With Link Id #quot;Hello;Other#quot;];
 
     A-->B;
-    A-->C;
+    A~~~C;
+    A-->D;
 ```
 
 <br/>
