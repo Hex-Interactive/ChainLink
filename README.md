@@ -11,13 +11,11 @@ Keep your map-specific logic in the map itself, while avoiding nested and unorga
 * Practices code sandboxing inherently, allowing you to integrate community-created content easily
 * Tailored for flexibility, per-game configuration, and usage on both the server and client
 
-## Installation
-
-TODO
-
 ## Documentation
 
-You can find documentation and guides on the [website](https://hex-interactive.github.io/ChainLink/).
+- [Website](https://hex-interactive.github.io/ChainLink/)
+- [Introduction](https://hex-interactive.github.io/ChainLink/docs)
+- [Installation](https://hex-interactive.github.io/ChainLink/docs/getting-started/installation)
 
 ## License
 
