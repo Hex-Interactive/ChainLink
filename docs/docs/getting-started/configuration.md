@@ -26,7 +26,7 @@ Use the function `SetMapDirectory` and pass a function that, when called, will r
 ```lua
 local ChainLink = require(...)
 
-ChainLink.SetMapDirectory(function(): Folder
+ChainLink.SetMapDirectory(function()
 	return workspace:FindFirstChild("CurrentMap")
 end)
 ```
@@ -85,7 +85,7 @@ Below is a full example of a potential configuration.
 ```lua
 local ChainLink = require(...)
 
-ChainLink.SetMapDirectory(function(): Folder
+ChainLink.SetMapDirectory(function()
 	return workspace:FindFirstChild("MainMap")
 end)
 

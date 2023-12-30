@@ -2,7 +2,7 @@
 export type Validator<T> = (subject: T) -> boolean
 
 -- CurrentMap
-export type MapDirectory = () -> Folder
+export type MapDirectory = () -> Instance
 
 -- Actions
 export type Action = (context: CallContext) -> ()

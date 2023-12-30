@@ -9,7 +9,7 @@ function CurrentMap.SetDirectory(getter: Types.MapDirectory)
 	getDirectory = getter
 end
 
-function CurrentMap.GetDirectory(): Folder
+function CurrentMap.GetDirectory(): Instance
 	Util.Assert(getDirectory ~= nil, "map directory not defined")
 	return getDirectory()
 end
