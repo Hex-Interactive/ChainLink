@@ -59,10 +59,10 @@ To customize functionality of built-in features such as [Triggers](../concepts/t
 local ChainLink = require(...)
 
 ChainLink.RegisterValidators({
-	CanTrigger = function(): boolean
+	CanTrigger = function()
 		return script:GetAttribute("TriggersEnabled")
 	end,
-	CanTriggerPlayer = function(subject: Player): boolean
+	CanTriggerPlayer = function(subject)
 		return subject.UserId ~= 1
 	end,
 })
@@ -93,7 +93,7 @@ ChainLink.RegisterActionsIn(script:WaitForChild("Actions"), { "OldAction" })
 ChainLink.RegisterDefaultActions()
 
 ChainLink.RegisterValidators({
-	CanTriggerPlayer = function(subject: Player): boolean
+	CanTriggerPlayer = function(subject)
 		return subject.UserId % 2 == 0
 	end,
 })
