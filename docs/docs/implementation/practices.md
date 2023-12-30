@@ -43,7 +43,7 @@ Adding more [Actions](../concepts/actions), especially ones that relate closely 
 - Spawning in a tornado entity
 
 :::warning
-It's important to keep security in mind when implementing Actions (such as ones that extend the round time or give coins), as there's no restrictions on calling Actions besides what you implement in their definition. See the [security](security) page for more information.
+It's important to keep security in mind when implementing Actions (such as ones that extend the round time or give coins), as there's no restrictions on calling Actions besides what you implement in their definition. See the [security](security#custom) page for more information.
 :::
 
 You can read more about how to register custom actions on the [configuration](../getting-started/configuration#registering-actions) page.
