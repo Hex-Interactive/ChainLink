@@ -21,7 +21,7 @@ The instructions that Chain executes are Actions and Routines. Actions are the l
 
 ## The Golden Rule
 
-ChainLink can be a very powerful tool for map development. When [implementing](integration/practices) ChainLink in your game there is one key concept to ensure you get maximum usage out of the system, however.
+ChainLink can be a very powerful tool for map development. When [implementing](docs/implementation/practices) ChainLink in your game there is one key concept to ensure you get maximum usage out of the system, however.
 
 :::info[The Golden Rule of ChainLink]
 ChainLink can only do what you, the developer, give it the capabilities to do.

@@ -30,7 +30,7 @@ After having tagged an instance with `Link`, you can define the instance's Link 
 
 ## Triggering
 
-Links are also an entry point of Chain for map developers to take advantage of ChainLink's [integration](../integration/practices) by the game developer.
+Links are also an entry point of Chain for map developers to take advantage of ChainLink's [implementation](../implementation/practices) by the game developer.
 
 When a Link is triggered, ChainLink will check if an attribute of type `string` named "LinkChain" is present on the linked instance. If this attribute exists, it will treat the value of the attribute as a Chain script and execute it. This is useful if the game developer has ChainLink triggering links very often, so that various game events will be able to trigger the systems created in ChainLink by the map developer.
 
