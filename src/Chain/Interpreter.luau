@@ -84,7 +84,7 @@ function Interpreter:InterpretCall(node: Types.ASTNode): Types.ASTData?
 				if typeof(value) == expectedType or (expectedType == "any" and value ~= nil) then
 					continue
 				end
-	
+
 				Util.LogWarn(`action "{callName}" argument #{index} is invalid`)
 				return nil
 			end
