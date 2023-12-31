@@ -93,8 +93,9 @@ const config: Config = {
       copyright: `Copyright © ${new Date().getFullYear()} Hex Interactive.`,
     },
     prism: {
-      theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
+      additionalLanguages: ['lua'],
+      theme: prismThemes.vsLight,
+      darkTheme: prismThemes.vsDark,
     },
   } satisfies Preset.ThemeConfig,
 };
