@@ -1,6 +1,6 @@
 --[[
 	ChainLink
-	v0.1.0
+	v0.1.1
 ]]
 
 local Validators = require(script:WaitForChild("Validators"))
