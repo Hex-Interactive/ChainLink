@@ -72,15 +72,22 @@ function Interpreter:InterpretCall(node: Types.ASTNode): Types.ASTData?
 		return nil
 	end
 
-	if action and action.ValidateArgs then
-		for index, expectedType in action.ValidateArgs do
-			local value = args[index]
-			if typeof(value) == expectedType or (expectedType == "any" and value ~= nil) then
-				continue
-			end
-
-			Util.LogWarn(`action "{callName}" argument #{index} is invalid`)
+	if action then
+		if action.ValidateTarget and not target then
+			Util.LogWarn(`action "{callName}" requires a target`)
 			return nil
+		end
+
+		if action.ValidateArgs then
+			for index, expectedType in action.ValidateArgs do
+				local value = args[index]
+				if typeof(value) == expectedType or (expectedType == "any" and value ~= nil) then
+					continue
+				end
+	
+				Util.LogWarn(`action "{callName}" argument #{index} is invalid`)
+				return nil
+			end
 		end
 	end
 
