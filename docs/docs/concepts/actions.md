@@ -36,10 +36,11 @@ type Action = (context: CallContext) -> ()
 type CallContext = {
 	target: Instance?,
 	args: { ASTData? },
-	validatedParam: any?,
+	validatedParam: ValidatedParam?,
 }
 
-type ValidateTargetFunc = (target: Instance) -> (boolean, any?)
+type ValidateTargetFunc = (target: Instance) -> (boolean, ValidatedParam?)
+type ValidatedParam = any
 
 type ActionModule = {
 	ValidateArgs: { [number]: string },
@@ -48,6 +49,6 @@ type ActionModule = {
 }
 ```
 
-In this example above, `ASTData` represents the [currently supported datatypes](chain#supported-datatypes) of Chain, see the [Chain](chain) page for more information. The return types of `ValidateTargetFunc` are 1. a boolean indicating a successful validation and 2. the `validatedParam`.
+In this example above, `ASTData` represents the [currently supported datatypes](chain#supported-datatypes) of Chain, see the [Chain](chain) page for more information. The return types of `ValidateTargetFunc` are 1. a boolean indicating a successful validation and 2. the developer-defined `validatedParam`.
 
 It is important to keep [security](../implementation/security#custom) in mind when creating your own Actions.

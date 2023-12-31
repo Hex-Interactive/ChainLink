@@ -11,7 +11,8 @@ export type ActionModule = {
 	ValidateTarget: (ValidateTargetFunc | boolean)?,
 	Run: Action,
 }
-type ValidateTargetFunc = (target: Instance) -> (boolean, any?)
+type ValidateTargetFunc = (target: Instance) -> (boolean, ValidatedParam?)
+type ValidatedParam = any
 
 -- Chain
 export type Result<T> = {
@@ -22,7 +23,7 @@ export type Result<T> = {
 export type CallContext = {
 	target: Instance?,
 	args: { ASTData? },
-	validatedParam: any?,
+	validatedParam: ValidatedParam?,
 }
 export type BinExpValue = number | boolean
 export type Routine = Action
