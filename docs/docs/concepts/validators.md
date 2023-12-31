@@ -9,7 +9,7 @@ Validators are used by the game developer to customize the internal logic of Cha
 A Validator is a function that passes in a subject of a specific type (depends on the Validator) and returns a boolean. For example, defining a given Validator in the configuration table could look like something along these lines:
 
 ```lua
-ValidatorName = function(subject: T): boolean
+ValidatorName = function(subject)
 	return -- Insert conditional logic
 end
 ```
