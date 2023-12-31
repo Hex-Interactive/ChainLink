@@ -9,6 +9,10 @@ ChainLink is a DataModel-driven logic and control system that empowers map desig
 
 ChainLink also practices sandboxing, which you can read about [below](#community-contributions).
 
+:::warning
+ChainLink, in its current state, is not production ready yet! Its [prototype](#in-plain-sight-2), however, has been battle tested.
+:::
+
 ## Conceptually
 
 The key features of ChainLink primarily come from two things, as the name suggests: [Chain](docs/concepts/chain) and [Links](docs/concepts/links).
@@ -42,3 +46,11 @@ If your implementation of ChainLink is up to security standards, you could even 
 ### Empower Your Builders
 
 Many builders don't know how to script in Luau but would like to give their maps unique features. ChainLink is perfect for this to be able to give them a way to create unique logic all within their map, no scripts or unneeded complexity. Giving your builders access to ChainLink breathes life into your game's maps, allowing each one to be a more unique and fun experience for players.
+
+## Games Using ChainLink
+
+If your game uses ChainLink, please feel free to submit a PR to add yourself to this page!
+
+### [In Plain Sight 2](https://www.roblox.com/games/2901172949)
+
+ChainLink was originally developed for In Plain Sight 2 and is used currently in-game to enhance the maps. Specifically, In Plain Sight 2 currently uses the prototype version of ChainLink, not the version publicly available. It's all the same concepts, but this public version has been fully rewritten with improvements.
