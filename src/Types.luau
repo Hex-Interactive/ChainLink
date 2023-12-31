@@ -25,7 +25,7 @@ export type CallContext = {
 	validatedParam: any?,
 }
 export type BinExpValue = number | boolean
-export type Routine = (context: CallContext) -> ()
+export type Routine = Action
 export type Lexemes = { Lexeme }
 export type Lexeme = {
 	id: string,
