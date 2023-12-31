@@ -4,7 +4,7 @@ return {
 	ValidateTarget = true,
 	ValidateArgs = { [1] = "string", [2] = "number" },
 
-	Run = function(context: Types.CallContext)
+	Run = function(context)
 		local target = context.target :: Instance
 		local name = context.args[1] :: string
 		local number = context.args[2] :: number

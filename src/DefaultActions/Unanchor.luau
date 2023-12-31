@@ -3,7 +3,7 @@ local Types = require(script.Parent.Parent:WaitForChild("Types"))
 return {
 	ValidateTarget = true,
 
-	Run = function(context: Types.CallContext)
+	Run = function(context)
 		local target = context.target :: Instance
 
 		for _, instance in target:GetDescendants() do

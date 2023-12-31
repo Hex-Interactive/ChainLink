@@ -29,7 +29,7 @@ return {
 		}
 	end,
 
-	Run = function(context: Types.CallContext)
+	Run = function(context)
 		local param = context.validatedParam :: ValidatedParam
 		param.part.AssemblyLinearVelocity = param.vel
 	end,
