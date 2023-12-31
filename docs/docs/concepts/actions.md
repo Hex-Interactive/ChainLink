@@ -48,6 +48,6 @@ type ActionModule = {
 }
 ```
 
-In this example above, `ASTData` represents the currently supported datatypes of Chain, see the [Chain](chain) page for more information. The return types of `ValidateTargetFunc` are 1. a boolean indicating a successful validation and 2. the `validatedParam`.
+In this example above, `ASTData` represents the [currently supported datatypes](chain#supported-datatypes) of Chain, see the [Chain](chain) page for more information. The return types of `ValidateTargetFunc` are 1. a boolean indicating a successful validation and 2. the `validatedParam`.
 
 It is important to keep [security](../implementation/security#custom) in mind when creating your own Actions.
