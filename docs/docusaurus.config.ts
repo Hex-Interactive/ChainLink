@@ -33,6 +33,7 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
+          editUrl: 'https://github.com/Hex-Interactive/ChainLink/edit/main/docs/'
         },
         theme: {
           customCss: './src/css/custom.css',
@@ -61,6 +62,7 @@ const config: Config = {
         },
       ],
     },
+
     footer: {
       links: [
         {
@@ -92,6 +94,7 @@ const config: Config = {
       ],
       copyright: `Copyright © ${new Date().getFullYear()} Hex Interactive.`,
     },
+
     prism: {
       additionalLanguages: ['lua'],
       theme: prismThemes.dracula,
