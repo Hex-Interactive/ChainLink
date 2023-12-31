@@ -19,4 +19,4 @@ Keep your map-specific logic in the map itself, while avoiding nested and unorga
 
 ## License
 
-ChainLink is licensed under the [MIT License](LICENSE.txt).
+ChainLink is licensed under the [MIT License](LICENSE.md).
