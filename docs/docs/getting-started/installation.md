@@ -12,7 +12,7 @@ ChainLink is available for Rojo-based and Studio workflows.
 2. Add ChainLink to your `wally.toml` file:
 
 ```
-ChainLink = "hex-interactive/chainlink@0.1.1"
+ChainLink = "hex-interactive/chainlink@0.1.2"
 ```
 
 3. Run the command `wally install` to install your packages
