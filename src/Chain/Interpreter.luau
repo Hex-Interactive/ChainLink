@@ -153,6 +153,7 @@ end
 
 function Interpreter:InterpretASTNode(node: Types.ASTNode): Types.ASTData?
 	local newCount = self.complexity + 1
+	self.complexity = newCount
 	if newCount > COMPLEXITY_LIMIT then
 		return nil -- Not a perfect limit, but it will stop any deeper function calls
 	end
