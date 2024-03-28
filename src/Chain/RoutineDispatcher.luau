@@ -1,18 +1,18 @@
 local CurrentMap = require(script.Parent.Parent:WaitForChild("CurrentMap"))
 local Mutexes = require(script.Parent.Parent:WaitForChild("Mutexes"))
-local Types = require(script.Parent.Parent:WaitForChild("Types"))
+local ChainTypes = require(script.Parent:WaitForChild("ChainTypes"))
 local Util = require(script.Parent.Parent:WaitForChild("Util"))
 
 local index: { [Model]: RoutineEntry } = {}
 
 type RoutineEntry = {
 	name: string,
-	run: Types.Routine,
+	run: ChainTypes.Routine,
 }
 
 local RoutineDispatcher = {}
 
-function RoutineDispatcher.Export(): { [string]: Types.Routine }
+function RoutineDispatcher.Export(): { [string]: ChainTypes.Routine }
 	local routines = {}
 
 	for routine, entry in index do

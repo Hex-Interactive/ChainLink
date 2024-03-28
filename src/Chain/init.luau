@@ -1,12 +1,12 @@
 local Interpreter = require(script:WaitForChild("Interpreter"))
-local Types = require(script.Parent:WaitForChild("Types"))
+local ChainTypes = require(script:WaitForChild("ChainTypes"))
 local Util = require(script.Parent:WaitForChild("Util"))
 local Parser = require(script:WaitForChild("Parser"))
 local Lexer = require(script:WaitForChild("Lexer"))
 
 local Chain = {}
 
-local function handleResult<T>(result: Types.Result<T>): boolean
+local function handleResult<T>(result: ChainTypes.Result<T>): boolean
 	if result.ok then
 		return true
 	end
@@ -18,7 +18,7 @@ local function handleResult<T>(result: Types.Result<T>): boolean
 	return false
 end
 
-function Chain.Compile(source: string): (Types.ASTNode?, Types.Lexemes?)
+function Chain.Compile(source: string): (ChainTypes.ASTNode?, ChainTypes.Lexemes?)
 	local lexer = Lexer.new(source)
 	local lexerResult = lexer:Begin()
 	local lexerSuccess = handleResult(lexerResult)
@@ -36,7 +36,7 @@ function Chain.Compile(source: string): (Types.ASTNode?, Types.Lexemes?)
 	return parserResult.data, lexerResult.data
 end
 
-function Chain.Interpret(ast: Types.ASTNode)
+function Chain.Interpret(ast: ChainTypes.ASTNode)
 	local interpreter = Interpreter.new(ast)
 	interpreter:Begin()
 end

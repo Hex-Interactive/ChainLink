@@ -1,5 +1,6 @@
 local LexemeIDs = require(script.Parent:WaitForChild("LexemeIDs"))
-local Types = require(script.Parent.Parent:WaitForChild("Types"))
+
+export type Value = number | boolean
 
 local typeChecking = {
 	[LexemeIDs.Pow] = { x = { "number" }, y = { "number" } },
@@ -74,7 +75,7 @@ function BinExp.TypeCheck(op: string, x: any, y: any): boolean
 	return true
 end
 
-function BinExp.Eval(op: string, x: Types.BinExpValue, y: Types.BinExpValue): Types.BinExpValue
+function BinExp.Eval(op: string, x: Value, y: Value): Value
 	return evals[op](x, y)
 end
 

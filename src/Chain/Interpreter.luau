@@ -1,7 +1,7 @@
 local RoutineDispatcher = require(script.Parent:WaitForChild("RoutineDispatcher"))
 local Actions = require(script.Parent.Parent:WaitForChild("Actions"))
 local ASTNodeIDs = require(script.Parent:WaitForChild("ASTNodeIDs"))
-local Types = require(script.Parent.Parent:WaitForChild("Types"))
+local ChainTypes = require(script.Parent:WaitForChild("ChainTypes"))
 local Links = require(script.Parent.Parent:WaitForChild("Links"))
 local Util = require(script.Parent.Parent:WaitForChild("Util"))
 local BinExp = require(script.Parent:WaitForChild("BinExp"))
@@ -13,14 +13,14 @@ local classMetatable = { __index = classPrototype }
 export type Identity = typeof(setmetatable(
 	{} :: {
 		_complexity: number,
-		_ast: Types.ASTNode,
-		_routines: { [string]: Types.Routine },
+		_ast: ChainTypes.ASTNode,
+		_routines: { [string]: ChainTypes.Routine },
 		_links: { [string]: { Instance } },
 	},
 	classMetatable
 ))
 
-local function constructor(ast: Types.ASTNode): Identity
+local function constructor(ast: ChainTypes.ASTNode): Identity
 	local self = setmetatable({}, classMetatable)
 
 	self._complexity = 0
@@ -31,8 +31,8 @@ local function constructor(ast: Types.ASTNode): Identity
 	return self
 end
 
-function classPrototype.InterpretRoot(self: Identity, node: Types.ASTNode): Types.ASTData?
-	local children = node.children :: Types.ASTChildren_Root
+function classPrototype.InterpretRoot(self: Identity, node: ChainTypes.ASTNode): ChainTypes.ASTData?
+	local children = node.children :: ChainTypes.ASTChildren_Root
 
 	for _, child in children do
 		self:InterpretASTNode(child)
@@ -41,8 +41,8 @@ function classPrototype.InterpretRoot(self: Identity, node: Types.ASTNode): Type
 	return nil
 end
 
-function classPrototype.InterpretCall(self: Identity, node: Types.ASTNode): Types.ASTData?
-	local children = node.children :: Types.ASTChildren_Call
+function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode): ChainTypes.ASTData?
+	local children = node.children :: ChainTypes.ASTChildren_Call
 	local target = (if children.target then self:InterpretASTNode(children.target) else nil) :: string?
 	local callName = node.data :: string
 
@@ -126,8 +126,8 @@ function classPrototype.InterpretCall(self: Identity, node: Types.ASTNode): Type
 	return nil
 end
 
-function classPrototype.InterpretBinExp(self: Identity, node: Types.ASTNode): Types.ASTData?
-	local children = node.children :: Types.ASTChildren_BinExp
+function classPrototype.InterpretBinExp(self: Identity, node: ChainTypes.ASTNode): ChainTypes.ASTData?
+	local children = node.children :: ChainTypes.ASTChildren_BinExp
 	local op = node.data :: string
 
 	if not BinExp.IsOpDefined(op) then
@@ -141,10 +141,10 @@ function classPrototype.InterpretBinExp(self: Identity, node: Types.ASTNode): Ty
 		return nil
 	end
 
-	return BinExp.Eval(op, left :: Types.BinExpValue, right :: Types.BinExpValue)
+	return BinExp.Eval(op, left :: BinExp.Value, right :: BinExp.Value)
 end
 
-function classPrototype.InterpretASTNode(self: Identity, node: Types.ASTNode): Types.ASTData?
+function classPrototype.InterpretASTNode(self: Identity, node: ChainTypes.ASTNode): ChainTypes.ASTData?
 	local newCount = self._complexity + 1
 	self._complexity = newCount
 	if newCount > COMPLEXITY_LIMIT then

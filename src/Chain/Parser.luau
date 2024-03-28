@@ -1,6 +1,6 @@
 local ASTNodeIDs = require(script.Parent:WaitForChild("ASTNodeIDs"))
+local ChainTypes = require(script.Parent:WaitForChild("ChainTypes"))
 local LexemeIDs = require(script.Parent:WaitForChild("LexemeIDs"))
-local Types = require(script.Parent.Parent:WaitForChild("Types"))
 
 local PREC = table.freeze({
 	[LexemeIDs.Pow] = 40,
@@ -47,14 +47,14 @@ local classPrototype = {}
 local classMetatable = { __index = classPrototype }
 export type Identity = typeof(setmetatable(
 	{} :: {
-		_lexemes: Types.Lexemes,
+		_lexemes: ChainTypes.Lexemes,
 		_len: number,
 		_pos: number,
 	},
 	classMetatable
 ))
 
-local function node(id: string, data: Types.ASTData, children: Types.ASTChildren?): Types.ASTNode
+local function node(id: string, data: ChainTypes.ASTData, children: ChainTypes.ASTChildren?): ChainTypes.ASTNode
 	return {
 		id = id,
 		data = data,
@@ -62,13 +62,13 @@ local function node(id: string, data: Types.ASTData, children: Types.ASTChildren
 	}
 end
 
-local function nodeUnexp(lexeme: Types.Lexeme?): Types.ASTNode
+local function nodeUnexp(lexeme: ChainTypes.Lexeme?): ChainTypes.ASTNode
 	local id = if lexeme then lexeme.id else "__Missing"
 	local data = if lexeme then lexeme.data else ""
 	return node(ASTNodeIDs.Unexp, `{id} ({data})`)
 end
 
-local function constructor(lexemes: Types.Lexemes): Identity
+local function constructor(lexemes: ChainTypes.Lexemes): Identity
 	local self = setmetatable({}, classMetatable)
 
 	self._lexemes = lexemes
@@ -87,7 +87,7 @@ function classPrototype.Peek(self: Identity, amount: number): string
 	return lexeme.id
 end
 
-function classPrototype.Look(self: Identity, amount: number): Types.Lexeme?
+function classPrototype.Look(self: Identity, amount: number): ChainTypes.Lexeme?
 	local nextPos = self._pos + amount
 	if nextPos > self._len then
 		return nil
@@ -100,7 +100,7 @@ function classPrototype.Consume(self: Identity)
 	self._pos += 1
 end
 
-function classPrototype.ParseFactor(self: Identity): Types.ASTNode
+function classPrototype.ParseFactor(self: Identity): ChainTypes.ASTNode
 	local id = self:Peek(0)
 
 	if id == LexemeIDs.LParen then
@@ -114,11 +114,11 @@ function classPrototype.ParseFactor(self: Identity): Types.ASTNode
 
 		return res
 	elseif id == LexemeIDs.Num then
-		local lexeme = self:Look(0) :: Types.Lexeme
+		local lexeme = self:Look(0) :: ChainTypes.Lexeme
 		self:Consume()
 		return node(ASTNodeIDs.Num, tonumber(lexeme.data) :: number)
 	elseif id == LexemeIDs.Id then
-		local lexeme = self:Look(0) :: Types.Lexeme
+		local lexeme = self:Look(0) :: ChainTypes.Lexeme
 		local resolved = RESOLVE_ID[lexeme.data]
 		if resolved then
 			self:Consume()
@@ -129,7 +129,7 @@ function classPrototype.ParseFactor(self: Identity): Types.ASTNode
 	return nodeUnexp(self:Look(0))
 end
 
-function classPrototype.ParseBinExp(self: Identity, min: number): Types.ASTNode
+function classPrototype.ParseBinExp(self: Identity, min: number): ChainTypes.ASTNode
 	local result = self:ParseFactor()
 	local id = self:Peek(0)
 
@@ -149,13 +149,13 @@ function classPrototype.ParseBinExp(self: Identity, min: number): Types.ASTNode
 	return result
 end
 
-function classPrototype.ParseExpression(self: Identity): Types.ASTNode
+function classPrototype.ParseExpression(self: Identity): ChainTypes.ASTNode
 	local id = self:Peek(0)
 	if id == LexemeIDs.UnexpEof then
 		return nodeUnexp(nil) -- We know this will be nil here
 	end
 
-	local lexeme = self:Look(0) :: Types.Lexeme
+	local lexeme = self:Look(0) :: ChainTypes.Lexeme
 	if id == LexemeIDs.Str then
 		self:Consume()
 		return node(ASTNodeIDs.Str, lexeme.data)
@@ -166,10 +166,10 @@ function classPrototype.ParseExpression(self: Identity): Types.ASTNode
 	return nodeUnexp(lexeme)
 end
 
-function classPrototype.ParseCall(self: Identity, callTarget: Types.Lexeme?): Types.ASTNode
+function classPrototype.ParseCall(self: Identity, callTarget: ChainTypes.Lexeme?): ChainTypes.ASTNode
 	local target = if callTarget then node(ASTNodeIDs.Str, callTarget.data) else nil
 
-	local callName = self:Look(0) :: Types.Lexeme
+	local callName = self:Look(0) :: ChainTypes.Lexeme
 	self:Consume()
 
 	self:Consume() -- Starting parenthesis
@@ -214,8 +214,8 @@ function classPrototype.ParseCall(self: Identity, callTarget: Types.Lexeme?): Ty
 	})
 end
 
-function classPrototype.ParseTargetedCall(self: Identity): Types.ASTNode
-	local targetName = self:Look(0) :: Types.Lexeme
+function classPrototype.ParseTargetedCall(self: Identity): ChainTypes.ASTNode
+	local targetName = self:Look(0) :: ChainTypes.Lexeme
 	self:Consume()
 
 	self:Consume() -- Arrow
@@ -234,7 +234,7 @@ function classPrototype.ParseTargetedCall(self: Identity): Types.ASTNode
 	return nodeUnexp(self:Look(0))
 end
 
-function classPrototype.ParseNext(self: Identity): Types.ASTNode?
+function classPrototype.ParseNext(self: Identity): ChainTypes.ASTNode?
 	local id = self:Peek(0)
 
 	if id == LexemeIDs.Eof then
@@ -254,7 +254,7 @@ function classPrototype.ParseNext(self: Identity): Types.ASTNode?
 	return nodeUnexp(self:Look(0))
 end
 
-function classPrototype.Begin(self: Identity): Types.Result<Types.ASTNode>
+function classPrototype.Begin(self: Identity): ChainTypes.Result<ChainTypes.ASTNode>
 	local children = {}
 
 	while true do

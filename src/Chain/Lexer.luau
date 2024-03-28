@@ -1,5 +1,5 @@
+local ChainTypes = require(script.Parent:WaitForChild("ChainTypes"))
 local LexemeIDs = require(script.Parent:WaitForChild("LexemeIDs"))
-local Types = require(script.Parent.Parent:WaitForChild("Types"))
 
 local NUMBERS = table.freeze({
 	["0"] = true,
@@ -44,7 +44,7 @@ local function isIdentifier(input: string?): boolean
 	return string.match(input or "", "%a") ~= nil or input == "_"
 end
 
-local function new(id: string, data: string?): Types.Lexeme
+local function new(id: string, data: string?): ChainTypes.Lexeme
 	return {
 		id = id,
 		data = data or "",
@@ -74,7 +74,7 @@ function classPrototype.Consume(self: Identity)
 	self._pos += 1
 end
 
-function classPrototype.ReadString(self: Identity): Types.Lexeme
+function classPrototype.ReadString(self: Identity): ChainTypes.Lexeme
 	local final = ""
 
 	local prev = nil
@@ -100,7 +100,7 @@ function classPrototype.ReadString(self: Identity): Types.Lexeme
 	return new(LexemeIDs.Str, final)
 end
 
-function classPrototype.ReadNumber(self: Identity, negative: boolean): Types.Lexeme
+function classPrototype.ReadNumber(self: Identity, negative: boolean): ChainTypes.Lexeme
 	local final = if negative then "-" else ""
 	if negative then
 		self:Consume()
@@ -119,7 +119,7 @@ function classPrototype.ReadNumber(self: Identity, negative: boolean): Types.Lex
 	return new(LexemeIDs.Num, final)
 end
 
-function classPrototype.ReadIdentifier(self: Identity): Types.Lexeme
+function classPrototype.ReadIdentifier(self: Identity): ChainTypes.Lexeme
 	local final = ""
 
 	while true do
@@ -135,7 +135,7 @@ function classPrototype.ReadIdentifier(self: Identity): Types.Lexeme
 	return new(LexemeIDs.Id, final)
 end
 
-function classPrototype.ReadNext(self: Identity): Types.Lexeme
+function classPrototype.ReadNext(self: Identity): ChainTypes.Lexeme
 	local char = self:Peek(0)
 
 	if char == nil then
@@ -238,7 +238,7 @@ function classPrototype.ReadNext(self: Identity): Types.Lexeme
 	return new(LexemeIDs.UknChar, char)
 end
 
-function classPrototype.Begin(self: Identity): Types.Result<Types.Lexemes>
+function classPrototype.Begin(self: Identity): ChainTypes.Result<ChainTypes.Lexemes>
 	local lexemes = {}
 
 	while true do
