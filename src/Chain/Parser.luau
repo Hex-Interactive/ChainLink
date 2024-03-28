@@ -63,7 +63,7 @@ local function node(id: string, data: ChainTypes.ASTData, children: ChainTypes.A
 end
 
 local function nodeUnexp(lexeme: ChainTypes.Lexeme?): ChainTypes.ASTNode
-	local id = if lexeme then lexeme.id else "__Missing"
+	local id = if lexeme then lexeme.id else "__UnexpEof"
 	local data = if lexeme then lexeme.data else ""
 	return node(ASTNodeIDs.Unexp, `{id} ({data})`)
 end
@@ -81,7 +81,7 @@ end
 function classPrototype.Peek(self: Identity, amount: number): string
 	local lexeme = self:Look(amount)
 	if not lexeme then
-		return LexemeIDs.UnexpEof
+		return LexemeIDs.Eof
 	end
 
 	return lexeme.id
@@ -151,8 +151,8 @@ end
 
 function classPrototype.ParseExpression(self: Identity): ChainTypes.ASTNode
 	local id = self:Peek(0)
-	if id == LexemeIDs.UnexpEof then
-		return nodeUnexp(nil) -- We know this will be nil here
+	if id == LexemeIDs.Eof then
+		return nodeUnexp(nil) -- We know the lexeme will be nil here, UnexpEof
 	end
 
 	local lexeme = self:Look(0) :: ChainTypes.Lexeme
