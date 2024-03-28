@@ -55,13 +55,13 @@ local evals = {
 	end,
 }
 
-local BinExpUtil = {}
+local BinExp = {}
 
-function BinExpUtil.IsDefined(op: string): boolean
+function BinExp.IsOpDefined(op: string): boolean
 	return evals[op] ~= nil
 end
 
-function BinExpUtil.IsValidTypes(op: string, x: any, y: any): boolean
+function BinExp.TypeCheck(op: string, x: any, y: any): boolean
 	local expected = typeChecking[op]
 	if not expected then
 		return false
@@ -74,8 +74,8 @@ function BinExpUtil.IsValidTypes(op: string, x: any, y: any): boolean
 	return true
 end
 
-function BinExpUtil.Eval(op: string, x: Types.BinExpValue, y: Types.BinExpValue): Types.BinExpValue
+function BinExp.Eval(op: string, x: Types.BinExpValue, y: Types.BinExpValue): Types.BinExpValue
 	return evals[op](x, y)
 end
 
-return BinExpUtil
+return BinExp
