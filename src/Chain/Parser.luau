@@ -1,4 +1,4 @@
-local ASTNodeIDs = require(script.Parent:WaitForChild("ASTNodeIDs"))
+local ASTNodeIds = require(script.Parent:WaitForChild("ASTNodeIds"))
 local ChainTypes = require(script.Parent:WaitForChild("ChainTypes"))
 local LexemeIDs = require(script.Parent:WaitForChild("LexemeIDs"))
 
@@ -34,11 +34,11 @@ local ASSOC = table.freeze({
 
 local RESOLVE_ID = table.freeze({
 	["true"] = table.freeze({
-		id = ASTNodeIDs.Bool,
+		id = ASTNodeIds.Bool,
 		value = true,
 	}),
 	["false"] = table.freeze({
-		id = ASTNodeIDs.Bool,
+		id = ASTNodeIds.Bool,
 		value = false,
 	}),
 })
@@ -65,7 +65,7 @@ end
 local function nodeUnexp(lexeme: ChainTypes.Lexeme?): ChainTypes.ASTNode
 	local id = if lexeme then lexeme.id else "__UnexpEof"
 	local data = if lexeme then lexeme.data else ""
-	return node(ASTNodeIDs.Unexp, `{id} ({data})`)
+	return node(ASTNodeIds.Unexp, `{id} ({data})`)
 end
 
 local function constructor(lexemes: ChainTypes.Lexemes): Identity
@@ -116,7 +116,7 @@ function classPrototype.ParseFactor(self: Identity): ChainTypes.ASTNode
 	elseif id == LexemeIDs.Num then
 		local lexeme = self:Look(0) :: ChainTypes.Lexeme
 		self:Consume()
-		return node(ASTNodeIDs.Num, tonumber(lexeme.data) :: number)
+		return node(ASTNodeIds.Num, tonumber(lexeme.data) :: number)
 	elseif id == LexemeIDs.Id then
 		local lexeme = self:Look(0) :: ChainTypes.Lexeme
 		local resolved = RESOLVE_ID[lexeme.data]
@@ -138,7 +138,7 @@ function classPrototype.ParseBinExp(self: Identity, min: number): ChainTypes.AST
 		local operator = self:Peek(0)
 		self:Consume()
 
-		result = node(ASTNodeIDs.BinExp, operator, {
+		result = node(ASTNodeIds.BinExp, operator, {
 			left = result,
 			right = self:ParseBinExp(nextMin),
 		})
@@ -158,7 +158,7 @@ function classPrototype.ParseExpression(self: Identity): ChainTypes.ASTNode
 	local lexeme = self:Look(0) :: ChainTypes.Lexeme
 	if id == LexemeIDs.Str then
 		self:Consume()
-		return node(ASTNodeIDs.Str, lexeme.data)
+		return node(ASTNodeIds.Str, lexeme.data)
 	elseif id == LexemeIDs.Num or id == LexemeIDs.Id or id == LexemeIDs.LParen then
 		return self:ParseBinExp(0)
 	end
@@ -167,7 +167,7 @@ function classPrototype.ParseExpression(self: Identity): ChainTypes.ASTNode
 end
 
 function classPrototype.ParseCall(self: Identity, callTarget: ChainTypes.Lexeme?): ChainTypes.ASTNode
-	local target = if callTarget then node(ASTNodeIDs.Str, callTarget.data) else nil
+	local target = if callTarget then node(ASTNodeIds.Str, callTarget.data) else nil
 
 	local callName = self:Look(0) :: ChainTypes.Lexeme
 	self:Consume()
@@ -184,7 +184,7 @@ function classPrototype.ParseCall(self: Identity, callTarget: ChainTypes.Lexeme?
 		end
 		self:Consume()
 
-		return node(ASTNodeIDs.Call, callName.data, {
+		return node(ASTNodeIds.Call, callName.data, {
 			target = target,
 			args = {},
 		})
@@ -208,7 +208,7 @@ function classPrototype.ParseCall(self: Identity, callTarget: ChainTypes.Lexeme?
 	end
 	self:Consume()
 
-	return node(ASTNodeIDs.Call, callName.data, {
+	return node(ASTNodeIds.Call, callName.data, {
 		target = target,
 		args = args,
 	})
@@ -263,7 +263,7 @@ function classPrototype.Begin(self: Identity): ChainTypes.Result<ChainTypes.ASTN
 			break
 		end
 
-		if nextNode.id == ASTNodeIDs.Unexp then
+		if nextNode.id == ASTNodeIds.Unexp then
 			return {
 				ok = false,
 				err = `parsed unexpected lexeme "{nextNode.data}"`,
@@ -275,7 +275,7 @@ function classPrototype.Begin(self: Identity): ChainTypes.Result<ChainTypes.ASTN
 
 	return {
 		ok = true,
-		data = node(ASTNodeIDs.Root, "", children),
+		data = node(ASTNodeIds.Root, "", children),
 	}
 end
 

@@ -1,6 +1,6 @@
 local RoutineDispatcher = require(script.Parent:WaitForChild("RoutineDispatcher"))
 local Actions = require(script.Parent.Parent:WaitForChild("Actions"))
-local ASTNodeIDs = require(script.Parent:WaitForChild("ASTNodeIDs"))
+local ASTNodeIds = require(script.Parent:WaitForChild("ASTNodeIds"))
 local ChainTypes = require(script.Parent:WaitForChild("ChainTypes"))
 local Links = require(script.Parent.Parent:WaitForChild("Links"))
 local Util = require(script.Parent.Parent:WaitForChild("Util"))
@@ -151,11 +151,11 @@ function classPrototype.InterpretASTNode(self: Identity, node: ChainTypes.ASTNod
 		return nil -- Not a perfect limit, but it will stop any deeper function calls
 	end
 
-	if node.id == ASTNodeIDs.Root then
+	if node.id == ASTNodeIds.Root then
 		return self:InterpretRoot(node)
-	elseif node.id == ASTNodeIDs.Call then
+	elseif node.id == ASTNodeIds.Call then
 		return self:InterpretCall(node)
-	elseif node.id == ASTNodeIDs.BinExp then
+	elseif node.id == ASTNodeIds.BinExp then
 		return self:InterpretBinExp(node)
 	end
 
