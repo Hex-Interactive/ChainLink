@@ -179,7 +179,7 @@ function classPrototype.ParseCall(self: Identity, callTarget: ChainTypes.Lexeme?
 		self:Consume()
 
 		local id = self:Peek(0)
-		if id ~= LexemeIds.NxCall then
+		if id ~= LexemeIds.Semicolon then
 			return nodeUnexp(self:Look(0))
 		end
 		self:Consume()
@@ -191,7 +191,7 @@ function classPrototype.ParseCall(self: Identity, callTarget: ChainTypes.Lexeme?
 	end
 
 	local args = { self:ParseExpression() }
-	while self:Peek(0) == LexemeIds.NxArg do
+	while self:Peek(0) == LexemeIds.Comma do
 		self:Consume()
 		table.insert(args, self:ParseExpression())
 	end
@@ -203,7 +203,7 @@ function classPrototype.ParseCall(self: Identity, callTarget: ChainTypes.Lexeme?
 	self:Consume()
 
 	local nextCallId = self:Peek(0)
-	if nextCallId ~= LexemeIds.NxCall then
+	if nextCallId ~= LexemeIds.Semicolon then
 		return nodeUnexp(self:Look(0))
 	end
 	self:Consume()
@@ -242,7 +242,7 @@ function classPrototype.ParseNext(self: Identity): ChainTypes.ASTNode?
 	elseif id == LexemeIds.Id then
 		local nextId = self:Peek(1)
 
-		if nextId == LexemeIds.Arr then
+		if nextId == LexemeIds.Arrow then
 			return self:ParseTargetedCall()
 		elseif nextId == LexemeIds.LParen then
 			return self:ParseCall(nil)

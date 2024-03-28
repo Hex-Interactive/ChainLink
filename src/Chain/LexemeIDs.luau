@@ -8,9 +8,9 @@ return table.freeze({
 	Str = "Str", -- Any string
 	Num = "Num", -- Any number
 
-	Arr = "Arr", -- Arrow (->)
-	NxCall = "NxCall", -- Next call (;)
-	NxArg = "NxArg", -- Next argument (,)
+	Arrow = "Arrow", -- Arrow (->)
+	Semicolon = "Semicolon", -- Semicolon (;)
+	Comma = "Comma", -- Comma (,)
 	LParen = "LParen", -- Left parenthesis (()
 	RParen = "RParen", -- Right parenthesis ())
 

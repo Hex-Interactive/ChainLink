@@ -146,7 +146,7 @@ function classPrototype.ReadNext(self: Identity): ChainTypes.Lexeme
 		if nextChar == ">" then
 			self:Consume()
 			self:Consume()
-			return new(LexemeIds.Arr, char .. nextChar)
+			return new(LexemeIds.Arrow, char .. nextChar)
 		elseif isNumerical(nextChar) then
 			return self:ReadNumber(true)
 		end
@@ -214,10 +214,10 @@ function classPrototype.ReadNext(self: Identity): ChainTypes.Lexeme
 		return new(LexemeIds.Pow, char)
 	elseif char == ";" then
 		self:Consume()
-		return new(LexemeIds.NxCall, char)
+		return new(LexemeIds.Semicolon, char)
 	elseif char == "," then
 		self:Consume()
-		return new(LexemeIds.NxArg, char)
+		return new(LexemeIds.Comma, char)
 	elseif char == "(" then
 		self:Consume()
 		return new(LexemeIds.LParen, char)
