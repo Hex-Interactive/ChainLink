@@ -13,6 +13,7 @@ local NUMBERS = table.freeze({
 	["8"] = true,
 	["9"] = true,
 })
+
 local WHITESPACE = table.freeze({
 	[""] = true,
 	[" "] = true,
@@ -20,25 +21,16 @@ local WHITESPACE = table.freeze({
 	["\t"] = true,
 })
 
-type Lexer = {
-	__index: Lexer,
-	new: (source: string) -> Lexer,
-
-	source: string,
-	len: number,
-	pos: number,
-
-	Peek: (self: Lexer, amount: number) -> string?,
-	Consume: (self: Lexer) -> (),
-	ReadString: (self: Lexer) -> Types.Lexeme,
-	ReadNumber: (self: Lexer, negative: boolean) -> Types.Lexeme,
-	ReadIdentifier: (self: Lexer) -> Types.Lexeme,
-	ReadNext: (self: Lexer) -> Types.Lexeme,
-	Begin: (self: Lexer) -> Types.Result<Types.Lexemes>,
-}
-
-local Lexer = {} :: Lexer
-Lexer.__index = Lexer
+local classPrototype = {}
+local classMetatable = { __index = classPrototype }
+export type Identity = typeof(setmetatable(
+	{} :: {
+		_source: string,
+		_len: number,
+		_pos: number,
+	},
+	classMetatable
+))
 
 local function isWhitespace(input: string?): boolean
 	return WHITESPACE[input] == true
@@ -59,30 +51,30 @@ local function new(id: string, data: string?): Types.Lexeme
 	}
 end
 
-function Lexer.new(source: string): Lexer
-	local self = (setmetatable({}, Lexer) :: any) :: Lexer
+local function constructor(source: string): Identity
+	local self = setmetatable({}, classMetatable)
 
-	self.source = source
-	self.len = string.len(source)
-	self.pos = 1
+	self._source = source
+	self._len = string.len(source)
+	self._pos = 1
 
 	return self
 end
 
-function Lexer:Peek(amount: number): string?
-	local nextPos = self.pos + amount
-	if nextPos > self.len then
+function classPrototype.Peek(self: Identity, amount: number): string?
+	local nextPos = self._pos + amount
+	if nextPos > self._len then
 		return nil
 	end
 
-	return string.sub(self.source, nextPos, nextPos)
+	return string.sub(self._source, nextPos, nextPos)
 end
 
-function Lexer:Consume()
-	self.pos += 1
+function classPrototype.Consume(self: Identity)
+	self._pos += 1
 end
 
-function Lexer:ReadString(): Types.Lexeme
+function classPrototype.ReadString(self: Identity): Types.Lexeme
 	local final = ""
 
 	local prev = nil
@@ -108,7 +100,7 @@ function Lexer:ReadString(): Types.Lexeme
 	return new(LexemeIDs.Str, final)
 end
 
-function Lexer:ReadNumber(negative: boolean): Types.Lexeme
+function classPrototype.ReadNumber(self: Identity, negative: boolean): Types.Lexeme
 	local final = if negative then "-" else ""
 	if negative then
 		self:Consume()
@@ -127,7 +119,7 @@ function Lexer:ReadNumber(negative: boolean): Types.Lexeme
 	return new(LexemeIDs.Num, final)
 end
 
-function Lexer:ReadIdentifier(): Types.Lexeme
+function classPrototype.ReadIdentifier(self: Identity): Types.Lexeme
 	local final = ""
 
 	while true do
@@ -143,7 +135,7 @@ function Lexer:ReadIdentifier(): Types.Lexeme
 	return new(LexemeIDs.Id, final)
 end
 
-function Lexer:ReadNext(): Types.Lexeme
+function classPrototype.ReadNext(self: Identity): Types.Lexeme
 	local char = self:Peek(0)
 
 	if char == nil then
@@ -246,7 +238,7 @@ function Lexer:ReadNext(): Types.Lexeme
 	return new(LexemeIDs.UknChar, char)
 end
 
-function Lexer:Begin(): Types.Result<Types.Lexemes>
+function classPrototype.Begin(self: Identity): Types.Result<Types.Lexemes>
 	local lexemes = {}
 
 	while true do
@@ -279,4 +271,6 @@ function Lexer:Begin(): Types.Result<Types.Lexemes>
 	}
 end
 
-return Lexer
+return {
+	new = constructor,
+}

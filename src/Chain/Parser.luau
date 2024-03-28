@@ -16,6 +16,7 @@ local PREC = table.freeze({
 	[LexemeIDs.Great] = 10,
 	[LexemeIDs.NotEq] = 10,
 })
+
 local ASSOC = table.freeze({
 	[LexemeIDs.Pow] = 0,
 	[LexemeIDs.Mod] = 1,
@@ -30,6 +31,7 @@ local ASSOC = table.freeze({
 	[LexemeIDs.Great] = 1,
 	[LexemeIDs.NotEq] = 1,
 })
+
 local RESOLVE_ID = table.freeze({
 	["true"] = table.freeze({
 		id = ASTNodeIDs.Bool,
@@ -41,28 +43,16 @@ local RESOLVE_ID = table.freeze({
 	}),
 })
 
-type Parser = {
-	__index: Parser,
-	new: (lexemes: Types.Lexemes) -> Parser,
-
-	lexemes: Types.Lexemes,
-	len: number,
-	pos: number,
-
-	Peek: (self: Parser, amount: number) -> string,
-	Look: (self: Parser, amount: number) -> Types.Lexeme?,
-	Consume: (self: Parser) -> (),
-	ParseFactor: (self: Parser) -> Types.ASTNode,
-	ParseBinExp: (self: Parser, min: number) -> Types.ASTNode,
-	ParseExpression: (self: Parser) -> Types.ASTNode,
-	ParseCall: (self: Parser, callTarget: Types.Lexeme?) -> Types.ASTNode,
-	ParseTargetedCall: (self: Parser) -> Types.ASTNode,
-	ParseNext: (self: Parser) -> Types.ASTNode?,
-	Begin: (self: Parser) -> Types.Result<Types.ASTNode>,
-}
-
-local Parser = {} :: Parser
-Parser.__index = Parser
+local classPrototype = {}
+local classMetatable = { __index = classPrototype }
+export type Identity = typeof(setmetatable(
+	{} :: {
+		_lexemes: Types.Lexemes,
+		_len: number,
+		_pos: number,
+	},
+	classMetatable
+))
 
 local function node(id: string, data: Types.ASTData, children: Types.ASTChildren?): Types.ASTNode
 	return {
@@ -78,17 +68,17 @@ local function nodeUnexp(lexeme: Types.Lexeme?): Types.ASTNode
 	return node(ASTNodeIDs.Unexp, `{id} ({data})`)
 end
 
-function Parser.new(lexemes: Types.Lexemes): Parser
-	local self = (setmetatable({}, Parser) :: any) :: Parser
+local function constructor(lexemes: Types.Lexemes): Identity
+	local self = setmetatable({}, classMetatable)
 
-	self.lexemes = lexemes
-	self.len = #lexemes
-	self.pos = 1
+	self._lexemes = lexemes
+	self._len = #lexemes
+	self._pos = 1
 
 	return self
 end
 
-function Parser:Peek(amount: number): string
+function classPrototype.Peek(self: Identity, amount: number): string
 	local lexeme = self:Look(amount)
 	if not lexeme then
 		return LexemeIDs.UnexpEof
@@ -97,20 +87,20 @@ function Parser:Peek(amount: number): string
 	return lexeme.id
 end
 
-function Parser:Look(amount: number): Types.Lexeme?
-	local nextPos = self.pos + amount
-	if nextPos > self.len then
+function classPrototype.Look(self: Identity, amount: number): Types.Lexeme?
+	local nextPos = self._pos + amount
+	if nextPos > self._len then
 		return nil
 	end
 
-	return self.lexemes[nextPos]
+	return self._lexemes[nextPos]
 end
 
-function Parser:Consume()
-	self.pos += 1
+function classPrototype.Consume(self: Identity)
+	self._pos += 1
 end
 
-function Parser:ParseFactor(): Types.ASTNode
+function classPrototype.ParseFactor(self: Identity): Types.ASTNode
 	local id = self:Peek(0)
 
 	if id == LexemeIDs.LParen then
@@ -139,7 +129,7 @@ function Parser:ParseFactor(): Types.ASTNode
 	return nodeUnexp(self:Look(0))
 end
 
-function Parser:ParseBinExp(min: number): Types.ASTNode
+function classPrototype.ParseBinExp(self: Identity, min: number): Types.ASTNode
 	local result = self:ParseFactor()
 	local id = self:Peek(0)
 
@@ -159,7 +149,7 @@ function Parser:ParseBinExp(min: number): Types.ASTNode
 	return result
 end
 
-function Parser:ParseExpression(): Types.ASTNode
+function classPrototype.ParseExpression(self: Identity): Types.ASTNode
 	local id = self:Peek(0)
 	if id == LexemeIDs.UnexpEof then
 		return nodeUnexp(nil) -- We know this will be nil here
@@ -176,7 +166,7 @@ function Parser:ParseExpression(): Types.ASTNode
 	return nodeUnexp(lexeme)
 end
 
-function Parser:ParseCall(callTarget: Types.Lexeme?): Types.ASTNode
+function classPrototype.ParseCall(self: Identity, callTarget: Types.Lexeme?): Types.ASTNode
 	local target = if callTarget then node(ASTNodeIDs.Str, callTarget.data) else nil
 
 	local callName = self:Look(0) :: Types.Lexeme
@@ -224,7 +214,7 @@ function Parser:ParseCall(callTarget: Types.Lexeme?): Types.ASTNode
 	})
 end
 
-function Parser:ParseTargetedCall(): Types.ASTNode
+function classPrototype.ParseTargetedCall(self: Identity): Types.ASTNode
 	local targetName = self:Look(0) :: Types.Lexeme
 	self:Consume()
 
@@ -244,7 +234,7 @@ function Parser:ParseTargetedCall(): Types.ASTNode
 	return nodeUnexp(self:Look(0))
 end
 
-function Parser:ParseNext(): Types.ASTNode?
+function classPrototype.ParseNext(self: Identity): Types.ASTNode?
 	local id = self:Peek(0)
 
 	if id == LexemeIDs.Eof then
@@ -264,7 +254,7 @@ function Parser:ParseNext(): Types.ASTNode?
 	return nodeUnexp(self:Look(0))
 end
 
-function Parser:Begin(): Types.Result<Types.ASTNode>
+function classPrototype.Begin(self: Identity): Types.Result<Types.ASTNode>
 	local children = {}
 
 	while true do
@@ -289,4 +279,6 @@ function Parser:Begin(): Types.Result<Types.ASTNode>
 	}
 end
 
-return Parser
+return {
+	new = constructor,
+}

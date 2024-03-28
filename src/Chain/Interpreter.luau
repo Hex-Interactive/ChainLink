@@ -8,37 +8,30 @@ local Util = require(script.Parent.Parent:WaitForChild("Util"))
 
 local COMPLEXITY_LIMIT = 800
 
-type Interpreter = {
-	__index: Interpreter,
-	new: (ast: Types.ASTNode) -> Interpreter,
+local classPrototype = {}
+local classMetatable = { __index = classPrototype }
+export type Identity = typeof(setmetatable(
+	{} :: {
+		_complexity: number,
+		_ast: Types.ASTNode,
+		_routines: { [string]: Types.Routine },
+		_links: { [string]: { Instance } },
+	},
+	classMetatable
+))
 
-	complexity: number,
-	ast: Types.ASTNode,
-	routines: { [string]: Types.Routine },
-	links: { [string]: { Instance } },
+local function constructor(ast: Types.ASTNode): Identity
+	local self = setmetatable({}, classMetatable)
 
-	InterpretRoot: (self: Interpreter, node: Types.ASTNode) -> Types.ASTData?,
-	InterpretCall: (self: Interpreter, node: Types.ASTNode) -> Types.ASTData?,
-	InterpretBinExp: (self: Interpreter, node: Types.ASTNode) -> Types.ASTData?,
-	InterpretASTNode: (self: Interpreter, node: Types.ASTNode) -> Types.ASTData?,
-	Begin: (self: Interpreter) -> (),
-}
-
-local Interpreter = {} :: Interpreter
-Interpreter.__index = Interpreter
-
-function Interpreter.new(ast: Types.ASTNode): Interpreter
-	local self = (setmetatable({}, Interpreter) :: any) :: Interpreter
-
-	self.complexity = 0
-	self.ast = ast
-	self.routines = RoutineDispatcher.Export()
-	self.links = Links.Export()
+	self._complexity = 0
+	self._ast = ast
+	self._routines = RoutineDispatcher.Export()
+	self._links = Links.Export()
 
 	return self
 end
 
-function Interpreter:InterpretRoot(node: Types.ASTNode): Types.ASTData?
+function classPrototype.InterpretRoot(self: Identity, node: Types.ASTNode): Types.ASTData?
 	local children = node.children :: Types.ASTChildren_Root
 
 	for _, child in children do
@@ -48,7 +41,7 @@ function Interpreter:InterpretRoot(node: Types.ASTNode): Types.ASTData?
 	return nil
 end
 
-function Interpreter:InterpretCall(node: Types.ASTNode): Types.ASTData?
+function classPrototype.InterpretCall(self: Identity, node: Types.ASTNode): Types.ASTData?
 	local children = node.children :: Types.ASTChildren_Call
 	local target = (if children.target then self:InterpretASTNode(children.target) else nil) :: string?
 	local callName = node.data :: string
@@ -60,7 +53,7 @@ function Interpreter:InterpretCall(node: Types.ASTNode): Types.ASTData?
 
 	local func = nil
 	local action = Actions.Get(callName)
-	local routine = self.routines[callName]
+	local routine = self._routines[callName]
 	if action then
 		func = action.Run
 	elseif routine then
@@ -92,7 +85,7 @@ function Interpreter:InterpretCall(node: Types.ASTNode): Types.ASTData?
 	end
 
 	if target then
-		local targets = self.links[target]
+		local targets = self._links[target]
 		if not targets then
 			return nil
 		end
@@ -133,7 +126,7 @@ function Interpreter:InterpretCall(node: Types.ASTNode): Types.ASTData?
 	return nil
 end
 
-function Interpreter:InterpretBinExp(node: Types.ASTNode): Types.ASTData?
+function classPrototype.InterpretBinExp(self: Identity, node: Types.ASTNode): Types.ASTData?
 	local children = node.children :: Types.ASTChildren_BinExp
 	local op = node.data :: string
 
@@ -151,9 +144,9 @@ function Interpreter:InterpretBinExp(node: Types.ASTNode): Types.ASTData?
 	return BinExpUtil.Eval(op, left :: Types.BinExpValue, right :: Types.BinExpValue)
 end
 
-function Interpreter:InterpretASTNode(node: Types.ASTNode): Types.ASTData?
-	local newCount = self.complexity + 1
-	self.complexity = newCount
+function classPrototype.InterpretASTNode(self: Identity, node: Types.ASTNode): Types.ASTData?
+	local newCount = self._complexity + 1
+	self._complexity = newCount
 	if newCount > COMPLEXITY_LIMIT then
 		return nil -- Not a perfect limit, but it will stop any deeper function calls
 	end
@@ -169,12 +162,14 @@ function Interpreter:InterpretASTNode(node: Types.ASTNode): Types.ASTData?
 	return node.data
 end
 
-function Interpreter:Begin()
-	self:InterpretASTNode(self.ast)
+function classPrototype.Begin(self: Identity)
+	self:InterpretASTNode(self._ast)
 
-	if self.complexity > COMPLEXITY_LIMIT then
+	if self._complexity > COMPLEXITY_LIMIT then
 		Util.LogWarn("interpreter complexity limit was reached, didn't execute fully")
 	end
 end
 
-return Interpreter
+return {
+	new = constructor,
+}
