@@ -118,10 +118,10 @@ local function serialize(routine: Model): ChainTypes.Routine
 	end
 end
 
-local function added(routine: Model)
+local function added(routine: Instance)
 	local name = routine.Name
 	if not routine:IsA("Model") then
-		Util.LogWarn(`routine "{name}" is not a model`)
+		Util.LogWarn(`added routine "{name}" is not a model`)
 		return
 	end
 
@@ -131,7 +131,12 @@ local function added(routine: Model)
 	})
 end
 
-local function removed(routine: Model)
+local function removed(routine: Instance)
+	if not routine:IsA("Model") then
+		Util.LogWarn(`removed routine "{routine.Name}" is not a model`)
+		return
+	end
+
 	RoutineDispatcher.Remove(routine)
 end
 

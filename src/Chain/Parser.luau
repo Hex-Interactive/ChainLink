@@ -1,35 +1,35 @@
 local ASTNodeIds = require(script.Parent:WaitForChild("ASTNodeIds"))
 local ChainTypes = require(script.Parent:WaitForChild("ChainTypes"))
-local LexemeIDs = require(script.Parent:WaitForChild("LexemeIDs"))
+local LexemeIds = require(script.Parent:WaitForChild("LexemeIds"))
 
 local PREC = table.freeze({
-	[LexemeIDs.Pow] = 40,
-	[LexemeIDs.Mod] = 30,
-	[LexemeIDs.Mul] = 30,
-	[LexemeIDs.Div] = 30,
-	[LexemeIDs.Add] = 20,
-	[LexemeIDs.Sub] = 20,
-	[LexemeIDs.Eq] = 10,
-	[LexemeIDs.LessEq] = 10,
-	[LexemeIDs.Less] = 10,
-	[LexemeIDs.GreatEq] = 10,
-	[LexemeIDs.Great] = 10,
-	[LexemeIDs.NotEq] = 10,
+	[LexemeIds.Pow] = 40,
+	[LexemeIds.Mod] = 30,
+	[LexemeIds.Mul] = 30,
+	[LexemeIds.Div] = 30,
+	[LexemeIds.Add] = 20,
+	[LexemeIds.Sub] = 20,
+	[LexemeIds.Eq] = 10,
+	[LexemeIds.LessEq] = 10,
+	[LexemeIds.Less] = 10,
+	[LexemeIds.GreatEq] = 10,
+	[LexemeIds.Great] = 10,
+	[LexemeIds.NotEq] = 10,
 })
 
 local ASSOC = table.freeze({
-	[LexemeIDs.Pow] = 0,
-	[LexemeIDs.Mod] = 1,
-	[LexemeIDs.Mul] = 1,
-	[LexemeIDs.Div] = 1,
-	[LexemeIDs.Add] = 1,
-	[LexemeIDs.Sub] = 1,
-	[LexemeIDs.Eq] = 1,
-	[LexemeIDs.LessEq] = 1,
-	[LexemeIDs.Less] = 1,
-	[LexemeIDs.GreatEq] = 1,
-	[LexemeIDs.Great] = 1,
-	[LexemeIDs.NotEq] = 1,
+	[LexemeIds.Pow] = 0,
+	[LexemeIds.Mod] = 1,
+	[LexemeIds.Mul] = 1,
+	[LexemeIds.Div] = 1,
+	[LexemeIds.Add] = 1,
+	[LexemeIds.Sub] = 1,
+	[LexemeIds.Eq] = 1,
+	[LexemeIds.LessEq] = 1,
+	[LexemeIds.Less] = 1,
+	[LexemeIds.GreatEq] = 1,
+	[LexemeIds.Great] = 1,
+	[LexemeIds.NotEq] = 1,
 })
 
 local RESOLVE_ID = table.freeze({
@@ -81,7 +81,7 @@ end
 function classPrototype.Peek(self: Identity, amount: number): string
 	local lexeme = self:Look(amount)
 	if not lexeme then
-		return LexemeIDs.Eof
+		return LexemeIds.Eof
 	end
 
 	return lexeme.id
@@ -103,21 +103,21 @@ end
 function classPrototype.ParseFactor(self: Identity): ChainTypes.ASTNode
 	local id = self:Peek(0)
 
-	if id == LexemeIDs.LParen then
+	if id == LexemeIds.LParen then
 		self:Consume()
 		local res = self:ParseBinExp(0)
 
-		if self:Peek(0) ~= LexemeIDs.RParen then
+		if self:Peek(0) ~= LexemeIds.RParen then
 			return nodeUnexp(self:Look(0))
 		end
 		self:Consume()
 
 		return res
-	elseif id == LexemeIDs.Num then
+	elseif id == LexemeIds.Num then
 		local lexeme = self:Look(0) :: ChainTypes.Lexeme
 		self:Consume()
 		return node(ASTNodeIds.Num, tonumber(lexeme.data) :: number)
-	elseif id == LexemeIDs.Id then
+	elseif id == LexemeIds.Id then
 		local lexeme = self:Look(0) :: ChainTypes.Lexeme
 		local resolved = RESOLVE_ID[lexeme.data]
 		if resolved then
@@ -151,15 +151,15 @@ end
 
 function classPrototype.ParseExpression(self: Identity): ChainTypes.ASTNode
 	local id = self:Peek(0)
-	if id == LexemeIDs.Eof then
+	if id == LexemeIds.Eof then
 		return nodeUnexp(nil) -- We know the lexeme will be nil here, UnexpEof
 	end
 
 	local lexeme = self:Look(0) :: ChainTypes.Lexeme
-	if id == LexemeIDs.Str then
+	if id == LexemeIds.Str then
 		self:Consume()
 		return node(ASTNodeIds.Str, lexeme.data)
-	elseif id == LexemeIDs.Num or id == LexemeIDs.Id or id == LexemeIDs.LParen then
+	elseif id == LexemeIds.Num or id == LexemeIds.Id or id == LexemeIds.LParen then
 		return self:ParseBinExp(0)
 	end
 
@@ -175,11 +175,11 @@ function classPrototype.ParseCall(self: Identity, callTarget: ChainTypes.Lexeme?
 	self:Consume() -- Starting parenthesis
 
 	local earlyExitId = self:Peek(0)
-	if earlyExitId == LexemeIDs.RParen then
+	if earlyExitId == LexemeIds.RParen then
 		self:Consume()
 
 		local id = self:Peek(0)
-		if id ~= LexemeIDs.NxCall then
+		if id ~= LexemeIds.NxCall then
 			return nodeUnexp(self:Look(0))
 		end
 		self:Consume()
@@ -191,19 +191,19 @@ function classPrototype.ParseCall(self: Identity, callTarget: ChainTypes.Lexeme?
 	end
 
 	local args = { self:ParseExpression() }
-	while self:Peek(0) == LexemeIDs.NxArg do
+	while self:Peek(0) == LexemeIds.NxArg do
 		self:Consume()
 		table.insert(args, self:ParseExpression())
 	end
 
 	local exitId = self:Peek(0)
-	if exitId ~= LexemeIDs.RParen then
+	if exitId ~= LexemeIds.RParen then
 		return nodeUnexp(self:Look(0))
 	end
 	self:Consume()
 
 	local nextCallId = self:Peek(0)
-	if nextCallId ~= LexemeIDs.NxCall then
+	if nextCallId ~= LexemeIds.NxCall then
 		return nodeUnexp(self:Look(0))
 	end
 	self:Consume()
@@ -221,10 +221,10 @@ function classPrototype.ParseTargetedCall(self: Identity): ChainTypes.ASTNode
 	self:Consume() -- Arrow
 
 	local id = self:Peek(0)
-	if id == LexemeIDs.Id then
+	if id == LexemeIds.Id then
 		local nextId = self:Peek(1)
 
-		if nextId == LexemeIDs.LParen then
+		if nextId == LexemeIds.LParen then
 			return self:ParseCall(targetName)
 		end
 
@@ -237,14 +237,14 @@ end
 function classPrototype.ParseNext(self: Identity): ChainTypes.ASTNode?
 	local id = self:Peek(0)
 
-	if id == LexemeIDs.Eof then
+	if id == LexemeIds.Eof then
 		return nil
-	elseif id == LexemeIDs.Id then
+	elseif id == LexemeIds.Id then
 		local nextId = self:Peek(1)
 
-		if nextId == LexemeIDs.Arr then
+		if nextId == LexemeIds.Arr then
 			return self:ParseTargetedCall()
-		elseif nextId == LexemeIDs.LParen then
+		elseif nextId == LexemeIds.LParen then
 			return self:ParseCall(nil)
 		end
 

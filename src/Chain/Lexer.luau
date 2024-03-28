@@ -1,5 +1,5 @@
 local ChainTypes = require(script.Parent:WaitForChild("ChainTypes"))
-local LexemeIDs = require(script.Parent:WaitForChild("LexemeIDs"))
+local LexemeIds = require(script.Parent:WaitForChild("LexemeIds"))
 
 local NUMBERS = table.freeze({
 	["0"] = true,
@@ -97,7 +97,7 @@ function classPrototype.ReadString(self: Identity): ChainTypes.Lexeme
 	end
 
 	self:Consume()
-	return new(LexemeIDs.Str, final)
+	return new(LexemeIds.Str, final)
 end
 
 function classPrototype.ReadNumber(self: Identity, negative: boolean): ChainTypes.Lexeme
@@ -116,7 +116,7 @@ function classPrototype.ReadNumber(self: Identity, negative: boolean): ChainType
 		self:Consume()
 	end
 
-	return new(LexemeIDs.Num, final)
+	return new(LexemeIds.Num, final)
 end
 
 function classPrototype.ReadIdentifier(self: Identity): ChainTypes.Lexeme
@@ -132,110 +132,110 @@ function classPrototype.ReadIdentifier(self: Identity): ChainTypes.Lexeme
 		self:Consume()
 	end
 
-	return new(LexemeIDs.Id, final)
+	return new(LexemeIds.Id, final)
 end
 
 function classPrototype.ReadNext(self: Identity): ChainTypes.Lexeme
 	local char = self:Peek(0)
 
 	if char == nil then
-		return new(LexemeIDs.Eof)
+		return new(LexemeIds.Eof)
 	elseif char == "-" then
 		local nextChar = self:Peek(1)
 
 		if nextChar == ">" then
 			self:Consume()
 			self:Consume()
-			return new(LexemeIDs.Arr, char .. nextChar)
+			return new(LexemeIds.Arr, char .. nextChar)
 		elseif isNumerical(nextChar) then
 			return self:ReadNumber(true)
 		end
 
 		self:Consume()
-		return new(LexemeIDs.Sub, char)
+		return new(LexemeIds.Sub, char)
 	elseif char == "=" then
 		local nextChar = self:Peek(1)
 
 		if nextChar == "=" then
 			self:Consume()
 			self:Consume()
-			return new(LexemeIDs.Eq, char .. nextChar)
+			return new(LexemeIds.Eq, char .. nextChar)
 		end
 
-		return new(LexemeIDs.UnexpChar, char)
+		return new(LexemeIds.UnexpChar, char)
 	elseif char == "<" then
 		local nextChar = self:Peek(1)
 
 		if nextChar == "=" then
 			self:Consume()
 			self:Consume()
-			return new(LexemeIDs.LessEq, char .. nextChar)
+			return new(LexemeIds.LessEq, char .. nextChar)
 		end
 
 		self:Consume()
-		return new(LexemeIDs.Less, char)
+		return new(LexemeIds.Less, char)
 	elseif char == ">" then
 		local nextChar = self:Peek(1)
 
 		if nextChar == "=" then
 			self:Consume()
 			self:Consume()
-			return new(LexemeIDs.GreatEq, char .. nextChar)
+			return new(LexemeIds.GreatEq, char .. nextChar)
 		end
 
 		self:Consume()
-		return new(LexemeIDs.Great, char)
+		return new(LexemeIds.Great, char)
 	elseif char == "~" then
 		local nextChar = self:Peek(1)
 
 		if nextChar == "=" then
 			self:Consume()
 			self:Consume()
-			return new(LexemeIDs.NotEq, char .. nextChar)
+			return new(LexemeIds.NotEq, char .. nextChar)
 		end
 
-		return new(LexemeIDs.UnexpChar, char)
+		return new(LexemeIds.UnexpChar, char)
 	elseif char == '"' then
 		return self:ReadString()
 	elseif char == "+" then
 		self:Consume()
-		return new(LexemeIDs.Add, char)
+		return new(LexemeIds.Add, char)
 	elseif char == "/" then
 		self:Consume()
-		return new(LexemeIDs.Div, char)
+		return new(LexemeIds.Div, char)
 	elseif char == "*" then
 		self:Consume()
-		return new(LexemeIDs.Mul, char)
+		return new(LexemeIds.Mul, char)
 	elseif char == "%" then
 		self:Consume()
-		return new(LexemeIDs.Mod, char)
+		return new(LexemeIds.Mod, char)
 	elseif char == "^" then
 		self:Consume()
-		return new(LexemeIDs.Pow, char)
+		return new(LexemeIds.Pow, char)
 	elseif char == ";" then
 		self:Consume()
-		return new(LexemeIDs.NxCall, char)
+		return new(LexemeIds.NxCall, char)
 	elseif char == "," then
 		self:Consume()
-		return new(LexemeIDs.NxArg, char)
+		return new(LexemeIds.NxArg, char)
 	elseif char == "(" then
 		self:Consume()
-		return new(LexemeIDs.LParen, char)
+		return new(LexemeIds.LParen, char)
 	elseif char == ")" then
 		self:Consume()
-		return new(LexemeIDs.RParen, char)
+		return new(LexemeIds.RParen, char)
 	elseif isNumerical(char) then
 		return self:ReadNumber(false)
 	elseif isIdentifier(char) then
 		return self:ReadIdentifier()
 	elseif isWhitespace(char) then
 		self:Consume()
-		return new(LexemeIDs.None, char)
+		return new(LexemeIds.None, char)
 	end
 
 	-- TODO: Implement logical operators (not, and, or)
 
-	return new(LexemeIDs.UknChar, char)
+	return new(LexemeIds.UknChar, char)
 end
 
 function classPrototype.Begin(self: Identity): ChainTypes.Result<ChainTypes.Lexemes>
@@ -244,14 +244,14 @@ function classPrototype.Begin(self: Identity): ChainTypes.Result<ChainTypes.Lexe
 	while true do
 		local lexeme = self:ReadNext()
 
-		if lexeme.id == LexemeIDs.None then
+		if lexeme.id == LexemeIds.None then
 			continue
-		elseif lexeme.id == LexemeIDs.UnexpChar then
+		elseif lexeme.id == LexemeIds.UnexpChar then
 			return {
 				ok = false,
 				err = `unexpected character "{lexeme.data}"`,
 			}
-		elseif lexeme.id == LexemeIDs.UknChar then
+		elseif lexeme.id == LexemeIds.UknChar then
 			return {
 				ok = false,
 				err = `unknown character "{lexeme.data}"`,
@@ -260,7 +260,7 @@ function classPrototype.Begin(self: Identity): ChainTypes.Result<ChainTypes.Lexe
 
 		table.insert(lexemes, lexeme)
 
-		if lexeme.id == LexemeIDs.Eof then
+		if lexeme.id == LexemeIds.Eof then
 			break
 		end
 	end

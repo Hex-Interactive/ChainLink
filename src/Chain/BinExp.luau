@@ -1,57 +1,57 @@
-local LexemeIDs = require(script.Parent:WaitForChild("LexemeIDs"))
+local LexemeIds = require(script.Parent:WaitForChild("LexemeIds"))
 
 export type Value = number | boolean
 
 local typeChecking = {
-	[LexemeIDs.Pow] = { x = { "number" }, y = { "number" } },
-	[LexemeIDs.Mod] = { x = { "number" }, y = { "number" } },
-	[LexemeIDs.Mul] = { x = { "number" }, y = { "number" } },
-	[LexemeIDs.Div] = { x = { "number" }, y = { "number" } },
-	[LexemeIDs.Add] = { x = { "number" }, y = { "number" } },
-	[LexemeIDs.Sub] = { x = { "number" }, y = { "number" } },
-	[LexemeIDs.Eq] = { x = { "number", "boolean" }, y = { "number", "boolean" } },
-	[LexemeIDs.LessEq] = { x = { "number" }, y = { "number" } },
-	[LexemeIDs.Less] = { x = { "number" }, y = { "number" } },
-	[LexemeIDs.GreatEq] = { x = { "number" }, y = { "number" } },
-	[LexemeIDs.Great] = { x = { "number" }, y = { "number" } },
-	[LexemeIDs.NotEq] = { x = { "number", "boolean" }, y = { "number", "boolean" } },
+	[LexemeIds.Pow] = { x = { "number" }, y = { "number" } },
+	[LexemeIds.Mod] = { x = { "number" }, y = { "number" } },
+	[LexemeIds.Mul] = { x = { "number" }, y = { "number" } },
+	[LexemeIds.Div] = { x = { "number" }, y = { "number" } },
+	[LexemeIds.Add] = { x = { "number" }, y = { "number" } },
+	[LexemeIds.Sub] = { x = { "number" }, y = { "number" } },
+	[LexemeIds.Eq] = { x = { "number", "boolean" }, y = { "number", "boolean" } },
+	[LexemeIds.LessEq] = { x = { "number" }, y = { "number" } },
+	[LexemeIds.Less] = { x = { "number" }, y = { "number" } },
+	[LexemeIds.GreatEq] = { x = { "number" }, y = { "number" } },
+	[LexemeIds.Great] = { x = { "number" }, y = { "number" } },
+	[LexemeIds.NotEq] = { x = { "number", "boolean" }, y = { "number", "boolean" } },
 }
 
 local evals = {
-	[LexemeIDs.Pow] = function(x: any, y: any): any
+	[LexemeIds.Pow] = function(x: any, y: any): any
 		return math.pow(x, y)
 	end,
-	[LexemeIDs.Mod] = function(x: any, y: any): any
+	[LexemeIds.Mod] = function(x: any, y: any): any
 		return x % y
 	end,
-	[LexemeIDs.Mul] = function(x: any, y: any): any
+	[LexemeIds.Mul] = function(x: any, y: any): any
 		return x * y
 	end,
-	[LexemeIDs.Div] = function(x: any, y: any): any
+	[LexemeIds.Div] = function(x: any, y: any): any
 		return x / y
 	end,
-	[LexemeIDs.Add] = function(x: any, y: any): any
+	[LexemeIds.Add] = function(x: any, y: any): any
 		return x + y
 	end,
-	[LexemeIDs.Sub] = function(x: any, y: any): any
+	[LexemeIds.Sub] = function(x: any, y: any): any
 		return x - y
 	end,
-	[LexemeIDs.Eq] = function(x: any, y: any): any
+	[LexemeIds.Eq] = function(x: any, y: any): any
 		return x == y
 	end,
-	[LexemeIDs.LessEq] = function(x: any, y: any): any
+	[LexemeIds.LessEq] = function(x: any, y: any): any
 		return x <= y
 	end,
-	[LexemeIDs.Less] = function(x: any, y: any): any
+	[LexemeIds.Less] = function(x: any, y: any): any
 		return x < y
 	end,
-	[LexemeIDs.GreatEq] = function(x: any, y: any): any
+	[LexemeIds.GreatEq] = function(x: any, y: any): any
 		return x >= y
 	end,
-	[LexemeIDs.Great] = function(x: any, y: any): any
+	[LexemeIds.Great] = function(x: any, y: any): any
 		return x > y
 	end,
-	[LexemeIDs.NotEq] = function(x: any, y: any): any
+	[LexemeIds.NotEq] = function(x: any, y: any): any
 		return x ~= y
 	end,
 }
