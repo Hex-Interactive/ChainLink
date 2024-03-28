@@ -1,4 +1,4 @@
-local Types = require(script.Parent.Parent:WaitForChild("Types"))
+local ChainTypes = require(script.Parent.Parent:WaitForChild("Chain"):WaitForChild("ChainTypes"))
 local Util = require(script.Parent.Parent:WaitForChild("Util"))
 
 return {
@@ -17,4 +17,4 @@ return {
 
 		target[propName] = propValue
 	end,
-} :: Types.ActionModule
+} :: ChainTypes.ActionModule

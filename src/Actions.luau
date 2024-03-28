@@ -1,5 +1,5 @@
+local ChainTypes = require(script.Parent:WaitForChild("Chain"):WaitForChild("ChainTypes"))
 local Mutexes = require(script.Parent:WaitForChild("Mutexes"))
-local Types = require(script.Parent:WaitForChild("Types"))
 local State = require(script.Parent:WaitForChild("State"))
 local Util = require(script.Parent:WaitForChild("Util"))
 
@@ -13,7 +13,7 @@ function Actions.Register(module: ModuleScript)
 	local name = module.Name
 	Util.Assert(not Mutexes.IsLocked(name), `action by name "{name}" already exists`)
 
-	index[name] = require(module) :: Types.ActionModule
+	index[name] = require(module) :: ChainTypes.ActionModule
 	Mutexes.Create(name)
 end
 
@@ -31,7 +31,7 @@ function Actions.RegisterDefaults(ignore: { string }?)
 	Actions.RegisterIn(script.Parent:WaitForChild("DefaultActions"), ignore)
 end
 
-function Actions.Get(name: string): Types.ActionModule?
+function Actions.Get(name: string): ChainTypes.ActionModule?
 	return index[name]
 end
 

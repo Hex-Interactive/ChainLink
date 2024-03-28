@@ -1,4 +1,4 @@
-local Types = require(script.Parent.Parent:WaitForChild("Types"))
+local ChainTypes = require(script.Parent.Parent:WaitForChild("Chain"):WaitForChild("ChainTypes"))
 local Util = require(script.Parent.Parent:WaitForChild("Util"))
 
 return {
@@ -23,4 +23,4 @@ return {
 			instance.Color = color
 		end
 	end,
-} :: Types.ActionModule
+} :: ChainTypes.ActionModule

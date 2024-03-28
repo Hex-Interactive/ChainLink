@@ -1,4 +1,4 @@
-local Types = require(script.Parent.Parent:WaitForChild("Types"))
+local ChainTypes = require(script.Parent.Parent:WaitForChild("Chain"):WaitForChild("ChainTypes"))
 
 return {
 	ValidateArgs = { [1] = "number" },
@@ -7,4 +7,4 @@ return {
 		local duration = context.args[1] :: number
 		task.wait(duration)
 	end,
-} :: Types.ActionModule
+} :: ChainTypes.ActionModule

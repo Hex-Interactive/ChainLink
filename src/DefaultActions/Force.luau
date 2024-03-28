@@ -1,4 +1,4 @@
-local Types = require(script.Parent.Parent:WaitForChild("Types"))
+local ChainTypes = require(script.Parent.Parent:WaitForChild("Chain"):WaitForChild("ChainTypes"))
 
 type ValidatedParam = {
 	part: BasePart,
@@ -33,4 +33,4 @@ return {
 		local param = context.validatedParam :: ValidatedParam
 		param.part.AssemblyLinearVelocity = param.vel
 	end,
-} :: Types.ActionModule
+} :: ChainTypes.ActionModule

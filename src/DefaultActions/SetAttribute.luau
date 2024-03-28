@@ -1,4 +1,4 @@
-local Types = require(script.Parent.Parent:WaitForChild("Types"))
+local ChainTypes = require(script.Parent.Parent:WaitForChild("Chain"):WaitForChild("ChainTypes"))
 
 return {
 	ValidateTarget = true,
@@ -10,4 +10,4 @@ return {
 		local value = context.args[2] :: any
 		target:SetAttribute(name, value)
 	end,
-} :: Types.ActionModule
+} :: ChainTypes.ActionModule

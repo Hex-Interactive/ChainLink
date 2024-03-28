@@ -1,7 +1,7 @@
 local CollectionService = game:GetService("CollectionService")
 
 local RoutineDispatcher = require(script.Parent:WaitForChild("RoutineDispatcher"))
-local Types = require(script.Parent.Parent:WaitForChild("Types"))
+local ChainTypes = require(script.Parent:WaitForChild("ChainTypes"))
 local Names = require(script.Parent.Parent:WaitForChild("Names"))
 local Util = require(script.Parent.Parent:WaitForChild("Util"))
 local Chain = require(script.Parent)
@@ -70,7 +70,7 @@ local function serializeLayer(parent: Instance): RoutineLayer
 	return layer
 end
 
-local function executeLayer(layer: RoutineLayer, _context: Types.CallContext)
+local function executeLayer(layer: RoutineLayer, _context: ChainTypes.CallContext)
 	for _, step in layer do
 		if step.class == "Chain" then
 			if typeof(step.data) ~= "string" then
@@ -110,10 +110,10 @@ local function executeLayer(layer: RoutineLayer, _context: Types.CallContext)
 	end
 end
 
-local function serialize(routine: Model): Types.Routine
+local function serialize(routine: Model): ChainTypes.Routine
 	local layer = serializeLayer(routine)
 
-	return function(context: Types.CallContext)
+	return function(context: ChainTypes.CallContext)
 		executeLayer(layer, context)
 	end
 end
