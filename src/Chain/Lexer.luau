@@ -224,6 +224,12 @@ function classPrototype.ReadNext(self: Identity): ChainTypes.Lexeme
 	elseif char == ")" then
 		self:Consume()
 		return new(LexemeIds.RParen, char)
+	elseif char == "[" then
+		self:Consume()
+		return new(LexemeIds.LBrack, char)
+	elseif char == "]" then
+		self:Consume()
+		return new(LexemeIds.RBrack, char)
 	elseif isNumerical(char) then
 		return self:ReadNumber(false)
 	elseif isIdentifier(char) then

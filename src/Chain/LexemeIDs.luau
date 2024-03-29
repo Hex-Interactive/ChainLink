@@ -13,6 +13,8 @@ return table.freeze({
 	Comma = "Comma", -- Comma (,)
 	LParen = "LParen", -- Left parenthesis (()
 	RParen = "RParen", -- Right parenthesis ())
+	LBrack = "LBrack", -- Left bracket ([)
+	RBrack = "RBrack", -- Right bracket (])
 
 	Eq = "Eq", -- Equal to (==)
 	LessEq = "LessEq", -- Less than or equal to (<=)

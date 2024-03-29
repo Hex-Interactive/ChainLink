@@ -19,12 +19,12 @@ export type Lexeme = {
 
 export type ASTNode = {
 	id: string,
-	data: ASTData,
+	data: ASTData, -- Empty string commonly used in cases of unread data
 	children: ASTChildren?,
 }
 
 export type ASTData = string | number | boolean
-export type ASTChildren = ASTChildren_Root | ASTChildren_Call | ASTChildren_BinExp
+export type ASTChildren = ASTChildren_Root | ASTChildren_Call | ASTChildren_BinExp | ASTChildren_Thunk
 
 export type ASTChildren_Root = { ASTNode }
 
@@ -36,6 +36,10 @@ export type ASTChildren_Call = {
 export type ASTChildren_BinExp = {
 	left: ASTNode,
 	right: ASTNode,
+}
+
+export type ASTChildren_Thunk = {
+	subject: ASTChildren_Call,
 }
 
 -- Actions & Routines

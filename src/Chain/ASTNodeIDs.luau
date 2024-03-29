@@ -8,4 +8,5 @@ return table.freeze({
 	Root = "Root", -- The beginning/root of the AST
 	Call = "Call", -- Action or routine call
 	BinExp = "BinExp", -- Binary expression
+	Thunk = "Thunk", -- Unevaluated call, thunk
 })

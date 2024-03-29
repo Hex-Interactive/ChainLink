@@ -159,7 +159,33 @@ function classPrototype.ParseExpression(self: Identity): ChainTypes.ASTNode
 	if id == LexemeIds.Str then
 		self:Consume()
 		return node(ASTNodeIds.Str, lexeme.data)
-	elseif id == LexemeIds.Num or id == LexemeIds.Id or id == LexemeIds.LParen then
+	elseif id == LexemeIds.Num or id == LexemeIds.LParen then
+		return self:ParseBinExp(0)
+	end
+
+	if id == LexemeIds.RBrack then
+		local nextId = self:Peek(1)
+
+		-- if nextId == LexemeIds.Id then
+		-- 	local nextNextId = self:Peek(2)
+
+		-- 	if nextNextId == LexemeIds.Arrow then
+		-- 		self:Consume() -- Consume bracket
+		-- 		return self:ParseTargetedCall()
+		-- 	elseif nextNextId == LexemeIds.LParen then
+		-- 		self:Consume() -- Consume bracket
+		-- 		return self:ParseCall(nil)
+		-- 	end
+
+		-- 	return nodeUnexp(self:Look(1))
+		-- end
+
+		-- there is a thunk to evaluate
+	end
+
+	if id == LexemeIds.Id then
+		-- could be binexp or call
+
 		return self:ParseBinExp(0)
 	end
 
