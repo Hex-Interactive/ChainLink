@@ -2,6 +2,8 @@ local ASTNodeIds = require(script.Parent:WaitForChild("ASTNodeIds"))
 local ChainTypes = require(script.Parent:WaitForChild("ChainTypes"))
 local LexemeIds = require(script.Parent:WaitForChild("LexemeIds"))
 
+local LEXEME_LIMIT = 800
+
 local PREC = table.freeze({
 	[LexemeIds.Pow] = 40,
 	[LexemeIds.Mod] = 30,
@@ -120,10 +122,13 @@ function classPrototype.ParseFactor(self: Identity): ChainTypes.ASTNode
 	elseif id == LexemeIds.Id then
 		local lexeme = self:Look(0) :: ChainTypes.Lexeme
 		local resolved = RESOLVE_ID[lexeme.data]
+
 		if resolved then
 			self:Consume()
 			return node(resolved.id, resolved.value)
 		end
+
+		return nodeUnexp(lexeme)
 	end
 
 	return nodeUnexp(self:Look(0))
@@ -260,7 +265,7 @@ function classPrototype.ParseTargetedCall(self: Identity): ChainTypes.ASTNode
 	return nodeUnexp(self:Look(0))
 end
 
-function classPrototype.ParseNext(self: Identity): ChainTypes.ASTNode?
+function classPrototype.ParseGeneralContext(self: Identity): ChainTypes.ASTNode?
 	local id = self:Peek(0)
 
 	if id == LexemeIds.Eof then
@@ -281,10 +286,17 @@ function classPrototype.ParseNext(self: Identity): ChainTypes.ASTNode?
 end
 
 function classPrototype.Begin(self: Identity): ChainTypes.Result<ChainTypes.ASTNode>
+	if self._len > LEXEME_LIMIT then
+		return {
+			ok = false,
+			err = `parser received more than {LEXEME_LIMIT} maximum input lexemes`,
+		}
+	end
+
 	local children = {}
 
 	while true do
-		local nextNode = self:ParseNext()
+		local nextNode = self:ParseGeneralContext()
 		if not nextNode then
 			break
 		end

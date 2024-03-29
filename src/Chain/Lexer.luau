@@ -1,6 +1,8 @@
 local ChainTypes = require(script.Parent:WaitForChild("ChainTypes"))
 local LexemeIds = require(script.Parent:WaitForChild("LexemeIds"))
 
+local CHARACTER_LIMIT = 1000
+
 local NUMBERS = table.freeze({
 	["0"] = true,
 	["1"] = true,
@@ -245,6 +247,13 @@ function classPrototype.ReadNext(self: Identity): ChainTypes.Lexeme
 end
 
 function classPrototype.Begin(self: Identity): ChainTypes.Result<ChainTypes.Lexemes>
+	if self._len > CHARACTER_LIMIT then
+		return {
+			ok = false,
+			err = `lexer received more than {CHARACTER_LIMIT} maximum input characters`,
+		}
+	end
+
 	local lexemes = {}
 
 	while true do
