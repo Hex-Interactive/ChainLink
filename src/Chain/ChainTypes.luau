@@ -38,9 +38,7 @@ export type ASTChildren_BinExp = {
 	right: ASTNode,
 }
 
-export type ASTChildren_Thunk = {
-	subject: ASTChildren_Call,
-}
+export type ASTChildren_Thunk = { ASTNode }
 
 -- Actions & Routines
 export type Action = (context: CallContext) -> ()

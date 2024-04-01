@@ -3,6 +3,7 @@ local ChainTypes = require(script.Parent:WaitForChild("ChainTypes"))
 local LexemeIds = require(script.Parent:WaitForChild("LexemeIds"))
 
 local LEXEME_LIMIT = 800
+local THUNK_LIMIT = 30
 
 local PREC = table.freeze({
 	[LexemeIds.Pow] = 40,
@@ -168,28 +169,29 @@ function classPrototype.ParseExpression(self: Identity): ChainTypes.ASTNode
 		return self:ParseBinExp(0)
 	end
 
-	if id == LexemeIds.RBrack then
-		local nextId = self:Peek(1)
+	if id == LexemeIds.LBrack then
+		self:Consume()
 
-		-- if nextId == LexemeIds.Id then
-		-- 	local nextNextId = self:Peek(2)
+		local children = {}
+		while true do
+			if self:Peek(0) == LexemeIds.RBrack then
+				self:Consume()
+				return node(ASTNodeIds.Thunk, "", children)
+			end
 
-		-- 	if nextNextId == LexemeIds.Arrow then
-		-- 		self:Consume() -- Consume bracket
-		-- 		return self:ParseTargetedCall()
-		-- 	elseif nextNextId == LexemeIds.LParen then
-		-- 		self:Consume() -- Consume bracket
-		-- 		return self:ParseCall(nil)
-		-- 	end
+			local nextNode = self:ParseGeneralContext()
+			if not nextNode then
+				return nodeUnexp(nil) -- We know the lexeme will be nil here, UnexpEof
+			end
 
-		-- 	return nodeUnexp(self:Look(1))
-		-- end
+			table.insert(children, nextNode)
+		end
 
-		-- there is a thunk to evaluate
+		return nodeUnexp(self:Look(0))
 	end
 
 	if id == LexemeIds.Id then
-		-- could be binexp or call
+		-- TODO: Could be binexp or call
 
 		return self:ParseBinExp(0)
 	end
@@ -293,8 +295,21 @@ function classPrototype.Begin(self: Identity): ChainTypes.Result<ChainTypes.ASTN
 		}
 	end
 
-	local children = {}
+	local numBrackets = 0
+	for _, lexeme in self._lexemes do
+		if lexeme.id == LexemeIds.LBrack or LexemeIds.RBrack then
+			numBrackets += 1
+		end
+	end
 
+	if numBrackets * 0.5 > THUNK_LIMIT then
+		return {
+			ok = false,
+			err = `parser received more than {THUNK_LIMIT} maximum thunks`,
+		}
+	end
+
+	local children = {}
 	while true do
 		local nextNode = self:ParseGeneralContext()
 		if not nextNode then
