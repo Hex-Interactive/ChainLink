@@ -18,6 +18,9 @@ local PREC = table.freeze({
 	[LexemeIds.GreatEq] = 10,
 	[LexemeIds.Great] = 10,
 	[LexemeIds.NotEq] = 10,
+	-- TODO: Not operator
+	[LexemeIds.And] = 10,
+	[LexemeIds.Or] = 10,
 })
 
 local ASSOC = table.freeze({
@@ -33,6 +36,9 @@ local ASSOC = table.freeze({
 	[LexemeIds.GreatEq] = 1,
 	[LexemeIds.Great] = 1,
 	[LexemeIds.NotEq] = 1,
+	-- TODO: Not operator
+	[LexemeIds.And] = 1,
+	[LexemeIds.Or] = 1,
 })
 
 local RESOLVE_ID = table.freeze({

@@ -15,6 +15,9 @@ local typeChecking = {
 	[LexemeIds.GreatEq] = { x = { "number" }, y = { "number" } },
 	[LexemeIds.Great] = { x = { "number" }, y = { "number" } },
 	[LexemeIds.NotEq] = { x = { "number", "boolean" }, y = { "number", "boolean" } },
+	-- TODO: Not operator
+	[LexemeIds.Add] = { x = { "boolean" }, y = { "boolean" } },
+	[LexemeIds.Or] = { x = { "boolean" }, y = { "boolean" } },
 }
 
 local evals = {
@@ -53,6 +56,13 @@ local evals = {
 	end,
 	[LexemeIds.NotEq] = function(x: any, y: any): any
 		return x ~= y
+	end,
+	-- TODO: Not operator
+	[LexemeIds.And] = function(x: any, y: any): any
+		return x and y
+	end,
+	[LexemeIds.Or] = function(x: any, y: any): any
+		return x or y
 	end,
 }
 
