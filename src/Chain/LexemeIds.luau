@@ -23,6 +23,10 @@ return table.freeze({
 	Great = "Great", -- Greater than (>)
 	NotEq = "NotEq", -- Not equal to (~=)
 
+	Not = "Not", -- Logical not (!)
+	And = "And", -- Logical and (&&)
+	Or = "Or", -- Logical or (||)
+
 	Add = "Add", -- Addition (+)
 	Sub = "Sub", -- Subtraction (-)
 	Mul = "Mul", -- Multiplication (*)

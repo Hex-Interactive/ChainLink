@@ -197,6 +197,29 @@ function classPrototype.ReadNext(self: Identity): ChainTypes.Lexeme
 		end
 
 		return new(LexemeIds.UnexpChar, char)
+	elseif char == "&" then
+		local nextChar = self:Peek(1)
+
+		if nextChar == "&" then
+			self:Consume()
+			self:Consume()
+			return new(LexemeIds.And, char .. nextChar)
+		end
+
+		return new(LexemeIds.UnexpChar, char)
+	elseif char == "|" then
+		local nextChar = self:Peek(1)
+
+		if nextChar == "|" then
+			self:Consume()
+			self:Consume()
+			return new(LexemeIds.Or, char .. nextChar)
+		end
+
+		return new(LexemeIds.UnexpChar, char)
+	elseif char == "!" then
+		self:Consume()
+		return new(LexemeIds.Not, char)
 	elseif char == '"' then
 		return self:ReadString()
 	elseif char == "+" then
