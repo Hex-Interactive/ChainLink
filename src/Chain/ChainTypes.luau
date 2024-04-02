@@ -24,7 +24,7 @@ export type ASTNode = {
 }
 
 export type ASTData = string | number | boolean
-export type ASTChildren = ASTChildren_Root | ASTChildren_Call | ASTChildren_BinExp | ASTChildren_Thunk
+export type ASTChildren = ASTChildren_Root | ASTChildren_Call | ASTChildren_BinExp | ASTChildren_Thunk | ASTChildren_Not
 
 export type ASTChildren_Root = { ASTNode }
 
@@ -39,6 +39,10 @@ export type ASTChildren_BinExp = {
 }
 
 export type ASTChildren_Thunk = { ASTNode }
+
+export type ASTChildren_Not = {
+	subj: ASTNode,
+}
 
 -- Actions & Routines
 export type Action = (context: CallContext) -> ()

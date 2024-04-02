@@ -18,7 +18,6 @@ local PREC = table.freeze({
 	[LexemeIds.GreatEq] = 10,
 	[LexemeIds.Great] = 10,
 	[LexemeIds.NotEq] = 10,
-	-- TODO: Not operator
 	[LexemeIds.And] = 10,
 	[LexemeIds.Or] = 10,
 })
@@ -36,7 +35,6 @@ local ASSOC = table.freeze({
 	[LexemeIds.GreatEq] = 1,
 	[LexemeIds.Great] = 1,
 	[LexemeIds.NotEq] = 1,
-	-- TODO: Not operator
 	[LexemeIds.And] = 1,
 	[LexemeIds.Or] = 1,
 })
@@ -166,6 +164,8 @@ function classPrototype.ParseExpression(self: Identity): ChainTypes.ASTNode
 	if id == LexemeIds.Eof then
 		return nodeUnexp(nil) -- We know the lexeme will be nil here, UnexpEof
 	end
+
+	-- TODO: Implement logical not operator
 
 	local lexeme = self:Look(0) :: ChainTypes.Lexeme
 	if id == LexemeIds.Str then
