@@ -169,6 +169,7 @@ function classPrototype.ParseExpression(self: Identity): ChainTypes.ASTNode
 		return self:ParseBinExp(0)
 	end
 
+	-- Thunk
 	if id == LexemeIds.LBrack then
 		self:Consume()
 
@@ -190,8 +191,12 @@ function classPrototype.ParseExpression(self: Identity): ChainTypes.ASTNode
 		return nodeUnexp(self:Look(0))
 	end
 
+	-- Call or binexp
 	if id == LexemeIds.Id then
-		-- TODO: Could be binexp or call
+		local result = self:ParseCallLike()
+		if result.id == ASTNodeIds.Call then
+			return result
+		end
 
 		return self:ParseBinExp(0)
 	end
@@ -267,21 +272,25 @@ function classPrototype.ParseTargetedCall(self: Identity): ChainTypes.ASTNode
 	return nodeUnexp(self:Look(0))
 end
 
+function classPrototype.ParseCallLike(self: Identity): ChainTypes.ASTNode
+	local nextId = self:Peek(1)
+
+	if nextId == LexemeIds.Arrow then
+		return self:ParseTargetedCall()
+	elseif nextId == LexemeIds.LParen then
+		return self:ParseCall(nil)
+	end
+
+	return nodeUnexp(self:Look(1))
+end
+
 function classPrototype.ParseGeneralContext(self: Identity): ChainTypes.ASTNode?
 	local id = self:Peek(0)
 
 	if id == LexemeIds.Eof then
 		return nil
 	elseif id == LexemeIds.Id then
-		local nextId = self:Peek(1)
-
-		if nextId == LexemeIds.Arrow then
-			return self:ParseTargetedCall()
-		elseif nextId == LexemeIds.LParen then
-			return self:ParseCall(nil)
-		end
-
-		return nodeUnexp(self:Look(1))
+		return self:ParseCallLike()
 	end
 
 	return nodeUnexp(self:Look(0))
