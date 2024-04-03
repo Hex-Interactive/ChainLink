@@ -125,9 +125,13 @@ function classPrototype.ParseFactor(self: Identity): ChainTypes.ASTNode
 		self:Consume()
 		return node(ASTNodeIds.Num, tonumber(lexeme.data) :: number)
 	elseif id == LexemeIds.Id then
+		local result = self:ParseCallLike()
+		if result.id == ASTNodeIds.Call then
+			return result
+		end
+
 		local lexeme = self:Look(0) :: ChainTypes.Lexeme
 		local resolved = RESOLVE_ID[lexeme.data]
-
 		if resolved then
 			self:Consume()
 			return node(resolved.id, resolved.value)
@@ -171,12 +175,9 @@ function classPrototype.ParseExpression(self: Identity): ChainTypes.ASTNode
 	if id == LexemeIds.Str then
 		self:Consume()
 		return node(ASTNodeIds.Str, lexeme.data)
-	elseif id == LexemeIds.Num or id == LexemeIds.LParen then
+	elseif id == LexemeIds.Num or id == LexemeIds.Id or id == LexemeIds.LParen then
 		return self:ParseBinExp(0)
-	end
-
-	-- Thunk
-	if id == LexemeIds.LBrack then
+	elseif id == LexemeIds.LBrack then
 		self:Consume()
 
 		local children = {}
@@ -195,16 +196,6 @@ function classPrototype.ParseExpression(self: Identity): ChainTypes.ASTNode
 		end
 
 		return nodeUnexp(self:Look(0))
-	end
-
-	-- Call or binexp
-	if id == LexemeIds.Id then
-		local result = self:ParseCallLike()
-		if result.id == ASTNodeIds.Call then
-			return result
-		end
-
-		return self:ParseBinExp(0)
 	end
 
 	return nodeUnexp(lexeme)
