@@ -108,8 +108,13 @@ function classPrototype.Consume(self: Identity)
 end
 
 function classPrototype.ParseFactor(self: Identity): ChainTypes.ASTNode
-	local id = self:Peek(0)
+	local preOpId = self:Peek(0)
+	if preOpId == LexemeIds.Not then
+		self:Consume()
+		return node(ASTNodeIds.Not, nil, self:ParseFactor())
+	end
 
+	local id = self:Peek(0)
 	if id == LexemeIds.LParen then
 		self:Consume()
 		local res = self:ParseBinExp(0)
@@ -169,13 +174,11 @@ function classPrototype.ParseExpression(self: Identity): ChainTypes.ASTNode
 		return nodeUnexp(nil) -- We know the lexeme will be nil here, UnexpEof
 	end
 
-	-- TODO: Implement logical not operator
-
 	local lexeme = self:Look(0) :: ChainTypes.Lexeme
 	if id == LexemeIds.Str then
 		self:Consume()
 		return node(ASTNodeIds.Str, lexeme.data)
-	elseif id == LexemeIds.Num or id == LexemeIds.Id or id == LexemeIds.LParen then
+	elseif id == LexemeIds.Num or id == LexemeIds.Id or id == LexemeIds.LParen or id == LexemeIds.Not then
 		return self:ParseBinExp(0)
 	elseif id == LexemeIds.LBrack then
 		self:Consume()

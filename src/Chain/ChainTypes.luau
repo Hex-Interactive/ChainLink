@@ -26,7 +26,9 @@ export type ASTNode = {
 export type ASTData = string | number | boolean
 export type ASTChildren = ASTChildren_Root | ASTChildren_Call | ASTChildren_BinExp | ASTChildren_Thunk | ASTChildren_Not
 
+export type ASTChildren_Not = ASTNode
 export type ASTChildren_Root = { ASTNode }
+export type ASTChildren_Thunk = { ASTNode }
 
 export type ASTChildren_Call = {
 	target: ASTNode?,
@@ -36,12 +38,6 @@ export type ASTChildren_Call = {
 export type ASTChildren_BinExp = {
 	left: ASTNode,
 	right: ASTNode,
-}
-
-export type ASTChildren_Thunk = { ASTNode }
-
-export type ASTChildren_Not = {
-	subj: ASTNode,
 }
 
 -- Actions & Routines
