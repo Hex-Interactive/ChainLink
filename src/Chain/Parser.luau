@@ -61,17 +61,17 @@ export type Identity = typeof(setmetatable(
 	classMetatable
 ))
 
-local function node(id: string, data: ChainTypes.ASTData, children: ChainTypes.ASTChildren?): ChainTypes.ASTNode
+local function node(id: string, data: ChainTypes.ASTData?, children: ChainTypes.ASTChildren?): ChainTypes.ASTNode
 	return {
 		id = id,
-		data = data,
+		data = if data == nil then "" else data, -- Empty string used for "no data"
 		children = children,
 	}
 end
 
 local function nodeUnexp(lexeme: ChainTypes.Lexeme?): ChainTypes.ASTNode
 	local id = if lexeme then lexeme.id else "__UnexpEof"
-	local data = if lexeme then lexeme.data else ""
+	local data = if lexeme then lexeme.data else "__Err"
 	return node(ASTNodeIds.Unexp, `{id} ({data})`)
 end
 
@@ -183,7 +183,7 @@ function classPrototype.ParseExpression(self: Identity): ChainTypes.ASTNode
 		while true do
 			if self:Peek(0) == LexemeIds.RBrack then
 				self:Consume()
-				return node(ASTNodeIds.Thunk, "", children)
+				return node(ASTNodeIds.Thunk, nil, children)
 			end
 
 			local nextNode = self:ParseGeneralContext()
@@ -343,7 +343,7 @@ function classPrototype.Begin(self: Identity): ChainTypes.Result<ChainTypes.ASTN
 
 	return {
 		ok = true,
-		data = node(ASTNodeIds.Root, "", children),
+		data = node(ASTNodeIds.Root, nil, children),
 	}
 end
 
