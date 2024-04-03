@@ -138,10 +138,23 @@ function classPrototype.InterpretBinExp(self: Identity, node: ChainTypes.ASTNode
 	local left = self:InterpretASTNode(children.left)
 	local right = self:InterpretASTNode(children.right)
 	if not BinExp.TypeCheck(op, left, right) then
+		Util.LogWarn("failed BinExp typecheck")
 		return nil
 	end
 
 	return BinExp.Eval(op, left :: BinExp.Value, right :: BinExp.Value)
+end
+
+function classPrototype.InterpretNot(self: Identity, node: ChainTypes.ASTNode): ChainTypes.ASTData?
+	local children = node.children :: ChainTypes.ASTChildren_Not
+
+	local result = self:InterpretASTNode(children)
+	if typeof(result) ~= "boolean" then
+		Util.LogWarn("failed logical not typecheck")
+		return nil
+	end
+
+	return not result
 end
 
 function classPrototype.InterpretASTNode(self: Identity, node: ChainTypes.ASTNode): ChainTypes.ASTData?
@@ -157,6 +170,8 @@ function classPrototype.InterpretASTNode(self: Identity, node: ChainTypes.ASTNod
 		return self:InterpretCall(node)
 	elseif node.id == ASTNodeIds.BinExp then
 		return self:InterpretBinExp(node)
+	elseif node.id == ASTNodeIds.Not then
+		return self:InterpretNot(node)
 	end
 
 	return node.data
