@@ -164,14 +164,14 @@ function classPrototype.InterpretASTNode(self: Identity, node: ChainTypes.ASTNod
 		return nil -- Not a perfect limit, but it will stop any deeper function calls
 	end
 
-	if node.id == ASTNodeIds.Root then
-		return self:InterpretRoot(node)
-	elseif node.id == ASTNodeIds.Call then
+	if node.id == ASTNodeIds.Call then
 		return self:InterpretCall(node)
 	elseif node.id == ASTNodeIds.BinExp then
 		return self:InterpretBinExp(node)
 	elseif node.id == ASTNodeIds.Not then
 		return self:InterpretNot(node)
+	elseif node.id == ASTNodeIds.Root then
+		return self:InterpretRoot(node)
 	end
 
 	return node.data
