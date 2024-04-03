@@ -4,11 +4,10 @@ return table.freeze({
 	Str = "Str", -- Any string
 	Num = "Num", -- Any string
 	Bool = "Bool", -- Any boolean
-
-	Not = "Not", -- Inverts an expression
+	Thunk = "Thunk", -- Any enevaluated branch of Chain
 
 	Root = "Root", -- The beginning/root of the AST
 	Call = "Call", -- Action or routine call
 	BinExp = "BinExp", -- Binary expression
-	Thunk = "Thunk", -- Unevaluated call, thunk
+	Not = "Not", -- Logical expression inversion
 })

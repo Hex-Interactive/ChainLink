@@ -46,6 +46,8 @@ function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode):
 	local target = (if children.target then self:InterpretASTNode(children.target) else nil) :: string?
 	local callName = node.data :: string
 
+	-- TODO: Implement thunks
+
 	local args = {}
 	for _, child in children.args do
 		table.insert(args, self:InterpretASTNode(child))
