@@ -15,7 +15,7 @@ local typeChecking = {
 	[LexemeIds.GreatEq] = { x = { "number" }, y = { "number" } },
 	[LexemeIds.Great] = { x = { "number" }, y = { "number" } },
 	[LexemeIds.NotEq] = { x = { "number", "boolean" }, y = { "number", "boolean" } },
-	[LexemeIds.Add] = { x = { "boolean" }, y = { "boolean" } },
+	[LexemeIds.And] = { x = { "boolean" }, y = { "boolean" } },
 	[LexemeIds.Or] = { x = { "boolean" }, y = { "boolean" } },
 }
 
