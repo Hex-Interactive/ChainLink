@@ -23,7 +23,8 @@ export type ASTNode = {
 	children: ASTChildren?,
 }
 
-export type ASTData = string | number | boolean
+export type Thunk = () -> ()
+export type ASTData = string | number | boolean | Thunk
 export type ASTChildren = ASTChildren_Root | ASTChildren_Call | ASTChildren_BinExp | ASTChildren_Thunk | ASTChildren_Not
 
 export type ASTChildren_Not = ASTNode

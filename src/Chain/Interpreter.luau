@@ -31,10 +31,11 @@ local function constructor(ast: ChainTypes.ASTNode): Identity
 	return self
 end
 
-function classPrototype.InterpretRoot(self: Identity, node: ChainTypes.ASTNode): ChainTypes.ASTData?
-	local children = node.children :: ChainTypes.ASTChildren_Root
+function classPrototype.InterpretRootLike(self: Identity, node: ChainTypes.ASTNode): ChainTypes.ASTData?
+	local children = node.children :: ChainTypes.ASTChildren_Root | ChainTypes.ASTChildren_Thunk
 
-	for _, child in children do
+	-- Pairs used to make typechecker happy
+	for _, child in pairs(children) do
 		self:InterpretASTNode(child)
 	end
 
@@ -45,8 +46,6 @@ function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode):
 	local children = node.children :: ChainTypes.ASTChildren_Call
 	local target = (if children.target then self:InterpretASTNode(children.target) else nil) :: string?
 	local callName = node.data :: string
-
-	-- TODO: Implement thunks
 
 	local args = {}
 	for _, child in children.args do
@@ -75,12 +74,19 @@ function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode):
 
 		if action.ValidateArgs then
 			for index, expectedType in action.ValidateArgs do
-				local value = args[index]
-				if typeof(value) == expectedType or (expectedType == "any" and value ~= nil) then
+				local argValue = args[index]
+				local argType = typeof(argValue)
+
+				-- Functions returned from the parser are thunks
+				if argType == "function" then
+					argType = "thunk"
+				end
+
+				if argType == expectedType or (expectedType == "any" and argType ~= nil) then
 					continue
 				end
 
-				Util.LogWarn(`action "{callName}" argument #{index} is invalid`)
+				Util.LogWarn(`action "{callName}" argument #{index} has invalid type`)
 				return nil
 			end
 		end
@@ -147,6 +153,12 @@ function classPrototype.InterpretBinExp(self: Identity, node: ChainTypes.ASTNode
 	return BinExp.Eval(op, left :: BinExp.Value, right :: BinExp.Value)
 end
 
+function classPrototype.InterpretThunk(self: Identity, node: ChainTypes.ASTNode): ChainTypes.ASTData?
+	return function()
+		self:InterpretRootLike(node)
+	end
+end
+
 function classPrototype.InterpretNot(self: Identity, node: ChainTypes.ASTNode): ChainTypes.ASTData?
 	local children = node.children :: ChainTypes.ASTChildren_Not
 
@@ -170,10 +182,12 @@ function classPrototype.InterpretASTNode(self: Identity, node: ChainTypes.ASTNod
 		return self:InterpretCall(node)
 	elseif node.id == ASTNodeIds.BinExp then
 		return self:InterpretBinExp(node)
+	elseif node.id == ASTNodeIds.Thunk then
+		return self:InterpretThunk(node)
 	elseif node.id == ASTNodeIds.Not then
 		return self:InterpretNot(node)
 	elseif node.id == ASTNodeIds.Root then
-		return self:InterpretRoot(node)
+		return self:InterpretRootLike(node)
 	end
 
 	return node.data

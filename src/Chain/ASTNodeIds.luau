@@ -4,6 +4,7 @@ return table.freeze({
 	Str = "Str", -- Any string
 	Num = "Num", -- Any string
 	Bool = "Bool", -- Any boolean
+
 	Thunk = "Thunk", -- Any enevaluated branch of Chain
 
 	Root = "Root", -- The beginning/root of the AST
