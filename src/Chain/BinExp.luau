@@ -1,4 +1,4 @@
-local ChainTypes = require(script.Parent.ChainTypes)
+local ChainTypes = require(script.Parent:WaitForChild("ChainTypes"))
 local LexemeIds = require(script.Parent:WaitForChild("LexemeIds"))
 
 export type Value = number | boolean

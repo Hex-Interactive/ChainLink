@@ -16,6 +16,7 @@ export type Identity = typeof(setmetatable(
 		_ast: ChainTypes.ASTNode,
 		_routines: { [string]: ChainTypes.Routine },
 		_links: { [string]: { Instance } },
+		_mem: { [string]: ChainTypes.ASTData },
 	},
 	classMetatable
 ))
@@ -27,8 +28,28 @@ local function constructor(ast: ChainTypes.ASTNode): Identity
 	self._ast = ast
 	self._routines = RoutineDispatcher.Export()
 	self._links = Links.Export()
+	self._mem = {}
 
 	return self
+end
+
+function classPrototype.MemDef(self: Identity, name: string, value: ChainTypes.ASTData)
+	if self._mem[name] then
+		Util.LogWarn(`mem contains a "{name}" def already`)
+		return
+	end
+
+	self._mem[name] = value
+end
+
+function classPrototype.MemRead(self: Identity, name: string): ChainTypes.ASTData?
+	local value = self._mem[name]
+	if value then
+		Util.LogWarn(`mem def "{name}" not found`)
+		return nil
+	end
+
+	return value
 end
 
 function classPrototype.InterpretRootLike(self: Identity, node: ChainTypes.ASTNode): ChainTypes.ASTData?
@@ -87,6 +108,15 @@ function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode):
 		end
 	end
 
+	local process: ChainTypes.Process = {
+		memDef = function(name, value)
+			self:MemDef(name, value)
+		end,
+		memRead = function(name)
+			return self:MemRead(name)
+		end,
+	}
+
 	if target then
 		local targets = self._links[target]
 		if not targets then
@@ -116,6 +146,7 @@ function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode):
 				target = targetLink,
 				args = args,
 				validatedParam = validatedParam,
+				process = process,
 			})
 		end
 	else
@@ -123,6 +154,7 @@ function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode):
 			target = nil,
 			args = args,
 			validatedParam = nil,
+			process = process,
 		})
 	end
 

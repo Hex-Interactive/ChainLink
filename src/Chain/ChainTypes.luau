@@ -5,10 +5,16 @@ export type Result<T> = {
 	data: T?,
 }
 
+export type Process = {
+	memDef: (name: string, value: ASTData) -> (),
+	memRead: (name: string) -> ASTData?,
+}
+
 export type CallContext = {
 	target: Instance?,
 	args: { ASTData? },
 	validatedParam: ValidatedParam?,
+	process: Process,
 }
 
 export type Lexemes = { Lexeme }
