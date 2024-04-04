@@ -75,18 +75,13 @@ function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode):
 		if action.ValidateArgs then
 			for index, expectedType in action.ValidateArgs do
 				local argValue = args[index]
-				local argType = typeof(argValue)
+				local argType = ChainTypes.Of(argValue)
 
-				-- Functions returned from the parser are thunks
-				if argType == "function" then
-					argType = "thunk"
-				end
-
-				if argType == expectedType or (expectedType == "any" and argType ~= nil) then
+				if (argType == expectedType or expectedType == "any") and argType ~= "error" then
 					continue
 				end
 
-				Util.LogWarn(`action "{callName}" argument #{index} has invalid type`)
+				Util.LogWarn(`action "{callName}" argument #{index} has invalid type, should be type "{expectedType}"`)
 				return nil
 			end
 		end
@@ -163,7 +158,7 @@ function classPrototype.InterpretNot(self: Identity, node: ChainTypes.ASTNode): 
 	local children = node.children :: ChainTypes.ASTChildren_Not
 
 	local result = self:InterpretASTNode(children)
-	if typeof(result) ~= "boolean" then
+	if ChainTypes.Of(result) ~= "boolean" then
 		Util.LogWarn("failed logical not typecheck")
 		return nil
 	end

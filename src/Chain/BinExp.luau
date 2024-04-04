@@ -1,8 +1,14 @@
+local ChainTypes = require(script.Parent.ChainTypes)
 local LexemeIds = require(script.Parent:WaitForChild("LexemeIds"))
 
 export type Value = number | boolean
 
-local typeChecking = {
+local typeChecking: {
+	[string]: {
+		x: { ChainTypes.TypeString },
+		y: { ChainTypes.TypeString },
+	},
+} = {
 	[LexemeIds.Pow] = { x = { "number" }, y = { "number" } },
 	[LexemeIds.Mod] = { x = { "number" }, y = { "number" } },
 	[LexemeIds.Mul] = { x = { "number" }, y = { "number" } },
@@ -76,7 +82,7 @@ function BinExp.TypeCheck(op: string, x: any, y: any): boolean
 		return false
 	end
 
-	if table.find(expected.x, typeof(x)) or table.find(expected.y, typeof(y)) then
+	if table.find(expected.x, ChainTypes.Of(x)) or table.find(expected.y, ChainTypes.Of(y)) then
 		return false
 	end
 

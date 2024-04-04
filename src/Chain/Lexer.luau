@@ -264,8 +264,6 @@ function classPrototype.ReadNext(self: Identity): ChainTypes.Lexeme
 		return new(LexemeIds.None, char)
 	end
 
-	-- TODO: Implement logical operators (not, and, or)
-
 	return new(LexemeIds.UknChar, char)
 end
 

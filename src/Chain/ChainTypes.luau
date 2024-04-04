@@ -23,6 +23,9 @@ export type ASTNode = {
 	children: ASTChildren?,
 }
 
+export type TypeString = "any" | "string" | "number" | "boolean" | "thunk"
+export type InternalTypeString = TypeString | "error"
+
 export type Thunk = () -> ()
 export type ASTData = string | number | boolean | Thunk
 export type ASTChildren = ASTChildren_Root | ASTChildren_Call | ASTChildren_BinExp | ASTChildren_Thunk | ASTChildren_Not
@@ -54,4 +57,19 @@ export type ActionModule = {
 type ValidateTargetFunc = (target: Instance) -> (boolean, ValidatedParam?)
 type ValidatedParam = any
 
-return nil
+-- Utils
+local ChainTypes = {}
+
+function ChainTypes.Of(value: any): InternalTypeString
+	local result = typeof(value)
+
+	if result == "function" then
+		return "thunk"
+	elseif result == "boolean" or result == "string" or result == "number" then
+		return result
+	end
+
+	return "error"
+end
+
+return ChainTypes
