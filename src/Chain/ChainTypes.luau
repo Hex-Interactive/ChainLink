@@ -26,8 +26,8 @@ export type ASTNode = {
 export type TypeString = "any" | "string" | "number" | "boolean" | "thunk"
 export type InternalTypeString = TypeString | "error"
 
-export type Thunk = () -> ()
-export type ASTData = string | number | boolean | Thunk
+export type thunk = () -> ()
+export type ASTData = string | number | boolean | thunk
 export type ASTChildren = ASTChildren_Root | ASTChildren_Call | ASTChildren_BinExp | ASTChildren_Thunk | ASTChildren_Not
 
 export type ASTChildren_Not = ASTNode
