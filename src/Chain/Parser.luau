@@ -130,7 +130,7 @@ function classPrototype.ParseFactor(self: Identity): ChainTypes.ASTNode
 		self:Consume()
 		return node(ASTNodeIds.Num, tonumber(lexeme.data) :: number)
 	elseif id == LexemeIds.Id then
-		local result = self:ParseCallLike()
+		local result = self:ParseCallLike(true)
 		if result.id == ASTNodeIds.Call then
 			return result
 		end
@@ -204,7 +204,7 @@ function classPrototype.ParseExpression(self: Identity): ChainTypes.ASTNode
 	return nodeUnexp(lexeme)
 end
 
-function classPrototype.ParseCall(self: Identity, callTarget: ChainTypes.Lexeme?): ChainTypes.ASTNode
+function classPrototype.ParseCall(self: Identity, expr: boolean, callTarget: ChainTypes.Lexeme?): ChainTypes.ASTNode
 	local target = if callTarget then node(ASTNodeIds.Str, callTarget.data) else nil
 
 	local callName = self:Look(0) :: ChainTypes.Lexeme
@@ -240,11 +240,13 @@ function classPrototype.ParseCall(self: Identity, callTarget: ChainTypes.Lexeme?
 	end
 	self:Consume()
 
-	local nextCallId = self:Peek(0)
-	if nextCallId ~= LexemeIds.Semicolon then
-		return nodeUnexp(self:Look(0))
+	if not expr then
+		local semicolonId = self:Peek(0)
+		if semicolonId ~= LexemeIds.Semicolon then
+			return nodeUnexp(self:Look(0))
+		end
+		self:Consume()
 	end
-	self:Consume()
 
 	return node(ASTNodeIds.Call, callName.data, {
 		target = target,
@@ -252,7 +254,7 @@ function classPrototype.ParseCall(self: Identity, callTarget: ChainTypes.Lexeme?
 	})
 end
 
-function classPrototype.ParseTargetedCall(self: Identity): ChainTypes.ASTNode
+function classPrototype.ParseTargetedCall(self: Identity, expr: boolean): ChainTypes.ASTNode
 	local targetName = self:Look(0) :: ChainTypes.Lexeme
 	self:Consume()
 
@@ -263,7 +265,7 @@ function classPrototype.ParseTargetedCall(self: Identity): ChainTypes.ASTNode
 		local nextId = self:Peek(1)
 
 		if nextId == LexemeIds.LParen then
-			return self:ParseCall(targetName)
+			return self:ParseCall(expr, targetName)
 		end
 
 		return nodeUnexp(self:Look(1))
@@ -272,13 +274,13 @@ function classPrototype.ParseTargetedCall(self: Identity): ChainTypes.ASTNode
 	return nodeUnexp(self:Look(0))
 end
 
-function classPrototype.ParseCallLike(self: Identity): ChainTypes.ASTNode
+function classPrototype.ParseCallLike(self: Identity, expr: boolean): ChainTypes.ASTNode
 	local nextId = self:Peek(1)
 
 	if nextId == LexemeIds.Arrow then
-		return self:ParseTargetedCall()
+		return self:ParseTargetedCall(expr)
 	elseif nextId == LexemeIds.LParen then
-		return self:ParseCall(nil)
+		return self:ParseCall(expr)
 	end
 
 	return nodeUnexp(self:Look(1))
@@ -290,7 +292,7 @@ function classPrototype.ParseGeneralContext(self: Identity): ChainTypes.ASTNode?
 	if id == LexemeIds.Eof then
 		return nil
 	elseif id == LexemeIds.Id then
-		return self:ParseCallLike()
+		return self:ParseCallLike(false)
 	end
 
 	return nodeUnexp(self:Look(0))
