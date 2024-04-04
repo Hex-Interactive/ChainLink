@@ -11,11 +11,11 @@ local VALID_MODES = table.freeze({
 	Player = true,
 })
 
-local index = {}
+local index: { [Instance]: RBXScriptConnection } = {}
 
 local Triggers = {}
 
-local function added(trigger: BasePart)
+local function added(trigger: Instance)
 	if not trigger:IsA("BasePart") then
 		Util.LogWarn(`invalid trigger "{trigger.Name}"`)
 		return
@@ -39,7 +39,7 @@ local function added(trigger: BasePart)
 		end
 
 		if mode == "Player" then
-			local player = Players:GetPlayerFromCharacter(hit.Parent)
+			local player = Players:GetPlayerFromCharacter(hit.Parent :: Model)
 			if not player or not Validators.Check(Names.Vals.CanTriggerPlayer, player) then
 				return
 			end
@@ -49,7 +49,7 @@ local function added(trigger: BasePart)
 	end)
 end
 
-local function removed(trigger: BasePart)
+local function removed(trigger: Instance)
 	local conn = index[trigger]
 	if not conn then
 		return
