@@ -39,17 +39,16 @@ function classPrototype.MemDef(self: Identity, name: string, value: ChainTypes.A
 		return
 	end
 
+	if ChainTypes.Of(value) == "error" then
+		Util.LogWarn(`attempted mem def for "{name}" has invalid type`)
+		return
+	end
+
 	self._mem[name] = value
 end
 
 function classPrototype.MemRead(self: Identity, name: string): ChainTypes.ASTData?
-	local value = self._mem[name]
-	if value then
-		Util.LogWarn(`mem def "{name}" not found`)
-		return nil
-	end
-
-	return value
+	return self._mem[name]
 end
 
 function classPrototype.InterpretRootLike(self: Identity, node: ChainTypes.ASTNode): ChainTypes.ASTData?
