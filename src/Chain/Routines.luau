@@ -70,7 +70,7 @@ local function serializeLayer(parent: Instance): RoutineLayer
 	return layer
 end
 
-local function executeLayer(layer: RoutineLayer, _context: ChainTypes.CallContext)
+local function executeLayer(layer: RoutineLayer, _context: ChainTypes.Context)
 	for _, step in layer do
 		if step.class == "Chain" then
 			if typeof(step.data) ~= "string" then
@@ -110,10 +110,10 @@ local function executeLayer(layer: RoutineLayer, _context: ChainTypes.CallContex
 	end
 end
 
-local function serialize(routine: Model): ChainTypes.Routine
+local function serialize(routine: Model): ChainTypes.CallDef
 	local layer = serializeLayer(routine)
 
-	return function(context: ChainTypes.CallContext)
+	return function(context: ChainTypes.Context)
 		executeLayer(layer, context)
 	end
 end

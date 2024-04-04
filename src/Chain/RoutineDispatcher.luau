@@ -7,12 +7,12 @@ local index: { [Model]: RoutineEntry } = {}
 
 type RoutineEntry = {
 	name: string,
-	run: ChainTypes.Routine,
+	run: ChainTypes.CallDef,
 }
 
 local RoutineDispatcher = {}
 
-function RoutineDispatcher.Export(): { [string]: ChainTypes.Routine }
+function RoutineDispatcher.Export(): { [string]: ChainTypes.CallDef }
 	local routines = {}
 
 	for routine, entry in index do

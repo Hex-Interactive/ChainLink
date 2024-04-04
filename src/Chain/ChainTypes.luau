@@ -48,20 +48,18 @@ export type Process = {
 	memRead: (name: string) -> Type?,
 }
 
-export type CallContext = {
-	target: Instance?,
-	args: { Type? },
-	validatedParam: ValidatedParam?,
+export type CallDef = (context: Context) -> ()
+export type Context = {
 	process: Process,
+	args: { Type? },
+	target: Instance?,
+	validatedParam: ValidatedParam?,
 }
-
-export type Action = (context: CallContext) -> ()
-export type Routine = Action
 
 export type ActionModule = {
 	ValidateArgs: { [number]: string },
 	ValidateTarget: (ValidateTargetFunc | boolean)?,
-	Run: Action,
+	Run: CallDef,
 }
 
 type ValidateTargetFunc = (target: Instance) -> (boolean, ValidatedParam?)

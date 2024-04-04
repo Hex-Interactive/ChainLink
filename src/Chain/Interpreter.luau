@@ -14,7 +14,7 @@ export type Identity = typeof(setmetatable(
 	{} :: {
 		_complexity: number,
 		_ast: ChainTypes.ASTNode,
-		_routines: { [string]: ChainTypes.Routine },
+		_routines: { [string]: ChainTypes.CallDef },
 		_links: { [string]: { Instance } },
 		_mem: { [string]: ChainTypes.Type },
 	},
@@ -142,18 +142,18 @@ function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode):
 			end
 
 			func({
-				target = targetLink,
-				args = args,
-				validatedParam = validatedParam,
 				process = process,
+				args = args,
+				target = targetLink,
+				validatedParam = validatedParam,
 			})
 		end
 	else
 		func({
-			target = nil,
-			args = args,
-			validatedParam = nil,
 			process = process,
+			args = args,
+			target = nil,
+			validatedParam = nil,
 		})
 	end
 
