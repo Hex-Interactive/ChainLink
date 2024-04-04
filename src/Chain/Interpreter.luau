@@ -16,7 +16,7 @@ export type Identity = typeof(setmetatable(
 		_ast: ChainTypes.ASTNode,
 		_routines: { [string]: ChainTypes.Routine },
 		_links: { [string]: { Instance } },
-		_mem: { [string]: ChainTypes.ASTData },
+		_mem: { [string]: ChainTypes.Type },
 	},
 	classMetatable
 ))
@@ -33,7 +33,7 @@ local function constructor(ast: ChainTypes.ASTNode): Identity
 	return self
 end
 
-function classPrototype.MemDef(self: Identity, name: string, value: ChainTypes.ASTData)
+function classPrototype.MemDef(self: Identity, name: string, value: ChainTypes.Type)
 	if self._mem[name] then
 		Util.LogWarn(`mem contains a "{name}" def already`)
 		return
@@ -47,11 +47,11 @@ function classPrototype.MemDef(self: Identity, name: string, value: ChainTypes.A
 	self._mem[name] = value
 end
 
-function classPrototype.MemRead(self: Identity, name: string): ChainTypes.ASTData?
+function classPrototype.MemRead(self: Identity, name: string): ChainTypes.Type?
 	return self._mem[name]
 end
 
-function classPrototype.InterpretRootLike(self: Identity, node: ChainTypes.ASTNode): ChainTypes.ASTData?
+function classPrototype.InterpretRootLike(self: Identity, node: ChainTypes.ASTNode): ChainTypes.Type?
 	local children = node.children :: ChainTypes.ASTChildren_Root | ChainTypes.ASTChildren_Thunk
 
 	-- Pairs used to make typechecker happy
@@ -62,7 +62,7 @@ function classPrototype.InterpretRootLike(self: Identity, node: ChainTypes.ASTNo
 	return nil
 end
 
-function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode): ChainTypes.ASTData?
+function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode): ChainTypes.Type?
 	local children = node.children :: ChainTypes.ASTChildren_Call
 	local target = (if children.target then self:InterpretASTNode(children.target) else nil) :: string?
 	local callName = node.data :: string
@@ -160,7 +160,7 @@ function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode):
 	return nil
 end
 
-function classPrototype.InterpretBinExp(self: Identity, node: ChainTypes.ASTNode): ChainTypes.ASTData?
+function classPrototype.InterpretBinExp(self: Identity, node: ChainTypes.ASTNode): ChainTypes.Type?
 	local children = node.children :: ChainTypes.ASTChildren_BinExp
 	local op = node.data :: string
 
@@ -179,13 +179,13 @@ function classPrototype.InterpretBinExp(self: Identity, node: ChainTypes.ASTNode
 	return BinExp.Eval(op, left :: BinExp.Value, right :: BinExp.Value)
 end
 
-function classPrototype.InterpretThunk(self: Identity, node: ChainTypes.ASTNode): ChainTypes.ASTData?
+function classPrototype.InterpretThunk(self: Identity, node: ChainTypes.ASTNode): ChainTypes.Type?
 	return function()
 		self:InterpretRootLike(node)
 	end
 end
 
-function classPrototype.InterpretNot(self: Identity, node: ChainTypes.ASTNode): ChainTypes.ASTData?
+function classPrototype.InterpretNot(self: Identity, node: ChainTypes.ASTNode): ChainTypes.Type?
 	local children = node.children :: ChainTypes.ASTChildren_Not
 
 	local result = self:InterpretASTNode(children)
@@ -197,7 +197,7 @@ function classPrototype.InterpretNot(self: Identity, node: ChainTypes.ASTNode): 
 	return not result
 end
 
-function classPrototype.InterpretASTNode(self: Identity, node: ChainTypes.ASTNode): ChainTypes.ASTData?
+function classPrototype.InterpretASTNode(self: Identity, node: ChainTypes.ASTNode): ChainTypes.Type?
 	local newCount = self._complexity + 1
 	self._complexity = newCount
 	if newCount > COMPLEXITY_LIMIT then

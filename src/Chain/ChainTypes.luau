@@ -1,39 +1,31 @@
--- Primary
+-- General
 export type Result<T> = {
 	ok: boolean,
 	err: string?,
 	data: T?,
 }
 
-export type Process = {
-	memDef: (name: string, value: ASTData) -> (),
-	memRead: (name: string) -> ASTData?,
-}
+-- Types
+export type thunk = () -> ()
+export type Type = string | number | boolean | thunk
 
-export type CallContext = {
-	target: Instance?,
-	args: { ASTData? },
-	validatedParam: ValidatedParam?,
-	process: Process,
-}
+export type TypeString = "any" | "string" | "number" | "boolean" | "thunk"
+export type InternalTypeString = TypeString | "error"
 
+-- Lexer
 export type Lexemes = { Lexeme }
 export type Lexeme = {
 	id: string,
 	data: string,
 }
 
+-- AST
 export type ASTNode = {
 	id: string,
-	data: ASTData, -- Empty string commonly used in cases of unread data
+	data: Type,
 	children: ASTChildren?,
 }
 
-export type TypeString = "any" | "string" | "number" | "boolean" | "thunk"
-export type InternalTypeString = TypeString | "error"
-
-export type thunk = () -> ()
-export type ASTData = string | number | boolean | thunk
 export type ASTChildren = ASTChildren_Root | ASTChildren_Call | ASTChildren_BinExp | ASTChildren_Thunk | ASTChildren_Not
 
 export type ASTChildren_Not = ASTNode
@@ -50,7 +42,19 @@ export type ASTChildren_BinExp = {
 	right: ASTNode,
 }
 
--- Actions & Routines
+-- Definitions
+export type Process = {
+	memDef: (name: string, value: Type) -> (),
+	memRead: (name: string) -> Type?,
+}
+
+export type CallContext = {
+	target: Instance?,
+	args: { Type? },
+	validatedParam: ValidatedParam?,
+	process: Process,
+}
+
 export type Action = (context: CallContext) -> ()
 export type Routine = Action
 

@@ -61,7 +61,7 @@ export type Identity = typeof(setmetatable(
 	classMetatable
 ))
 
-local function node(id: string, data: ChainTypes.ASTData?, children: ChainTypes.ASTChildren?): ChainTypes.ASTNode
+local function node(id: string, data: ChainTypes.Type?, children: ChainTypes.ASTChildren?): ChainTypes.ASTNode
 	return {
 		id = id,
 		data = if data == nil then "" else data, -- Empty string used for "no data"
