@@ -1,13 +1,13 @@
 local ChainTypes = require(script.Parent.Parent:WaitForChild("Chain"):WaitForChild("ChainTypes"))
 
 return {
-	ValidateTarget = true,
-	ValidateArgs = { [1] = "string", [2] = "any" },
+	parameters = { [1] = "string", [2] = "any" },
+	validateTarget = true,
 
-	Run = function(context)
+	call = function(context)
 		local target = context.target :: Instance
 		local name = context.args[1] :: string
 		local value = context.args[2] :: any
 		target:SetAttribute(name, value)
 	end,
-} :: ChainTypes.ActionModule
+} :: ChainTypes.CallDefinition<nil>

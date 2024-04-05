@@ -1,36 +1,35 @@
 local ChainTypes = require(script.Parent.Parent:WaitForChild("Chain"):WaitForChild("ChainTypes"))
+local Util = require(script.Parent.Parent:WaitForChild("Util"))
 
-type ValidatedParam = {
-	part: BasePart,
-	vel: Vector3,
-}
+local function failWarn()
+	Util.LogWarn(`action "Force" target is invalid`)
+end
 
 return {
-	ValidateTarget = function(target: Instance): (boolean, ValidatedParam?)
+	validateTarget = true,
+
+	call = function(context)
+		local target = context.target :: Instance
+
 		local forceDirAtt = target:FindFirstChild("_ForceDirection", true)
 		if not forceDirAtt or not forceDirAtt:IsA("Attachment") then
-			return false, nil
+			failWarn()
+			return
 		end
 
 		local magnitude = forceDirAtt:GetAttribute("Magnitude")
 		if typeof(magnitude) ~= "number" then
-			return false, nil
+			failWarn()
+			return
 		end
 
 		local basePart = forceDirAtt.Parent
 		if not basePart or not basePart:IsA("BasePart") then
-			return false, nil
+			failWarn()
+			return
 		end
 
 		local direction = CFrame.lookAt(basePart.Position, forceDirAtt.WorldPosition).LookVector
-		return true, {
-			part = basePart,
-			vel = direction * magnitude,
-		}
+		basePart.AssemblyLinearVelocity = direction * magnitude
 	end,
-
-	Run = function(context)
-		local param = context.validatedParam :: ValidatedParam
-		param.part.AssemblyLinearVelocity = param.vel
-	end,
-} :: ChainTypes.ActionModule
+} :: ChainTypes.CallDefinition<nil>

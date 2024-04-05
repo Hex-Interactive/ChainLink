@@ -1,10 +1,10 @@
 local ChainTypes = require(script.Parent.Parent:WaitForChild("Chain"):WaitForChild("ChainTypes"))
 
 return {
-	ValidateArgs = { [1] = "number" },
+	parameters = { [1] = "number" },
 
-	Run = function(context)
+	call = function(context)
 		local duration = context.args[1] :: number
 		task.wait(duration)
 	end,
-} :: ChainTypes.ActionModule
+} :: ChainTypes.CallDefinition<nil>

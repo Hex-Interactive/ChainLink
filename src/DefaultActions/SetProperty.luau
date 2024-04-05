@@ -2,10 +2,10 @@ local ChainTypes = require(script.Parent.Parent:WaitForChild("Chain"):WaitForChi
 local Util = require(script.Parent.Parent:WaitForChild("Util"))
 
 return {
-	ValidateTarget = true,
-	ValidateArgs = { [1] = "string", [2] = "any" },
+	parameters = { [1] = "string", [2] = "any" },
+	validateTarget = true,
 
-	Run = function(context)
+	call = function(context)
 		local target = context.target :: any -- Allow dynamic property read/assign
 		local propName = context.args[1] :: string
 		local propValue = context.args[2] :: any
@@ -17,4 +17,4 @@ return {
 
 		target[propName] = propValue
 	end,
-} :: ChainTypes.ActionModule
+} :: ChainTypes.CallDefinition<nil>

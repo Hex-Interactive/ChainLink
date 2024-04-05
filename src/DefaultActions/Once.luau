@@ -2,10 +2,10 @@ local ChainTypes = require(script.Parent.Parent:WaitForChild("Chain"):WaitForChi
 local Names = require(script.Parent.Parent:WaitForChild("Names"))
 
 return {
-	ValidateTarget = true,
+	validateTarget = true,
 
-	Run = function(context)
+	call = function(context)
 		local target = context.target :: Instance
 		task.defer(target.RemoveTag, target, Names.Tags.Link)
 	end,
-} :: ChainTypes.ActionModule
+} :: ChainTypes.CallDefinition<nil>

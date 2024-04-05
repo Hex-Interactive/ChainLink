@@ -2,10 +2,10 @@ local ChainTypes = require(script.Parent.Parent:WaitForChild("Chain"):WaitForChi
 local Util = require(script.Parent.Parent:WaitForChild("Util"))
 
 return {
-	ValidateTarget = true,
-	ValidateArgs = { [1] = "string" },
+	parameters = { [1] = "string" },
+	validateTarget = true,
 
-	Run = function(context)
+	call = function(context)
 		local target = context.target :: Instance
 		local name = context.args[1] :: string
 
@@ -23,4 +23,4 @@ return {
 			instance.Color = color
 		end
 	end,
-} :: ChainTypes.ActionModule
+} :: ChainTypes.CallDefinition<nil>

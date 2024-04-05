@@ -140,7 +140,6 @@ function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode):
 				if typeof(action.validateTarget) == "function" then
 					local validated, arg = action.validateTarget(targetLink)
 					if not validated then
-						Util.LogWarn(`action "{callName}" target "{targetLink.Name}" is invalid`)
 						continue
 					end
 
