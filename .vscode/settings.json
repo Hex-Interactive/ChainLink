@@ -8,5 +8,11 @@
 		"editor.formatOnSave": true
 	},
 
+	"workbench.editor.customLabels.enabled": true,
+	"workbench.editor.customLabels.patterns": {
+		"**/init.luau": "/${dirname}.${extname}",
+		"**/init.lua": "/${dirname}.${extname}"
+	},
+
 	"luau-lsp.sourcemap.rojoProjectFile": "develop.project.json",
 }
