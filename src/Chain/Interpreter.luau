@@ -101,6 +101,9 @@ function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode):
 		if action.validateTarget and not target then
 			Util.LogWarn(`action "{callName}" requires a target`)
 			return nil
+		elseif target and action.validateTarget == false then
+			Util.LogWarn(`action "{callName}" requires NO target`)
+			return nil
 		end
 
 		if action.parameters then
