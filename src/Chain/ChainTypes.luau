@@ -10,7 +10,8 @@ export type thunk = () -> ()
 export type Type = string | number | boolean | thunk
 
 export type TypeString = "any" | "string" | "number" | "boolean" | "thunk"
-export type InternalTypeString = TypeString | "error"
+export type TypeStringNilable = TypeString | "any?" | "string?" | "number?" | "boolean?" | "thunk?"
+export type TypeStringInternal = TypeString | "error"
 
 -- Lexer
 export type Lexemes = { Lexeme }
@@ -48,27 +49,24 @@ export type Process = {
 	memRead: (name: string) -> Type?,
 }
 
-export type CallDef = (context: Context) -> ()
-export type Context = {
+export type Call<T> = (context: Context<T>) -> ()
+export type Context<T> = {
 	process: Process,
 	args: { Type? },
+	validatedArg: T,
 	target: Instance?,
-	validatedParam: ValidatedParam?,
 }
 
-export type ActionModule = {
-	ValidateArgs: { [number]: string },
-	ValidateTarget: (ValidateTargetFunc | boolean)?,
-	Run: CallDef,
+export type CallDefinition<T> = {
+	parameters: { [number]: TypeStringNilable },
+	validateTarget: (((target: Instance) -> (boolean, T?)) | boolean)?,
+	call: Call<T>,
 }
-
-type ValidateTargetFunc = (target: Instance) -> (boolean, ValidatedParam?)
-type ValidatedParam = any
 
 -- Utils
 local ChainTypes = {}
 
-function ChainTypes.Of(value: any): InternalTypeString
+function ChainTypes.Of(value: any): TypeStringInternal
 	local result = typeof(value)
 
 	if result == "function" then

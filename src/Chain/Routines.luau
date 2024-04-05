@@ -9,7 +9,6 @@ local Chain = require(script.Parent)
 local MAX_ROUTINE_STEPS = 20
 local VALID_STEPS = table.freeze({
 	Chain = true,
-	-- If = true,
 })
 
 type RoutineLayer = { RoutineStep }
@@ -19,7 +18,7 @@ type RoutineStep = {
 	childLayers: { RoutineLayer }?,
 }
 
-local Routines = {} -- TODO: Implement "If" step
+local Routines = {}
 
 local function serializeLayer(parent: Instance): RoutineLayer
 	local layer = {}
@@ -46,31 +45,13 @@ local function serializeLayer(parent: Instance): RoutineLayer
 			data = step:GetAttribute(Names.Attr.Data),
 		}
 
-		-- if class == "If" then
-		-- 	local truePath = step:FindFirstChild("True")
-		-- 	local falsePath = step:FindFirstChild("False")
-		-- 	if not (truePath and falsePath) then
-		-- 		Util.LogWarn(`invalid routine if "{step.Name}" step`)
-		-- 		break
-		-- 	end
-
-		-- 	if not truePath:IsA("Configuration") or not falsePath:IsA("Configuration") then
-		-- 		Util.LogWarn(`invalid routine true/false paths for "{step.Name}" step`)
-		-- 		break
-		-- 	end
-
-		-- 	routineStep.childLayers = {}
-		-- 	routineStep.childLayers[1] = serializeLayer(truePath)
-		-- 	routineStep.childLayers[2] = serializeLayer(falsePath)
-		-- end
-
 		table.insert(layer, routineStep)
 	end
 
 	return layer
 end
 
-local function executeLayer(layer: RoutineLayer, _context: ChainTypes.Context)
+local function executeLayer(layer: RoutineLayer, _context: ChainTypes.Context<nil>)
 	for _, step in layer do
 		if step.class == "Chain" then
 			if typeof(step.data) ~= "string" then
@@ -79,41 +60,14 @@ local function executeLayer(layer: RoutineLayer, _context: ChainTypes.Context)
 			end
 
 			Chain.Execute(step.data :: string)
-			-- elseif step.class == "If" then
-			-- 	if typeof(step.data) ~= "string" then
-			-- 		Util.LogWarn(`routine "If" step data "{step.data}" should be a string`)
-			-- 		continue
-			-- 	end
-
-			-- 	if not step.childLayers then
-			-- 		continue
-			-- 	end
-
-			-- 	local data = string.gsub(step.data :: string, "_SOURCE_", context.parameter.source)
-			-- 	local result
-
-			-- 	for operator, eval in ifEvals do
-			-- 		if string.find(data, operator) then
-			-- 			local segments = string.split(data, operator)
-			-- 			result = eval(segments[1], segments[2])
-			-- 			break
-			-- 		end
-			-- 	end
-
-			-- 	if not result then
-			-- 		Util.LogWarn(`invalid routine "If" step data "{data}" found`)
-			-- 		continue
-			-- 	end
-
-			-- 	executeLayer(step.childLayers[if result then 1 else 2], context)
 		end
 	end
 end
 
-local function serialize(routine: Model): ChainTypes.CallDef
+local function serialize(routine: Model): ChainTypes.Call<nil>
 	local layer = serializeLayer(routine)
 
-	return function(context: ChainTypes.Context)
+	return function(context: ChainTypes.Context<nil>)
 		executeLayer(layer, context)
 	end
 end

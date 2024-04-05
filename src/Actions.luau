@@ -13,7 +13,7 @@ function Actions.Register(module: ModuleScript)
 	local name = module.Name
 	Util.Assert(not Mutexes.IsLocked(name), `action by name "{name}" already exists`)
 
-	index[name] = require(module) :: ChainTypes.ActionModule
+	index[name] = require(module) :: ChainTypes.CallDefinition<unknown>
 	Mutexes.Create(name)
 end
 
@@ -31,7 +31,7 @@ function Actions.RegisterDefaults(ignore: { string }?)
 	Actions.RegisterIn(script.Parent:WaitForChild("DefaultActions"), ignore)
 end
 
-function Actions.Get(name: string): ChainTypes.ActionModule?
+function Actions.Get(name: string): ChainTypes.CallDefinition<unknown>?
 	return index[name]
 end
 

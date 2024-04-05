@@ -14,9 +14,10 @@ export type Identity = typeof(setmetatable(
 	{} :: {
 		_complexity: number,
 		_ast: ChainTypes.ASTNode,
-		_routines: { [string]: ChainTypes.CallDef },
+		_routines: { [string]: ChainTypes.Call<nil> },
 		_links: { [string]: { Instance } },
 		_mem: { [string]: ChainTypes.Type },
+		_process: ChainTypes.Process,
 	},
 	classMetatable
 ))
@@ -29,6 +30,15 @@ local function constructor(ast: ChainTypes.ASTNode): Identity
 	self._routines = RoutineDispatcher.Export()
 	self._links = Links.Export()
 	self._mem = {}
+
+	self._process = {
+		memDef = function(name, value)
+			self:MemDef(name, value)
+		end,
+		memRead = function(name)
+			return self:MemRead(name)
+		end,
+	}
 
 	return self
 end
@@ -72,31 +82,37 @@ function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode):
 		table.insert(args, self:InterpretASTNode(child))
 	end
 
-	local func = nil
 	local action = Actions.Get(callName)
 	local routine = self._routines[callName]
+
+	local call: ChainTypes.Call<any> = nil
 	if action then
-		func = action.Run
+		call = action.call
 	elseif routine then
-		func = routine
+		call = routine
 	end
 
-	if not func then
+	if not call then
 		Util.LogWarn(`unable to resolve call name "{callName}"`)
 		return nil
 	end
 
 	if action then
-		if action.ValidateTarget and not target then
+		if action.validateTarget and not target then
 			Util.LogWarn(`action "{callName}" requires a target`)
 			return nil
 		end
 
-		if action.ValidateArgs then
-			for index, expectedType in action.ValidateArgs do
+		if action.parameters then
+			for index, expectedType in action.parameters do
+				if expectedType == "any?" then
+					continue
+				end
+
 				local argValue = args[index]
 				local argType = ChainTypes.Of(argValue)
 
+				-- Chain internal error type guards against nil
 				if (argType == expectedType or expectedType == "any") and argType ~= "error" then
 					continue
 				end
@@ -107,15 +123,6 @@ function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode):
 		end
 	end
 
-	local process: ChainTypes.Process = {
-		memDef = function(name, value)
-			self:MemDef(name, value)
-		end,
-		memRead = function(name)
-			return self:MemRead(name)
-		end,
-	}
-
 	if target then
 		local targets = self._links[target]
 		if not targets then
@@ -123,37 +130,37 @@ function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode):
 		end
 
 		for _, targetLink in targets do
-			local validatedParam = nil
+			local validatedArg = nil
 
-			if action and action.ValidateTarget then
+			if action and action.validateTarget then
 				if not targetLink then
 					continue
 				end
 
-				if typeof(action.ValidateTarget) == "function" then
-					local validated, param = action.ValidateTarget(targetLink)
+				if typeof(action.validateTarget) == "function" then
+					local validated, arg = action.validateTarget(targetLink)
 					if not validated then
 						Util.LogWarn(`action "{callName}" target "{targetLink.Name}" is invalid`)
 						continue
 					end
 
-					validatedParam = param
+					validatedArg = arg
 				end
 			end
 
-			func({
-				process = process,
+			call({
+				process = self._process,
 				args = args,
+				validatedArg = validatedArg,
 				target = targetLink,
-				validatedParam = validatedParam,
 			})
 		end
 	else
-		func({
-			process = process,
+		call({
+			process = self._process,
 			args = args,
+			validatedArg = nil,
 			target = nil,
-			validatedParam = nil,
 		})
 	end
 

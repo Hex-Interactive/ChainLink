@@ -10,7 +10,7 @@ local Actions = require(script:WaitForChild("Actions"))
 local Runtime = require(script:WaitForChild("Runtime"))
 local Chain = require(script:WaitForChild("Chain"))
 
-export type ActionModule = ChainTypes.ActionModule
+export type CallDefinition<T> = ChainTypes.CallDefinition<T>
 
 return {
 	-- Setup
