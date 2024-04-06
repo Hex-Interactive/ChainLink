@@ -1,7 +1,7 @@
-local CurrentMap = require(script.Parent.Parent:WaitForChild("CurrentMap"))
-local Mutexes = require(script.Parent.Parent:WaitForChild("Mutexes"))
-local ChainTypes = require(script.Parent:WaitForChild("ChainTypes"))
-local Util = require(script.Parent.Parent:WaitForChild("Util"))
+local ChainTypes = require(script.Parent:WaitForChild("Chain"):WaitForChild("ChainTypes"))
+local CurrentMap = require(script.Parent:WaitForChild("CurrentMap"))
+local Mutexes = require(script.Parent:WaitForChild("Mutexes"))
+local Util = require(script.Parent:WaitForChild("Util"))
 
 local index: { [Model]: RoutineEntry } = {}
 

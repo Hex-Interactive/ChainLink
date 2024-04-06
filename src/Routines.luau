@@ -1,9 +1,9 @@
 local CollectionService = game:GetService("CollectionService")
 
+local ChainTypes = require(script.Parent:WaitForChild("Chain"):WaitForChild("ChainTypes"))
 local RoutineDispatcher = require(script.Parent:WaitForChild("RoutineDispatcher"))
-local ChainTypes = require(script.Parent:WaitForChild("ChainTypes"))
-local Names = require(script.Parent.Parent:WaitForChild("Names"))
-local Util = require(script.Parent.Parent:WaitForChild("Util"))
+local Names = require(script.Parent:WaitForChild("Names"))
+local Util = require(script.Parent:WaitForChild("Util"))
 local Chain = require(script.Parent)
 
 local MAX_ROUTINE_STEPS = 20
@@ -51,7 +51,7 @@ local function serializeLayer(parent: Instance): RoutineLayer
 	return layer
 end
 
-local function executeLayer(layer: RoutineLayer, _context: ChainTypes.Context<nil>)
+local function executeLayer(layer: RoutineLayer, _context: ChainTypes.Context)
 	for _, step in layer do
 		if step.class == "Chain" then
 			if typeof(step.data) ~= "string" then
@@ -64,11 +64,12 @@ local function executeLayer(layer: RoutineLayer, _context: ChainTypes.Context<ni
 	end
 end
 
-local function serialize(routine: Model): ChainTypes.Call<nil>
+local function serialize(routine: Model): ChainTypes.Call
 	local layer = serializeLayer(routine)
 
-	return function(context: ChainTypes.Context<nil>)
+	return function(context: ChainTypes.Context)
 		executeLayer(layer, context)
+		return nil
 	end
 end
 
