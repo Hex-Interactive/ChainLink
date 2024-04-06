@@ -18,6 +18,15 @@ local function handleResult<T>(result: ChainTypes.Result<T>): boolean
 	return false
 end
 
+function Chain.CreateBindings(): ChainTypes.Bindings
+	-- TODO
+
+	return {
+		calls = {},
+		targets = {},
+	}
+end
+
 function Chain.Compile(source: string): (ChainTypes.ASTNode?, ChainTypes.Lexemes?)
 	local lexer = Lexer.new(source)
 	local lexerResult = lexer:Begin()
@@ -36,18 +45,18 @@ function Chain.Compile(source: string): (ChainTypes.ASTNode?, ChainTypes.Lexemes
 	return parserResult.data, lexerResult.data
 end
 
-function Chain.Interpret(ast: ChainTypes.ASTNode)
-	local interpreter = Interpreter.new(ast)
+function Chain.Interpret(ast: ChainTypes.ASTNode, bindings: ChainTypes.Bindings)
+	local interpreter = Interpreter.new(ast, bindings)
 	interpreter:Begin()
 end
 
-function Chain.Execute(source: string)
+function Chain.Execute(source: string, bindings: ChainTypes.Bindings)
 	local ast = Chain.Compile(source)
 	if not ast then
 		return
 	end
 
-	Chain.Interpret(ast)
+	Chain.Interpret(ast, bindings)
 end
 
 return Chain

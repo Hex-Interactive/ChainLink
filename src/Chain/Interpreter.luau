@@ -1,8 +1,5 @@
-local RoutineDispatcher = require(script.Parent:WaitForChild("RoutineDispatcher"))
-local Actions = require(script.Parent.Parent:WaitForChild("Actions"))
 local ASTNodeIds = require(script.Parent:WaitForChild("ASTNodeIds"))
 local ChainTypes = require(script.Parent:WaitForChild("ChainTypes"))
-local Links = require(script.Parent.Parent:WaitForChild("Links"))
 local Util = require(script.Parent.Parent:WaitForChild("Util"))
 local BinExp = require(script.Parent:WaitForChild("BinExp"))
 
@@ -12,23 +9,24 @@ local classPrototype = {}
 local classMetatable = { __index = classPrototype }
 export type Identity = typeof(setmetatable(
 	{} :: {
-		_complexity: number,
 		_ast: ChainTypes.ASTNode,
-		_routines: { [string]: ChainTypes.Call },
-		_links: { [string]: { Instance } },
+		_bindings: ChainTypes.Bindings,
+
+		_complexity: number,
 		_mem: { [string]: ChainTypes.Type },
+
 		_process: ChainTypes.Process,
 	},
 	classMetatable
 ))
 
-local function constructor(ast: ChainTypes.ASTNode): Identity
+local function constructor(ast: ChainTypes.ASTNode, bindings: ChainTypes.Bindings): Identity
 	local self = setmetatable({}, classMetatable)
 
-	self._complexity = 0
 	self._ast = ast
-	self._routines = RoutineDispatcher.Export()
-	self._links = Links.Export()
+	self._bindings = bindings
+
+	self._complexity = 0
 	self._mem = {}
 
 	self._process = {
@@ -73,75 +71,66 @@ function classPrototype.InterpretRootLike(self: Identity, node: ChainTypes.ASTNo
 end
 
 function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode): ChainTypes.Type?
-	local children = node.children :: ChainTypes.ASTChildren_Call
-	local target = (if children.target then self:InterpretASTNode(children.target) else nil) :: string?
 	local callName = node.data :: string
-
-	local args = {}
-	for _, child in children.args do
-		table.insert(args, self:InterpretASTNode(child))
-	end
-
-	local action = Actions.Get(callName)
-	local routine = self._routines[callName]
-
-	local call: ChainTypes.Call? = nil
-	if action then
-		call = action.call
-	elseif routine then
-		call = routine
-	end
-
-	if not call then
+	local callDef = self._bindings.calls[callName]
+	if not callDef then
 		Util.LogWarn(`unable to resolve call name "{callName}"`)
 		return nil
 	end
 
-	if action then
-		if action.target and not target then
-			Util.LogWarn(`action "{callName}" requires a target`)
-			return nil
-		elseif target and action.target == false then
-			Util.LogWarn(`action "{callName}" requires NO target`)
-			return nil
-		end
+	local args = {}
+	local children = node.children :: ChainTypes.ASTChildren_Call
+	for _, child in children.args do
+		table.insert(args, self:InterpretASTNode(child))
+	end
 
-		if action.parameters then
-			for index, expectedType in action.parameters do
-				if expectedType == "any?" then
-					continue
-				end
+	local targetDef = callDef.target
+	local target = (if children.target then self:InterpretASTNode(children.target) else nil) :: string?
+	if targetDef and not target then
+		Util.LogWarn(`call "{callName}" requires a target`)
+		return nil
+	elseif target and targetDef == false then
+		Util.LogWarn(`call "{callName}" shouldn't have a target`)
+		return nil
+	end
 
-				local argValue = args[index]
-				local argType = ChainTypes.Of(argValue)
-
-				-- Chain internal error type guards against nil
-				if (argType == expectedType or expectedType == "any") and argType ~= "error" then
-					continue
-				end
-
-				Util.LogWarn(`action "{callName}" argument #{index} has invalid type, should be type "{expectedType}"`)
-				return nil
+	if callDef.parameters then
+		for index, expectedType in callDef.parameters do
+			if expectedType == "any?" then
+				continue
 			end
+
+			local argValue = args[index]
+			local argType = ChainTypes.Of(argValue)
+
+			-- Chain internal error type guards against nil
+			if (argType == expectedType or expectedType == "any") and argType ~= "error" then
+				continue
+			end
+
+			Util.LogWarn(`call "{callName}" argument #{index} has invalid type, should be type "{expectedType}"`)
+			return nil
 		end
 	end
 
 	if target then
-		local targets = self._links[target]
+		local targets = self._bindings.targets[target]
 		if not targets then
 			return nil
 		end
 
-		for _, targetLink in targets do
+		local isFunctionalTarget = typeof(targetDef) == "function"
+
+		for _, foundTarget in targets do
 			local validatedArg = nil
 
-			if action and action.target then
-				if not targetLink then
+			if targetDef then
+				if not foundTarget then
 					continue
 				end
 
-				if typeof(action.target) == "function" then
-					local validated, arg = action.target(targetLink)
+				if isFunctionalTarget then
+					local validated, arg = (targetDef :: ChainTypes.FunctionalTarget)(foundTarget)
 					if not validated then
 						continue
 					end
@@ -150,15 +139,15 @@ function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode):
 				end
 			end
 
-			call({
+			callDef.call({
 				process = self._process,
 				args = args,
 				validatedArg = validatedArg,
-				target = targetLink,
+				target = foundTarget,
 			})
 		end
 	else
-		call({
+		callDef.call({
 			process = self._process,
 			args = args,
 			validatedArg = nil,

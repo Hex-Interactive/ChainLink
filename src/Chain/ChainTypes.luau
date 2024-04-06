@@ -59,10 +59,16 @@ export type Context = {
 	target: Instance?,
 }
 
+export type FunctionalTarget = (target: Instance) -> (boolean, ValidatedArg)
 export type CallDefinition = {
 	parameters: { [number]: TypeStringNilable },
-	target: ((target: Instance) -> (boolean, ValidatedArg)) | boolean,
+	target: FunctionalTarget | boolean,
 	call: Call,
+}
+
+export type Bindings = {
+	calls: { [string]: CallDefinition },
+	targets: { [string]: { Instance } },
 }
 
 -- Utils
