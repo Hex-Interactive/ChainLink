@@ -1,10 +1,9 @@
 local Interpreter = require(script:WaitForChild("Interpreter"))
 local ChainTypes = require(script:WaitForChild("ChainTypes"))
+local Bindings = require(script:WaitForChild("Bindings"))
 local Util = require(script.Parent:WaitForChild("Util"))
 local Parser = require(script:WaitForChild("Parser"))
 local Lexer = require(script:WaitForChild("Lexer"))
-
-local builtinCalls: { [string]: ChainTypes.CallDefinition }
 
 local Chain = {}
 
@@ -20,39 +19,8 @@ local function handleResult<T>(result: ChainTypes.Result<T>): boolean
 	return false
 end
 
-local function reconcileBuiltinCalls()
-	if builtinCalls then
-		return
-	end
-
-	local dir = script.Parent:FindFirstChild("BuiltinCalls")
-	assert(dir, "chain unable to find builtin calls")
-
-	local new = {}
-	for _, module in dir:GetChildren() do
-		new[module.Name] = require(module) :: ChainTypes.CallDefinition
-	end
-
-	builtinCalls = new
-end
-
-function Chain.CreateBindings(
-	calls: { [string]: ChainTypes.CallDefinition },
-	targets: { [string]: { Instance } }
-): ChainTypes.Bindings
-	reconcileBuiltinCalls()
-
-	for name in builtinCalls do
-		if calls[name] then
-			error(`call binding name "{name}" is taken by builtin, pick another`)
-		end
-	end
-
-	return {
-		builtinCalls = builtinCalls,
-		calls = calls,
-		targets = targets,
-	}
+function Chain.CreateBindings(calls: Bindings.CallsDict, targets: Bindings.TargetsDict): Bindings.Identity
+	return Bindings.new(calls, targets)
 end
 
 function Chain.Compile(source: string): (ChainTypes.ASTNode?, ChainTypes.Lexemes?)
@@ -73,12 +41,12 @@ function Chain.Compile(source: string): (ChainTypes.ASTNode?, ChainTypes.Lexemes
 	return parserResult.data, lexerResult.data
 end
 
-function Chain.Interpret(ast: ChainTypes.ASTNode, bindings: ChainTypes.Bindings)
+function Chain.Interpret(ast: ChainTypes.ASTNode, bindings: Bindings.Identity)
 	local interpreter = Interpreter.new(ast, bindings)
 	interpreter:Begin()
 end
 
-function Chain.Execute(source: string, bindings: ChainTypes.Bindings)
+function Chain.Execute(source: string, bindings: Bindings.Identity)
 	local ast = Chain.Compile(source)
 	if not ast then
 		return

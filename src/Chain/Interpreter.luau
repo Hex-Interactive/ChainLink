@@ -1,5 +1,6 @@
 local ASTNodeIds = require(script.Parent:WaitForChild("ASTNodeIds"))
 local ChainTypes = require(script.Parent:WaitForChild("ChainTypes"))
+local Bindings = require(script.Parent:WaitForChild("Bindings"))
 local Util = require(script.Parent.Parent:WaitForChild("Util"))
 local BinExp = require(script.Parent:WaitForChild("BinExp"))
 
@@ -10,7 +11,7 @@ local classMetatable = { __index = classPrototype }
 export type Identity = typeof(setmetatable(
 	{} :: {
 		_ast: ChainTypes.ASTNode,
-		_bindings: ChainTypes.Bindings,
+		_bindings: Bindings.Identity,
 
 		_complexity: number,
 		_mem: { [string]: ChainTypes.Type },
@@ -20,7 +21,7 @@ export type Identity = typeof(setmetatable(
 	classMetatable
 ))
 
-local function constructor(ast: ChainTypes.ASTNode, bindings: ChainTypes.Bindings): Identity
+local function constructor(ast: ChainTypes.ASTNode, bindings: Bindings.Identity): Identity
 	local self = setmetatable({}, classMetatable)
 
 	self._ast = ast
@@ -72,7 +73,7 @@ end
 
 function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode): ChainTypes.Type?
 	local callName = node.data :: string
-	local callDef = self._bindings.builtinCalls[callName] or self._bindings.calls[callName]
+	local callDef = self._bindings:GetCall(callName)
 	if not callDef then
 		Util.LogWarn(`unable to resolve call name "{callName}"`)
 		return nil
@@ -114,7 +115,7 @@ function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode):
 	end
 
 	if target then
-		local targets = self._bindings.targets[target]
+		local targets = self._bindings:GetTargets(target)
 		if not targets then
 			return nil
 		end
@@ -218,6 +219,10 @@ function classPrototype.InterpretASTNode(self: Identity, node: ChainTypes.ASTNod
 end
 
 function classPrototype.Begin(self: Identity)
+	if self._bindings:IsInvalid() then
+		error("interpreter's bindings are invalid on begin", 2)
+	end
+
 	self:InterpretASTNode(self._ast)
 
 	if self._complexity > COMPLEXITY_LIMIT then
