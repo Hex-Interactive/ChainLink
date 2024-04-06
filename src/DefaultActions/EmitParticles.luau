@@ -16,5 +16,7 @@ return {
 
 			instance:Emit(number)
 		end
+
+		return nil
 	end,
 } :: ChainTypes.CallDefinition

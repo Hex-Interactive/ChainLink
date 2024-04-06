@@ -147,16 +147,16 @@ function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode):
 				target = foundTarget,
 			})
 		end
-	else
-		callDef.call({
-			process = self._process,
-			args = args,
-			validatedArg = nil,
-			target = nil,
-		})
+
+		return nil -- Targetted calls cannot return
 	end
 
-	return nil
+	return callDef.call({
+		process = self._process,
+		args = args,
+		validatedArg = nil,
+		target = nil,
+	})
 end
 
 function classPrototype.InterpretBinExp(self: Identity, node: ChainTypes.ASTNode): ChainTypes.Type?

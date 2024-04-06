@@ -16,5 +16,7 @@ return {
 		elseif falseBranch then
 			falseBranch()
 		end
+
+		return nil
 	end,
 } :: ChainTypes.CallDefinition

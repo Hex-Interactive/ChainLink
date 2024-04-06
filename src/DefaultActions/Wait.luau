@@ -7,5 +7,6 @@ return {
 	call = function(context)
 		local duration = context.args[1] :: number
 		task.wait(duration)
+		return nil
 	end,
 } :: ChainTypes.CallDefinition

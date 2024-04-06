@@ -15,5 +15,7 @@ return {
 
 			instance:Stop()
 		end
+
+		return nil
 	end,
 } :: ChainTypes.CallDefinition

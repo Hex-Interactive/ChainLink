@@ -17,5 +17,7 @@ return {
 				instance:SetNetworkOwner(nil)
 			end
 		end
+
+		return nil
 	end,
 } :: ChainTypes.CallDefinition

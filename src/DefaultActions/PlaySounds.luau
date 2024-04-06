@@ -15,5 +15,7 @@ return {
 
 			instance:Play()
 		end
+
+		return nil
 	end,
 } :: ChainTypes.CallDefinition

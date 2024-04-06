@@ -7,5 +7,6 @@ return {
 	call = function(context)
 		local target = context.target :: Instance
 		task.defer(target.RemoveTag, target, Names.Tags.Link)
+		return nil
 	end,
 } :: ChainTypes.CallDefinition

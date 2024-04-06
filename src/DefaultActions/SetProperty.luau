@@ -16,5 +16,6 @@ return {
 		end
 
 		target[propName] = propValue
+		return nil
 	end,
 } :: ChainTypes.CallDefinition

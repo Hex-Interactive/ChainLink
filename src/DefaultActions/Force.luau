@@ -31,5 +31,7 @@ return {
 
 		local direction = CFrame.lookAt(basePart.Position, forceDirAtt.WorldPosition).LookVector
 		basePart.AssemblyLinearVelocity = direction * magnitude
+
+		return nil
 	end,
 } :: ChainTypes.CallDefinition

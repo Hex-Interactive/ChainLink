@@ -49,7 +49,7 @@ export type Process = {
 	memRead: (name: string) -> Type?,
 }
 
-export type Call = (context: Context) -> ()
+export type Call = (context: Context) -> Type?
 
 type ValidatedArg = unknown?
 export type Context = {
@@ -64,12 +64,6 @@ export type CallDefinition = {
 	parameters: { [number]: TypeStringNilable },
 	target: FunctionalTarget | boolean,
 	call: Call,
-}
-
-export type Bindings = {
-	builtinCalls: { [string]: CallDefinition },
-	calls: { [string]: CallDefinition },
-	targets: { [string]: { Instance } },
 }
 
 -- Utils

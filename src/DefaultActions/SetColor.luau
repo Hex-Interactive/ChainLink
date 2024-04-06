@@ -22,5 +22,7 @@ return {
 
 			instance.Color = color
 		end
+
+		return nil
 	end,
 } :: ChainTypes.CallDefinition

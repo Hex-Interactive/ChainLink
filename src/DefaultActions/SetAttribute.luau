@@ -8,6 +8,8 @@ return {
 		local target = context.target :: Instance
 		local name = context.args[1] :: string
 		local value = context.args[2] :: any
+
 		target:SetAttribute(name, value)
+		return nil
 	end,
 } :: ChainTypes.CallDefinition
