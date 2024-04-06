@@ -72,7 +72,7 @@ end
 
 function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode): ChainTypes.Type?
 	local callName = node.data :: string
-	local callDef = self._bindings.calls[callName]
+	local callDef = self._bindings.builtinCalls[callName] or self._bindings.calls[callName]
 	if not callDef then
 		Util.LogWarn(`unable to resolve call name "{callName}"`)
 		return nil

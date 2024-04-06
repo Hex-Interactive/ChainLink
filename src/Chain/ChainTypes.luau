@@ -67,6 +67,7 @@ export type CallDefinition = {
 }
 
 export type Bindings = {
+	builtinCalls: { [string]: CallDefinition },
 	calls: { [string]: CallDefinition },
 	targets: { [string]: { Instance } },
 }

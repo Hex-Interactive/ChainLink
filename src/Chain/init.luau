@@ -4,6 +4,8 @@ local Util = require(script.Parent:WaitForChild("Util"))
 local Parser = require(script:WaitForChild("Parser"))
 local Lexer = require(script:WaitForChild("Lexer"))
 
+local builtinCalls: { [string]: ChainTypes.CallDefinition }
+
 local Chain = {}
 
 local function handleResult<T>(result: ChainTypes.Result<T>): boolean
@@ -18,12 +20,38 @@ local function handleResult<T>(result: ChainTypes.Result<T>): boolean
 	return false
 end
 
-function Chain.CreateBindings(): ChainTypes.Bindings
-	-- TODO
+local function reconcileBuiltinCalls()
+	if builtinCalls then
+		return
+	end
+
+	local dir = script.Parent:FindFirstChild("BuiltinCalls")
+	assert(dir, "chain unable to find builtin calls")
+
+	local new = {}
+	for _, module in dir:GetChildren() do
+		new[module.Name] = require(module) :: ChainTypes.CallDefinition
+	end
+
+	builtinCalls = new
+end
+
+function Chain.CreateBindings(
+	calls: { [string]: ChainTypes.CallDefinition },
+	targets: { [string]: { Instance } }
+): ChainTypes.Bindings
+	reconcileBuiltinCalls()
+
+	for name in builtinCalls do
+		if calls[name] then
+			error(`call binding name "{name}" is taken by builtin, pick another`)
+		end
+	end
 
 	return {
-		calls = {},
-		targets = {},
+		builtinCalls = builtinCalls,
+		calls = calls,
+		targets = targets,
 	}
 end
 
