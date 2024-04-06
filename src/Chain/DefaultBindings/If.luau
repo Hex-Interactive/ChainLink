@@ -4,7 +4,7 @@ type thunk = ChainTypes.thunk
 
 return {
 	parameters = { [1] = "boolean", [2] = "thunk", [3] = "thunk?" },
-	validateTarget = false,
+	target = false,
 
 	call = function(context)
 		local condition = context.args[1] :: boolean
@@ -17,4 +17,4 @@ return {
 			falseBranch()
 		end
 	end,
-} :: ChainTypes.CallDefinition<nil>
+} :: ChainTypes.CallDefinition

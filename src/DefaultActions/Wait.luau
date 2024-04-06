@@ -2,9 +2,10 @@ local ChainTypes = require(script.Parent.Parent:WaitForChild("Chain"):WaitForChi
 
 return {
 	parameters = { [1] = "number" },
+	target = false,
 
 	call = function(context)
 		local duration = context.args[1] :: number
 		task.wait(duration)
 	end,
-} :: ChainTypes.CallDefinition<nil>
+} :: ChainTypes.CallDefinition

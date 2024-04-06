@@ -3,7 +3,7 @@ local Util = require(script.Parent.Parent:WaitForChild("Util"))
 
 return {
 	parameters = { [1] = "string", [2] = "any" },
-	validateTarget = true,
+	target = true,
 
 	call = function(context)
 		local target = context.target :: any -- Allow dynamic property read/assign
@@ -17,4 +17,4 @@ return {
 
 		target[propName] = propValue
 	end,
-} :: ChainTypes.CallDefinition<nil>
+} :: ChainTypes.CallDefinition

@@ -2,7 +2,7 @@ local ChainTypes = require(script.Parent.Parent:WaitForChild("Chain"):WaitForChi
 
 return {
 	parameters = { [1] = "string", [2] = "any" },
-	validateTarget = true,
+	target = true,
 
 	call = function(context)
 		local target = context.target :: Instance
@@ -10,4 +10,4 @@ return {
 		local value = context.args[2] :: any
 		target:SetAttribute(name, value)
 	end,
-} :: ChainTypes.CallDefinition<nil>
+} :: ChainTypes.CallDefinition

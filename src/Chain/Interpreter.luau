@@ -14,7 +14,7 @@ export type Identity = typeof(setmetatable(
 	{} :: {
 		_complexity: number,
 		_ast: ChainTypes.ASTNode,
-		_routines: { [string]: ChainTypes.Call<nil> },
+		_routines: { [string]: ChainTypes.Call },
 		_links: { [string]: { Instance } },
 		_mem: { [string]: ChainTypes.Type },
 		_process: ChainTypes.Process,
@@ -85,7 +85,7 @@ function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode):
 	local action = Actions.Get(callName)
 	local routine = self._routines[callName]
 
-	local call: ChainTypes.Call<any> = nil
+	local call: ChainTypes.Call? = nil
 	if action then
 		call = action.call
 	elseif routine then
@@ -98,10 +98,10 @@ function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode):
 	end
 
 	if action then
-		if action.validateTarget and not target then
+		if action.target and not target then
 			Util.LogWarn(`action "{callName}" requires a target`)
 			return nil
-		elseif target and action.validateTarget == false then
+		elseif target and action.target == false then
 			Util.LogWarn(`action "{callName}" requires NO target`)
 			return nil
 		end
@@ -135,13 +135,13 @@ function classPrototype.InterpretCall(self: Identity, node: ChainTypes.ASTNode):
 		for _, targetLink in targets do
 			local validatedArg = nil
 
-			if action and action.validateTarget then
+			if action and action.target then
 				if not targetLink then
 					continue
 				end
 
-				if typeof(action.validateTarget) == "function" then
-					local validated, arg = action.validateTarget(targetLink)
+				if typeof(action.target) == "function" then
+					local validated, arg = action.target(targetLink)
 					if not validated then
 						continue
 					end

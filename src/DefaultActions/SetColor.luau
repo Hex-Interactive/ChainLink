@@ -3,7 +3,7 @@ local Util = require(script.Parent.Parent:WaitForChild("Util"))
 
 return {
 	parameters = { [1] = "string" },
-	validateTarget = true,
+	target = true,
 
 	call = function(context)
 		local target = context.target :: Instance
@@ -23,4 +23,4 @@ return {
 			instance.Color = color
 		end
 	end,
-} :: ChainTypes.CallDefinition<nil>
+} :: ChainTypes.CallDefinition

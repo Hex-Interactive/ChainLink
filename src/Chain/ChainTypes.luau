@@ -49,18 +49,20 @@ export type Process = {
 	memRead: (name: string) -> Type?,
 }
 
-export type Call<T> = (context: Context<T>) -> ()
-export type Context<T> = {
+export type Call = (context: Context) -> ()
+
+type ValidatedArg = unknown?
+export type Context = {
 	process: Process,
 	args: { Type? },
-	validatedArg: T,
+	validatedArg: ValidatedArg,
 	target: Instance?,
 }
 
-export type CallDefinition<T> = {
+export type CallDefinition = {
 	parameters: { [number]: TypeStringNilable },
-	validateTarget: (((target: Instance) -> (boolean, T?)) | boolean)?,
-	call: Call<T>,
+	target: ((target: Instance) -> (boolean, ValidatedArg)) | boolean,
+	call: Call,
 }
 
 -- Utils

@@ -6,7 +6,7 @@ local function failWarn()
 end
 
 return {
-	validateTarget = true,
+	target = true,
 
 	call = function(context)
 		local target = context.target :: Instance
@@ -32,4 +32,4 @@ return {
 		local direction = CFrame.lookAt(basePart.Position, forceDirAtt.WorldPosition).LookVector
 		basePart.AssemblyLinearVelocity = direction * magnitude
 	end,
-} :: ChainTypes.CallDefinition<nil>
+} :: ChainTypes.CallDefinition
