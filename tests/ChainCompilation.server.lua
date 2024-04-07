@@ -26,6 +26,7 @@ local function test(args: { run: string, expected: string })
 			)}`
 
 		results = `AST MATCH SUCCESS: {printBool(astMatches)}` .. astResults
+		warn("Compiled AST for below:", astOrErr)
 	else
 		results = `ERROR MESSAGE: "{astOrErr}"`
 	end
@@ -52,4 +53,20 @@ test({
 test({
 	run = [[BoolEvals(true == false, 4 * 5 >= 1, -1 < 17);]],
 	expected = [[{"id":"Root","data":"","children":[{"id":"Call","data":"BoolEvals","children":{"args":[{"id":"BinExp","data":"Eq","children":{"left":{"id":"Bool","data":true},"right":{"id":"Bool","data":false}}},{"id":"BinExp","data":"GreatEq","children":{"left":{"id":"BinExp","data":"Mul","children":{"left":{"id":"Num","data":4},"right":{"id":"Num","data":5}}},"right":{"id":"Num","data":1}}},{"id":"BinExp","data":"Less","children":{"left":{"id":"Num","data":-1},"right":{"id":"Num","data":17}}}]}}]}]],
+})
+test({
+	run = [[TestingCallExpr(Hello(), GivesNumber() == 1, Target->Thing());]],
+	expected = [[]], -- TODO
+})
+test({
+	run = [[If(3 > 1, { DoCoolThing();Object->Destroy(); });]],
+	expected = [[{"id":"Root","data":"","children":[{"id":"Call","data":"If","children":{"args":[{"id":"BinExp","data":"Great","children":{"left":{"id":"Num","data":3},"right":{"id":"Num","data":1}}},{"id":"Thunk","data":"","children":[{"id":"Call","data":"DoCoolThing","children":{"args":[]}},{"id":"Call","data":"Destroy","children":{"target":{"id":"Str","data":"Object"},"args":[]}}]}]}}]}]],
+})
+test({
+	run = [[NestedThunks(true, { Something(true, { Winner(); }); }, { Nope(); });]],
+	expected = [[{"id":"Root","data":"","children":[{"id":"Call","data":"NestedThunks","children":{"args":[{"id":"Bool","data":true},{"id":"Thunk","data":"","children":[{"id":"Call","data":"Something","children":{"args":[{"id":"Bool","data":true},{"id":"Thunk","data":"","children":[{"id":"Call","data":"Winner","children":{"args":[]}}]}]}}]},{"id":"Thunk","data":"","children":[{"id":"Call","data":"Nope","children":{"args":[]}}]}]}}]}]],
+})
+test({
+	run = [[LogicOps(!true, !(true || false), (1 > 3) && !(4 > 3));]],
+	expected = [[{"id":"Root","data":"","children":[{"id":"Call","data":"LogicOps","children":{"args":[{"id":"Not","data":"","children":{"id":"Bool","data":true}},{"id":"Not","data":"","children":{"id":"BinExp","data":"Or","children":{"left":{"id":"Bool","data":true},"right":{"id":"Bool","data":false}}}},{"id":"BinExp","data":"And","children":{"left":{"id":"BinExp","data":"Great","children":{"left":{"id":"Num","data":1},"right":{"id":"Num","data":3}}},"right":{"id":"Not","data":"","children":{"id":"BinExp","data":"Great","children":{"left":{"id":"Num","data":4},"right":{"id":"Num","data":3}}}}}}]}}]}]],
 })
