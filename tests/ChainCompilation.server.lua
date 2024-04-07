@@ -35,7 +35,7 @@ end
 
 test({
 	run = [[NameGoesHere(true, "hello \\" there", -33);TestHere();]],
-	expected = [[{"id":"Root","data":"","children":[{"id":"Call","data":"NameGoesHere","children":{"args":[{"id":"Bool","data":true},{"id":"Str","data":"hello \" there"},{"id":"Num","data":-33}]}},{"id":"Call","data":"TestHere","children":{"args":[]}}]}]],
+	expected = [[{"id":"Root","data":"","children":[{"id":"Call","data":"NameGoesHere","children":{"args":[{"id":"Bool","data":true},{"id":"Str","data":"hello \\\" there"},{"id":"Num","data":-33}]}},{"id":"Call","data":"TestHere","children":{"args":[]}}]}]],
 })
 test({
 	run = [[Things->NumberTesting(23.64, -0.4, 76);]],
