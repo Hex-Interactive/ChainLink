@@ -13,4 +13,6 @@
 		"**/init.luau": "${dirname} (${filename}.${extname})",
 		"**/init.lua": "${dirname} (${filename}.${extname})"
 	},
+
+	"luau-lsp.sourcemap.rojoProjectFile": "develop.project.json",
 }

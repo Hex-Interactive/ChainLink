@@ -59,8 +59,5 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: v0.2.7
 
-      - name: Install packages
-        run: wally install
-
-      - name: Build package
-        run: rojo build -o package.rbxl
+      - name: Build packages
+        run: rojo build -o packages.rbxl
