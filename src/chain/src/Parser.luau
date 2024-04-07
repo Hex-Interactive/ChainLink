@@ -216,11 +216,13 @@ function classPrototype.ParseCall(self: Identity, expr: boolean, callTarget: Typ
 	if earlyExitId == LexemeIds.RParen then
 		self:Consume()
 
-		local id = self:Peek(0)
-		if id ~= LexemeIds.Semicolon then
-			return nodeUnexp(self:Look(0))
+		if not expr then
+			local id = self:Peek(0)
+			if id ~= LexemeIds.Semicolon then
+				return nodeUnexp(self:Look(0))
+			end
+			self:Consume()
 		end
-		self:Consume()
 
 		return node(ASTNodeIds.Call, callName.data, {
 			target = target,

@@ -55,8 +55,12 @@ test({
 	expected = [[{"id":"Root","data":"","children":[{"id":"Call","data":"BoolEvals","children":{"args":[{"id":"BinExp","data":"Eq","children":{"left":{"id":"Bool","data":true},"right":{"id":"Bool","data":false}}},{"id":"BinExp","data":"GreatEq","children":{"left":{"id":"BinExp","data":"Mul","children":{"left":{"id":"Num","data":4},"right":{"id":"Num","data":5}}},"right":{"id":"Num","data":1}}},{"id":"BinExp","data":"Less","children":{"left":{"id":"Num","data":-1},"right":{"id":"Num","data":17}}}]}}]}]],
 })
 test({
-	run = [[TestingCallExpr(Hello(), GivesNumber() == 1, Target->Thing());]],
-	expected = [[]], -- TODO
+	run = [[TestingCallExpr(Hello(), Test("Yep!"), Stuff->Do(), Person->Greet(false));]],
+	expected = [[{"id":"Root","data":"","children":[{"id":"Call","data":"TestingCallExpr","children":{"args":[{"id":"Call","data":"Hello","children":{"args":[]}},{"id":"Call","data":"Test","children":{"args":[{"id":"Str","data":"Yep!"}]}},{"id":"Call","data":"Do","children":{"target":{"id":"Str","data":"Stuff"},"args":[]}},{"id":"Call","data":"Greet","children":{"target":{"id":"Str","data":"Person"},"args":[{"id":"Bool","data":false}]}}]}}]}]],
+})
+test({
+	run = [[CallExpUsage(GivesNumber() == 1 && (3 == 4), !Target->Thing());]],
+	expected = [[{"id":"Root","data":"","children":[{"id":"Call","data":"CallExpUsage","children":{"args":[{"id":"BinExp","data":"And","children":{"left":{"id":"BinExp","data":"Eq","children":{"left":{"id":"Call","data":"GivesNumber","children":{"args":[]}},"right":{"id":"Num","data":1}}},"right":{"id":"BinExp","data":"Eq","children":{"left":{"id":"Num","data":3},"right":{"id":"Num","data":4}}}}},{"id":"Not","data":"","children":{"id":"Call","data":"Thing","children":{"target":{"id":"Str","data":"Target"},"args":[]}}}]}}]}]],
 })
 test({
 	run = [[If(3 > 1, { DoCoolThing();Object->Destroy(); });]],
