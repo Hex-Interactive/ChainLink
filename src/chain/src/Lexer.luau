@@ -249,10 +249,10 @@ function classPrototype.ReadNext(self: Identity): Types.Lexeme
 	elseif char == ")" then
 		self:Consume()
 		return new(LexemeIds.RParen, char)
-	elseif char == "[" then
+	elseif char == "{" then
 		self:Consume()
 		return new(LexemeIds.LBrack, char)
-	elseif char == "]" then
+	elseif char == "}" then
 		self:Consume()
 		return new(LexemeIds.RBrack, char)
 	elseif isNumerical(char) then
