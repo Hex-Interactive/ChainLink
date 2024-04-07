@@ -1,7 +1,7 @@
-local Routines = require(script.Parent:WaitForChild("ChainBindings"):WaitForChild("Routines"))
+local RoutineSer = require(script.Parent:WaitForChild("ChainBindings"):WaitForChild("RoutineSer"))
+local ChainRunner = require(script.Parent:WaitForChild("ChainRunner"))
 local CurrentMap = require(script.Parent:WaitForChild("CurrentMap"))
 local Triggers = require(script.Parent:WaitForChild("Triggers"))
-local Chain = require(script.Parent:WaitForChild("Chain"))
 local State = require(script.Parent:WaitForChild("State"))
 local Names = require(script.Parent:WaitForChild("Names"))
 local Util = require(script.Parent:WaitForChild("Util"))
@@ -18,7 +18,7 @@ function Runtime.TriggerLink(link: Instance)
 		return
 	end
 
-	task.spawn(Chain.Execute, chain)
+	task.spawn(ChainRunner.Execute, chain)
 end
 
 function Runtime.Init()
@@ -28,7 +28,7 @@ function Runtime.Init()
 	CurrentMap.GetDirectory() -- Validate map directory getter is defined
 
 	Triggers.Init()
-	Routines.Init()
+	RoutineSer.Init()
 end
 
 return Runtime

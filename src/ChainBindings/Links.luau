@@ -1,7 +1,7 @@
 local CollectionService = game:GetService("CollectionService")
 
-local CurrentMap = require(script.Parent:WaitForChild("CurrentMap"))
-local Names = require(script.Parent:WaitForChild("Names"))
+local CurrentMap = require(script.Parent.Parent:WaitForChild("CurrentMap"))
+local Names = require(script.Parent.Parent:WaitForChild("Names"))
 
 local Links = {}
 

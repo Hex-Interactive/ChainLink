@@ -1,9 +1,9 @@
 local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 
+local ChainRunner = require(script.Parent:WaitForChild("ChainRunner"))
 local Validators = require(script.Parent:WaitForChild("Validators"))
 local CurrentMap = require(script.Parent:WaitForChild("CurrentMap"))
-local Chain = require(script.Parent:WaitForChild("Chain"))
 local Names = require(script.Parent:WaitForChild("Names"))
 local Util = require(script.Parent:WaitForChild("Util"))
 
@@ -44,7 +44,7 @@ local function added(trigger: Instance)
 				return
 			end
 
-			Chain.Execute(chain)
+			ChainRunner.Execute(chain)
 		end
 	end)
 end
