@@ -4,6 +4,8 @@ ChainLink is a DataModel-driven logic and control system that empowers map desig
 
 Keep your map-specific logic in the map itself, while avoiding nested and unorganized scripts.
 
+The ChainLink package is a runtime for the simplistic sandboxed scripting language, Chain, which is also a package held in this repository.
+
 ## Features
 
 * Create robust, unique map-based gameplay features without Luau scripting, quickly
