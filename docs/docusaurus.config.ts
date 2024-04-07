@@ -47,13 +47,18 @@ const config: Config = {
       defaultMode: 'dark',
     },
     navbar: {
-      title: 'ChainLink',
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'guideSidebar',
+          sidebarId: 'chainlink',
           position: 'left',
-          label: 'Docs',
+          label: 'ChainLink',
+        },
+        {
+          type: 'docSidebar',
+          sidebarId: 'chain',
+          position: 'left',
+          label: 'Chain',
         },
         {
           href: 'https://github.com/Hex-Interactive/ChainLink',
@@ -66,24 +71,33 @@ const config: Config = {
     footer: {
       links: [
         {
-          title: 'Docs',
+          title: 'ChainLink',
           items: [
             {
               label: 'Introduction',
-              to: '/docs',
+              to: '/docs/chainlink',
             },
             {
               label: 'Installation',
-              to: '/docs/getting-started/installation',
+              to: '/docs/chainlink/getting-started/installation',
             },
             {
               label: 'Configuration',
-              to: '/docs/getting-started/configuration',
+              to: '/docs/chainlink/getting-started/configuration',
             },
           ],
         },
         {
-          title: 'More',
+          title: 'Chain',
+          items: [
+            {
+              label: 'Introduction',
+              to: '/docs/chain',
+            },
+          ],
+        },
+        {
+          title: 'Links',
           items: [
             {
               label: 'GitHub',

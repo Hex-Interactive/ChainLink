@@ -1,6 +1,6 @@
 ---
 sidebar_position: 1
-slug: /
+slug: /chainlink
 ---
 
 # Introduction
@@ -15,9 +15,9 @@ ChainLink, in its current state, is not production ready yet! Its [prototype](#i
 
 ## Conceptually
 
-The key features of ChainLink primarily come from two things, as the name suggests: [Chain](docs/concepts/chain) and [Links](docs/concepts/links).
+The key features of ChainLink primarily come from two things, as the name suggests: [Chain](chainlink/concepts/chain) and [Links](chainlink/chain/concepts/links).
 
-Chain is a custom list-based scripting language. It's intentionally simple, lacking common programming features such as if-statements or functions. The singluar goal of Chain is to be a list of definitive instructions to execute. Achieving more complex logic with Chain comes from the usage of features like Links, [Actions](docs/concepts/actions), and [Routines](docs/concepts/routines).
+Chain is a custom list-based scripting language. It's intentionally simple, lacking common programming features such as if-statements or functions. The singluar goal of Chain is to be a list of definitive instructions to execute. Achieving more complex logic with Chain comes from the usage of features like Links, [Actions](chainlink/concepts/actions), and [Routines](chainlink/concepts/routines).
 
 Links are what tie your maps's presence in the [Roblox DOM](https://create.roblox.com/docs/reference/engine/classes/DataModel) to the world of ChainLink. In other words, ChainLink, and by extension its scripting language, Chain, are not able to access your game's hierarchy without a Link explicitly denoting that a given instance can be accessed.
 
@@ -25,7 +25,7 @@ The instructions that Chain executes are Actions and Routines. Actions are the l
 
 ## The Golden Rule
 
-ChainLink can be a very powerful tool for map development. When [implementing](docs/implementation/practices) ChainLink in your game there is one key concept to ensure you get maximum usage out of the system, however.
+ChainLink can be a very powerful tool for map development. When [implementing](chainlink/implementation/practices) ChainLink in your game there is one key concept to ensure you get maximum usage out of the system, however.
 
 :::info[The Golden Rule of ChainLink]
 ChainLink can only do what you, the developer, give it the capabilities to do.
