@@ -81,4 +81,21 @@ function Types.Of(value: any): TypeStringInternal
 	return "error"
 end
 
+function Types.CheckValid(value: any, expected: TypeStringNilable): boolean
+	if expected == "any?" then
+		return true
+	end
+
+	if value == nil then
+		return string.sub(expected, #expected) == "?"
+	end
+
+	local valueType = Types.Of(value)
+	if valueType == "error" then
+		return false
+	end
+
+	return valueType == expected or valueType == "any"
+end
+
 return Types

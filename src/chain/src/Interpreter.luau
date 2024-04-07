@@ -79,39 +79,30 @@ function classPrototype.InterpretCall(self: Identity, node: Types.ASTNode): Type
 		return nil
 	end
 
-	local args = {}
 	local children = node.children :: Types.ASTChildren_Call
-	for _, child in children.args do
-		table.insert(args, self:InterpretASTNode(child))
-	end
-
-	local targetDef = callDef.target
 	local target = (if children.target then self:InterpretASTNode(children.target) else nil) :: string?
+	local targetDef = callDef.target
+
 	if targetDef and not target then
 		Logger.Warn(`call "{callName}" requires a target`)
 		return nil
-	elseif target and targetDef == false then
+	elseif targetDef == false and target then
 		Logger.Warn(`call "{callName}" shouldn't have a target`)
 		return nil
 	end
 
-	if callDef.parameters then
-		for index, expectedType in callDef.parameters do
-			if expectedType == "any?" then
-				continue
-			end
+	local args = {}
+	for _, child in children.args do
+		table.insert(args, self:InterpretASTNode(child))
+	end
 
-			local argValue = args[index]
-			local argType = Types.Of(argValue)
-
-			-- Chain internal error type guards against nil
-			if (argType == expectedType or expectedType == "any") and argType ~= "error" then
-				continue
-			end
-
-			Logger.Warn(`call "{callName}" argument #{index} has invalid type, should be type "{expectedType}"`)
-			return nil
+	for index, expectedType: Types.TypeStringNilable in callDef.parameters do
+		if Types.CheckValid(args[index], expectedType) then
+			continue
 		end
+
+		Logger.Warn(`call "{callName}" argument #{index} has invalid type, should be type "{expectedType}"`)
+		return nil
 	end
 
 	if target then
@@ -148,7 +139,7 @@ function classPrototype.InterpretCall(self: Identity, node: Types.ASTNode): Type
 			})
 		end
 
-		return nil -- Targetted calls cannot return
+		return nil -- Targeted calls cannot return
 	end
 
 	return callDef.call({
