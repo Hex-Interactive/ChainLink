@@ -1,4 +1,4 @@
-local Util = require(script.Parent:WaitForChild("Util"))
+local Util = require(script.Parent.Parent:WaitForChild("Util"))
 
 local index = {}
 

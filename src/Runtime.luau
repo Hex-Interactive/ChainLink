@@ -1,4 +1,4 @@
-local Routines = require(script.Parent:WaitForChild("Chain"):WaitForChild("Routines"))
+local Routines = require(script.Parent:WaitForChild("ChainBindings"):WaitForChild("Routines"))
 local CurrentMap = require(script.Parent:WaitForChild("CurrentMap"))
 local Triggers = require(script.Parent:WaitForChild("Triggers"))
 local Chain = require(script.Parent:WaitForChild("Chain"))

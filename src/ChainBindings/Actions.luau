@@ -1,9 +1,9 @@
-local ChainTypes = require(script.Parent:WaitForChild("Chain"):WaitForChild("ChainTypes"))
+local ChainTypes = require(script.Parent.Parent:WaitForChild("Chain"):WaitForChild("ChainTypes"))
+local State = require(script.Parent.Parent:WaitForChild("State"))
+local Util = require(script.Parent.Parent:WaitForChild("Util"))
 local Mutexes = require(script.Parent:WaitForChild("Mutexes"))
-local State = require(script.Parent:WaitForChild("State"))
-local Util = require(script.Parent:WaitForChild("Util"))
 
-local index = {}
+local cache = {}
 
 local Actions = {}
 
@@ -13,7 +13,7 @@ function Actions.Register(module: ModuleScript)
 	local name = module.Name
 	Util.Assert(not Mutexes.IsLocked(name), `action by name "{name}" already exists`)
 
-	index[name] = require(module) :: ChainTypes.CallDefinition
+	cache[name] = require(module) :: ChainTypes.CallDefinition
 	Mutexes.Create(name)
 end
 
@@ -31,8 +31,8 @@ function Actions.RegisterDefaults(ignore: { string }?)
 	Actions.RegisterIn(script.Parent:WaitForChild("DefaultActions"), ignore)
 end
 
-function Actions.Get(name: string): ChainTypes.CallDefinition?
-	return index[name]
+function Actions.Export(): { [string]: ChainTypes.CallDefinition }
+	return table.clone(cache)
 end
 
 return Actions

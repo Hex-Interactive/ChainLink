@@ -1,5 +1,5 @@
-local ChainTypes = require(script.Parent.Parent:WaitForChild("Chain"):WaitForChild("ChainTypes"))
-local Util = require(script.Parent.Parent:WaitForChild("Util"))
+local ChainTypes = require(script.Parent.Parent.Parent:WaitForChild("Chain"):WaitForChild("ChainTypes"))
+local Util = require(script.Parent.Parent.Parent:WaitForChild("Util"))
 
 local function failWarn()
 	Util.LogWarn(`action "Force" target is invalid`)

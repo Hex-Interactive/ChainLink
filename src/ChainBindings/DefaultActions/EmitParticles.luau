@@ -1,4 +1,4 @@
-local ChainTypes = require(script.Parent.Parent:WaitForChild("Chain"):WaitForChild("ChainTypes"))
+local ChainTypes = require(script.Parent.Parent.Parent:WaitForChild("Chain"):WaitForChild("ChainTypes"))
 
 return {
 	parameters = { [1] = "string", [2] = "number" },

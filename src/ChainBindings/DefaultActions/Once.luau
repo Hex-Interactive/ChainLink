@@ -1,5 +1,5 @@
-local ChainTypes = require(script.Parent.Parent:WaitForChild("Chain"):WaitForChild("ChainTypes"))
-local Names = require(script.Parent.Parent:WaitForChild("Names"))
+local ChainTypes = require(script.Parent.Parent.Parent:WaitForChild("Chain"):WaitForChild("ChainTypes"))
+local Names = require(script.Parent.Parent.Parent:WaitForChild("Names"))
 
 return {
 	target = true,

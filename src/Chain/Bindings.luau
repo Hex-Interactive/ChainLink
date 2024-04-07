@@ -1,4 +1,5 @@
 local ChainTypes = require(script.Parent:WaitForChild("ChainTypes"))
+local Util = require(script.Parent.Parent:WaitForChild("Util"))
 
 export type CallsDict = { [string]: ChainTypes.CallDefinition }
 export type TargetsDict = { [string]: { Instance } }
@@ -22,7 +23,7 @@ local function reconcileBuiltinCalls()
 	end
 
 	local dir = script.Parent:FindFirstChild("BuiltinCalls")
-	assert(dir, "chain unable to find builtin calls")
+	Util.Assert(dir, "chain unable to find builtin calls")
 
 	local new = {}
 	for _, module in dir:GetChildren() do
