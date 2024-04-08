@@ -13,3 +13,5 @@ You can learn more about how to use and work with Chain in its documentation [HE
 # Usage in ChainLink
 
 Chain is primarily used to execute [Actions](../actions) and [Routines](../routines) in a certain order. In many places throughout the system of ChainLink, there is an available space to put a "Chain script" for execution, typically whenever something is activated.
+
+Chain calls can be [Actions](../actions) or [Routines](../routines). For Chain targets, you can use [Link Ids](links#referencing).
