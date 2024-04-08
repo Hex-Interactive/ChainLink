@@ -1,5 +1,5 @@
 {
-	"name": "ChainLink-Develop",
+	"name": "ChainLink",
 	"tree": {
 		"$className": "DataModel",
 		"ServerScriptService": {
@@ -7,10 +7,7 @@
 		},
 		"ReplicatedStorage": {
 			"Packages": {
-				"$className": "Folder",
-				"ChainLink": {
-					"$path": "src"
-				}
+				"$path": "src"
 			}
 		}
 	}
