@@ -15,7 +15,7 @@ ChainLink, in its current state, is not production ready yet! Its [prototype](#i
 
 ## Conceptually
 
-The key features of ChainLink primarily come from two things, as the name suggests: [Chain](chainlink/concepts/chain) and [Links](chainlink/chain/concepts/links).
+The key features of ChainLink primarily come from two things, as the name suggests: [Chain](chainlink/concepts/chain) and [Links](chainlink/concepts/links).
 
 Chain is a custom list-based scripting language. It's intentionally simple, lacking common programming features such as if-statements or functions. The singluar goal of Chain is to be a list of definitive instructions to execute. Achieving more complex logic with Chain comes from the usage of features like Links, [Actions](chainlink/concepts/actions), and [Routines](chainlink/concepts/routines).
 
