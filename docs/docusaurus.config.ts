@@ -47,6 +47,7 @@ const config: Config = {
       defaultMode: 'dark',
     },
     navbar: {
+      title: "Home",
       items: [
         {
           type: 'docSidebar',
