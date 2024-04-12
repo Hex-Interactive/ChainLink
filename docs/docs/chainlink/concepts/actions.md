@@ -27,28 +27,6 @@ It is recommended to read the default Actions entry on the [security](../impleme
 
 ## Custom
 
-Creating custom Actions is very important to a [featureful implementation](../implementation/practices#implementing-custom-actions) of ChainLink. To define a custom Action, you'll need to write an ActionModule and then register it during [configuration](../getting-started/configuration). If you use Luau types, you can use the exported ActionModule type to assist with this process. A good resource for writing Actions is the source code of ChainLink where the default Actions are defined.
+Creating custom Actions is very important to a [featureful implementation](../implementation/practices#implementing-custom-actions) of ChainLink. To define a custom Action, you'll need to write an Chain Call and then register it during [configuration](../getting-started/configuration). If you use Luau types, you can use the exported `CallDefinition` type to assist with this process. A good resource for writing Actions is the source code of ChainLink where the default Actions are defined.
 
-To understand, the ActionModule definition precisely, the types are below.
-
-```lua title="Types related to ActionModule"
-type Action = (context: CallContext) -> ()
-type CallContext = {
-	target: Instance?,
-	args: { ASTData? },
-	validatedParam: ValidatedParam?,
-}
-
-type ValidateTargetFunc = (target: Instance) -> (boolean, ValidatedParam?)
-type ValidatedParam = any
-
-type ActionModule = {
-	ValidateArgs: { [number]: string },
-	ValidateTarget: (ValidateTargetFunc | boolean)?,
-	Run: Action,
-}
-```
-
-In this example above, `ASTData` represents the [currently supported datatypes](chain#supported-datatypes) of Chain, see the [Chain](chain) page for more information. The return types of `ValidateTargetFunc` are 1. a boolean indicating a successful validation and 2. the developer-defined `validatedParam`.
-
-It is important to keep [security](../implementation/security#custom) in mind when creating your own Actions.
+To learn more about Chain Calls, see the [Chain page](chain). It is important to keep [security](../implementation/security#custom) in mind when creating your own Actions.

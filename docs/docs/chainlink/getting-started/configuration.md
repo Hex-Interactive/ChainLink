@@ -35,13 +35,15 @@ end)
 
 To extend the native functionality of ChainLink and integrate better with your game systems, you should register Actions. This must be done before the `Init` function is called. There are 3 functions to register Actions.
 
-- `RegisterAction` registers a single ActionModule, and thus it takes a ModuleScript as an argument.
-- `RegisterActionsIn` registers descendant ActionModules (only ModuleScripts) of the passed in parent argument.
+- `RegisterAction` registers a single Action, and thus it takes a ModuleScript as an argument.
+- `RegisterActionsIn` registers descendant Actions (only ModuleScripts) of the passed in parent argument.
 	- There is an optional second argument of an array of strings for Action names to ignore.
 - `RegisterDefaultActions` registers all the default ChainLink Actions.
 	- There is an optional second argument of an array of strings for Action names to ignore.
 
-The name property of registered ModuleScripts (ActionModules) is used for the Action name. Action names must not match; they all have to be unique. It is recommended to store your custom ActionModules in a folder hierarchy and use `RegisterActionsIn` to register them. Both `RegisterActionsIn` and `RegisterDefaultActions` will ignore non-ModuleScript instances, allowing you to organize your Actions into nested folders for organization, if you so choose.
+The name property of registered ModuleScripts (Actions) is used for the Action name. Action names must not match; they all have to be unique. It is recommended to store your custom Actions in a folder hierarchy and use `RegisterActionsIn` to register them. Both `RegisterActionsIn` and `RegisterDefaultActions` will ignore non-ModuleScript instances, allowing you to organize your Actions into nested folders for organization, if you so choose.
+
+The modules themselves are represented and defined by [Chain](../concepts/chain) Calls.
 
 ```lua
 local ChainLink = require(...)

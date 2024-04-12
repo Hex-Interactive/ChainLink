@@ -7,11 +7,11 @@ sidebar_position: 6
 Chain is a simplistic scripting language. It's how you add custom logic and behaviors to maps, by utilizing the features of the language itself alongside [Actions](actions) and [Routines](routines). Chain can be used as a standalone feature in game development, but ChainLink is a runtime for Chain that provides helpful abstractions which map developers can make use of.
 
 :::tip
-You can learn more about how to use and work with Chain in its documentation [HERE](/docs/chain).
+You can learn more about how to use and work with Chain in its documentation [HERE](/docs/chain). This includes Calls and Targets!
 :::
 
 # Usage in ChainLink
 
 Chain is primarily used to execute Actions and Routines in a certain order. In many places throughout the system of ChainLink, there is an available space to put a "Chain script" for execution, typically whenever something is activated.
 
-Chain calls can be Actions or Routines. For Chain targets, you can use [Link Ids](links#referencing).
+Chain Calls can be Actions or Routines. For Chain Targets, you can use [Link Ids](links#referencing).
