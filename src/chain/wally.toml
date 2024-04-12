@@ -1,6 +1,6 @@
 [package]
 name = "hex-interactive/chain"
-description = "Simple sandboxed scripting language written in Luau"
+description = "Simple sandboxed scripting language written in Luau\n\nMore information: https://github.com/Hex-Interactive/ChainLink"
 version = "0.1.0"
 registry = "https://github.com/upliftgames/wally-index"
 realm = "shared"
