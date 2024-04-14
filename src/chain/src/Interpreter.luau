@@ -6,8 +6,8 @@ local Types = require(script.Parent:WaitForChild("Types"))
 
 local COMPLEXITY_LIMIT = 800
 
-local classPrototype = {}
-local classMetatable = { __index = classPrototype }
+local Interpreter = {}
+local metatable = { __index = Interpreter }
 export type Identity = typeof(setmetatable(
 	{} :: {
 		_ast: Types.ASTNode,
@@ -18,11 +18,11 @@ export type Identity = typeof(setmetatable(
 
 		_process: Types.Process,
 	},
-	classMetatable
+	metatable
 ))
 
 local function constructor(ast: Types.ASTNode, bindings: Bindings.Identity): Identity
-	local self = setmetatable({}, classMetatable)
+	local self = setmetatable({}, metatable)
 
 	self._ast = ast
 	self._bindings = bindings
@@ -42,7 +42,7 @@ local function constructor(ast: Types.ASTNode, bindings: Bindings.Identity): Ide
 	return self
 end
 
-function classPrototype.MemDef(self: Identity, name: string, value: Types.Type)
+function Interpreter.MemDef(self: Identity, name: string, value: Types.Type)
 	if self._mem[name] then
 		Logger.Warn(`mem contains a "{name}" def already`)
 		return
@@ -56,11 +56,11 @@ function classPrototype.MemDef(self: Identity, name: string, value: Types.Type)
 	self._mem[name] = value
 end
 
-function classPrototype.MemRead(self: Identity, name: string): Types.Type?
+function Interpreter.MemRead(self: Identity, name: string): Types.Type?
 	return self._mem[name]
 end
 
-function classPrototype.InterpretRootLike(self: Identity, node: Types.ASTNode): Types.Type?
+function Interpreter.InterpretRootLike(self: Identity, node: Types.ASTNode): Types.Type?
 	local children = node.children :: Types.ASTChildren_Root | Types.ASTChildren_Thunk
 
 	-- Pairs used to make typechecker happy
@@ -71,7 +71,7 @@ function classPrototype.InterpretRootLike(self: Identity, node: Types.ASTNode): 
 	return nil
 end
 
-function classPrototype.InterpretCall(self: Identity, node: Types.ASTNode): Types.Type?
+function Interpreter.InterpretCall(self: Identity, node: Types.ASTNode): Types.Type?
 	local callName = node.data :: string
 	local callDef = self._bindings:GetCall(callName)
 	if not callDef then
@@ -150,7 +150,7 @@ function classPrototype.InterpretCall(self: Identity, node: Types.ASTNode): Type
 	})
 end
 
-function classPrototype.InterpretBinExp(self: Identity, node: Types.ASTNode): Types.Type?
+function Interpreter.InterpretBinExp(self: Identity, node: Types.ASTNode): Types.Type?
 	local children = node.children :: Types.ASTChildren_BinExp
 	local op = node.data :: string
 
@@ -169,13 +169,13 @@ function classPrototype.InterpretBinExp(self: Identity, node: Types.ASTNode): Ty
 	return BinExp.Eval(op, left :: BinExp.Value, right :: BinExp.Value)
 end
 
-function classPrototype.InterpretThunk(self: Identity, node: Types.ASTNode): Types.Type?
+function Interpreter.InterpretThunk(self: Identity, node: Types.ASTNode): Types.Type?
 	return function()
 		self:InterpretRootLike(node)
 	end
 end
 
-function classPrototype.InterpretNot(self: Identity, node: Types.ASTNode): Types.Type?
+function Interpreter.InterpretNot(self: Identity, node: Types.ASTNode): Types.Type?
 	local children = node.children :: Types.ASTChildren_Not
 
 	local result = self:InterpretASTNode(children)
@@ -187,7 +187,7 @@ function classPrototype.InterpretNot(self: Identity, node: Types.ASTNode): Types
 	return not result
 end
 
-function classPrototype.InterpretASTNode(self: Identity, node: Types.ASTNode): Types.Type?
+function Interpreter.InterpretASTNode(self: Identity, node: Types.ASTNode): Types.Type?
 	local newCount = self._complexity + 1
 	self._complexity = newCount
 	if newCount > COMPLEXITY_LIMIT then
@@ -209,7 +209,7 @@ function classPrototype.InterpretASTNode(self: Identity, node: Types.ASTNode): T
 	return node.data
 end
 
-function classPrototype.Begin(self: Identity)
+function Interpreter.Begin(self: Identity)
 	if self._bindings:IsInvalid() then
 		error("interpreter's bindings are invalid on begin", 2)
 	end

@@ -50,15 +50,15 @@ local RESOLVE_ID = table.freeze({
 	}),
 })
 
-local classPrototype = {}
-local classMetatable = { __index = classPrototype }
+local Parser = {}
+local metatable = { __index = Parser }
 export type Identity = typeof(setmetatable(
 	{} :: {
 		_lexemes: Types.Lexemes,
 		_len: number,
 		_pos: number,
 	},
-	classMetatable
+	metatable
 ))
 
 local function node(id: string, data: Types.Type?, children: Types.ASTChildren?): Types.ASTNode
@@ -76,7 +76,7 @@ local function nodeUnexp(lexeme: Types.Lexeme?): Types.ASTNode
 end
 
 local function constructor(lexemes: Types.Lexemes): Identity
-	local self = setmetatable({}, classMetatable)
+	local self = setmetatable({}, metatable)
 
 	self._lexemes = lexemes
 	self._len = #lexemes
@@ -85,7 +85,7 @@ local function constructor(lexemes: Types.Lexemes): Identity
 	return self
 end
 
-function classPrototype.Peek(self: Identity, amount: number): string
+function Parser.Peek(self: Identity, amount: number): string
 	local lexeme = self:Look(amount)
 	if not lexeme then
 		return LexemeIds.Eof
@@ -94,7 +94,7 @@ function classPrototype.Peek(self: Identity, amount: number): string
 	return lexeme.id
 end
 
-function classPrototype.Look(self: Identity, amount: number): Types.Lexeme?
+function Parser.Look(self: Identity, amount: number): Types.Lexeme?
 	local nextPos = self._pos + amount
 	if nextPos > self._len then
 		return nil
@@ -103,11 +103,11 @@ function classPrototype.Look(self: Identity, amount: number): Types.Lexeme?
 	return self._lexemes[nextPos]
 end
 
-function classPrototype.Consume(self: Identity)
+function Parser.Consume(self: Identity)
 	self._pos += 1
 end
 
-function classPrototype.ParseFactor(self: Identity): Types.ASTNode
+function Parser.ParseFactor(self: Identity): Types.ASTNode
 	local preOpId = self:Peek(0)
 	if preOpId == LexemeIds.Not then
 		self:Consume()
@@ -148,7 +148,7 @@ function classPrototype.ParseFactor(self: Identity): Types.ASTNode
 	return nodeUnexp(self:Look(0))
 end
 
-function classPrototype.ParseBinExp(self: Identity, min: number): Types.ASTNode
+function Parser.ParseBinExp(self: Identity, min: number): Types.ASTNode
 	local result = self:ParseFactor()
 	local id = self:Peek(0)
 
@@ -168,7 +168,7 @@ function classPrototype.ParseBinExp(self: Identity, min: number): Types.ASTNode
 	return result
 end
 
-function classPrototype.ParseExpression(self: Identity): Types.ASTNode
+function Parser.ParseExpression(self: Identity): Types.ASTNode
 	local id = self:Peek(0)
 	if id == LexemeIds.Eof then
 		return nodeUnexp(nil) -- We know the lexeme will be nil here, UnexpEof
@@ -204,7 +204,7 @@ function classPrototype.ParseExpression(self: Identity): Types.ASTNode
 	return nodeUnexp(lexeme)
 end
 
-function classPrototype.ParseCall(self: Identity, expr: boolean, callTarget: Types.Lexeme?): Types.ASTNode
+function Parser.ParseCall(self: Identity, expr: boolean, callTarget: Types.Lexeme?): Types.ASTNode
 	local target = if callTarget then node(ASTNodeIds.Str, callTarget.data) else nil
 
 	local callName = self:Look(0) :: Types.Lexeme
@@ -256,7 +256,7 @@ function classPrototype.ParseCall(self: Identity, expr: boolean, callTarget: Typ
 	})
 end
 
-function classPrototype.ParseTargetedCall(self: Identity, expr: boolean): Types.ASTNode
+function Parser.ParseTargetedCall(self: Identity, expr: boolean): Types.ASTNode
 	local targetName = self:Look(0) :: Types.Lexeme
 	self:Consume()
 
@@ -276,7 +276,7 @@ function classPrototype.ParseTargetedCall(self: Identity, expr: boolean): Types.
 	return nodeUnexp(self:Look(0))
 end
 
-function classPrototype.ParseCallLike(self: Identity, expr: boolean): Types.ASTNode
+function Parser.ParseCallLike(self: Identity, expr: boolean): Types.ASTNode
 	local nextId = self:Peek(1)
 
 	if nextId == LexemeIds.Arrow then
@@ -288,7 +288,7 @@ function classPrototype.ParseCallLike(self: Identity, expr: boolean): Types.ASTN
 	return nodeUnexp(self:Look(1))
 end
 
-function classPrototype.ParseGeneralContext(self: Identity): Types.ASTNode?
+function Parser.ParseGeneralContext(self: Identity): Types.ASTNode?
 	local id = self:Peek(0)
 
 	if id == LexemeIds.Eof then
@@ -300,7 +300,7 @@ function classPrototype.ParseGeneralContext(self: Identity): Types.ASTNode?
 	return nodeUnexp(self:Look(0))
 end
 
-function classPrototype.Begin(self: Identity): Types.Result<Types.ASTNode>
+function Parser.Begin(self: Identity): Types.Result<Types.ASTNode>
 	if self._len > LEXEME_LIMIT then
 		return {
 			ok = false,

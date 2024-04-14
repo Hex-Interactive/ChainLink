@@ -23,15 +23,15 @@ local WHITESPACE = table.freeze({
 	["\t"] = true,
 })
 
-local classPrototype = {}
-local classMetatable = { __index = classPrototype }
+local Lexer = {}
+local metatable = { __index = Lexer }
 export type Identity = typeof(setmetatable(
 	{} :: {
 		_source: string,
 		_len: number,
 		_pos: number,
 	},
-	classMetatable
+	metatable
 ))
 
 local function isWhitespace(input: string?): boolean
@@ -54,7 +54,7 @@ local function new(id: string, data: string?): Types.Lexeme
 end
 
 local function constructor(source: string): Identity
-	local self = setmetatable({}, classMetatable)
+	local self = setmetatable({}, metatable)
 
 	self._source = source
 	self._len = string.len(source)
@@ -63,7 +63,7 @@ local function constructor(source: string): Identity
 	return self
 end
 
-function classPrototype.Peek(self: Identity, amount: number): string?
+function Lexer.Peek(self: Identity, amount: number): string?
 	local nextPos = self._pos + amount
 	if nextPos > self._len then
 		return nil
@@ -72,11 +72,11 @@ function classPrototype.Peek(self: Identity, amount: number): string?
 	return string.sub(self._source, nextPos, nextPos)
 end
 
-function classPrototype.Consume(self: Identity)
+function Lexer.Consume(self: Identity)
 	self._pos += 1
 end
 
-function classPrototype.ReadString(self: Identity): Types.Lexeme
+function Lexer.ReadString(self: Identity): Types.Lexeme
 	local final = ""
 
 	local prev = nil
@@ -102,7 +102,7 @@ function classPrototype.ReadString(self: Identity): Types.Lexeme
 	return new(LexemeIds.Str, final)
 end
 
-function classPrototype.ReadNumber(self: Identity, negative: boolean): Types.Lexeme
+function Lexer.ReadNumber(self: Identity, negative: boolean): Types.Lexeme
 	local final = if negative then "-" else ""
 	if negative then
 		self:Consume()
@@ -121,7 +121,7 @@ function classPrototype.ReadNumber(self: Identity, negative: boolean): Types.Lex
 	return new(LexemeIds.Num, final)
 end
 
-function classPrototype.ReadIdentifier(self: Identity): Types.Lexeme
+function Lexer.ReadIdentifier(self: Identity): Types.Lexeme
 	local final = ""
 
 	while true do
@@ -137,7 +137,7 @@ function classPrototype.ReadIdentifier(self: Identity): Types.Lexeme
 	return new(LexemeIds.Id, final)
 end
 
-function classPrototype.ReadNext(self: Identity): Types.Lexeme
+function Lexer.ReadNext(self: Identity): Types.Lexeme
 	local char = self:Peek(0)
 
 	if char == nil then
@@ -267,7 +267,7 @@ function classPrototype.ReadNext(self: Identity): Types.Lexeme
 	return new(LexemeIds.UknChar, char)
 end
 
-function classPrototype.Begin(self: Identity): Types.Result<Types.Lexemes>
+function Lexer.Begin(self: Identity): Types.Result<Types.Lexemes>
 	if self._len > CHARACTER_LIMIT then
 		return {
 			ok = false,

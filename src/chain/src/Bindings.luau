@@ -6,15 +6,15 @@ export type TargetsDict = { [string]: { Instance } }
 
 local builtinCalls: CallsDict
 
-local classPrototype = {}
-local classMetatable = { __index = classPrototype }
+local Bindings = {}
+local metatable = { __index = Bindings }
 export type Identity = typeof(setmetatable(
 	{} :: {
 		_valid: boolean,
 		_calls: CallsDict,
 		_targets: TargetsDict,
 	},
-	classMetatable
+	metatable
 ))
 
 local function reconcileBuiltinCalls()
@@ -41,7 +41,7 @@ local function constructor(calls: CallsDict, targets: TargetsDict): Identity
 		end
 	end
 
-	local self = setmetatable({}, classMetatable)
+	local self = setmetatable({}, metatable)
 
 	self._valid = true
 	self._calls = calls
@@ -50,19 +50,19 @@ local function constructor(calls: CallsDict, targets: TargetsDict): Identity
 	return self
 end
 
-function classPrototype.GetCall(self: Identity, name: string): Types.CallDefinition?
+function Bindings.GetCall(self: Identity, name: string): Types.CallDefinition?
 	return builtinCalls[name] or self._calls[name]
 end
 
-function classPrototype.GetTargets(self: Identity, name: string): { Instance }?
+function Bindings.GetTargets(self: Identity, name: string): { Instance }?
 	return self._targets[name]
 end
 
-function classPrototype.IsInvalid(self: Identity): boolean
+function Bindings.IsInvalid(self: Identity): boolean
 	return not self._valid
 end
 
-function classPrototype.Destroy(self: Identity)
+function Bindings.Destroy(self: Identity)
 	self._valid = false
 
 	table.clear(self._calls)
