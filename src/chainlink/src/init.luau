@@ -1,6 +1,6 @@
 --[[
 	ChainLink
-	v0.1.2
+	v0.2.0
 ]]
 
 local Actions = require(script:WaitForChild("ChainBindings"):WaitForChild("Actions"))

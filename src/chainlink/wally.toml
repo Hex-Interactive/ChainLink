@@ -1,7 +1,7 @@
 [package]
 name = "hex-interactive/chainlink"
 description = "DataModel-driven logic and control system for Roblox\n\nMore information: https://github.com/Hex-Interactive/ChainLink"
-version = "0.1.2"
+version = "0.2.0"
 registry = "https://github.com/upliftgames/wally-index"
 realm = "shared"
 license = "MIT"
