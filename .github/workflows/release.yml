@@ -21,12 +21,12 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: v0.2.7
 
-      - name: Build system
-        run: rojo build -o ChainLinkSystem.rbxm
+      - name: Build ChainLink package
+        run: rojo build -o ChainLink.rbxm
 
       - name: GitHub release
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          files: ChainLinkSystem.rbxm
+          files: ChainLink.rbxm
           draft: true
